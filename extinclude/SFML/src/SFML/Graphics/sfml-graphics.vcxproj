@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{1ED6FD87-0AEE-39E6-ADB7-3ABCE8F430C9}</ProjectGUID>
+    <WindowsTargetPlatformVersion>10.0.10150.0</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>sfml-graphics</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup>
+      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\lib\Debug\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sfml-graphics.dir\Debug\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">sfml-graphics-d-2</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.dll</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\lib\Release\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sfml-graphics.dir\Release\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">sfml-graphics-2</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.dll</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\lib\MinSizeRel\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">sfml-graphics.dir\MinSizeRel\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">sfml-graphics-2</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.dll</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
+      <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\lib\RelWithDebInfo\</OutDir>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">sfml-graphics.dir\RelWithDebInfo\</IntDir>
+      <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">sfml-graphics-2</TargetName>
+      <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.dll</TargetExt>
+      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
+      <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
+    </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Debug/</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR="Debug";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR=\"Debug\";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 /debug %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\..\lib\Debug\sfml-window-d.lib;..\..\..\lib\Debug\sfml-system-d.lib;opengl32.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\freetype.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\jpeg.lib;winmm.lib;gdi32.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/Debug/sfml-graphics-d.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/Debug/sfml-graphics-d.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>Release/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR="Release";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR=\"Release\";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\..\lib\Release\sfml-window.lib;..\..\..\lib\Release\sfml-system.lib;opengl32.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\freetype.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\jpeg.lib;winmm.lib;gdi32.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/Release/sfml-graphics.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/Release/sfml-graphics.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR="MinSizeRel";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat></DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR=\"MinSizeRel\";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\..\lib\MinSizeRel\sfml-window.lib;..\..\..\lib\MinSizeRel\sfml-system.lib;opengl32.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\freetype.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\jpeg.lib;winmm.lib;gdi32.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/MinSizeRel/sfml-graphics.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/MinSizeRel/sfml-graphics.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR="RelWithDebInfo";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;STBI_FAILURE_USERMSG;CMAKE_INTDIR=\"RelWithDebInfo\";SFML_GRAPHICS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\stb_image;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\jpeg;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\headers\freetype2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalOptions> /machine:X86 /debug %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;..\..\..\lib\RelWithDebInfo\sfml-window.lib;..\..\..\lib\RelWithDebInfo\sfml-system.lib;opengl32.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\freetype.lib;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\extlibs\libs-msvc-universal\x86\jpeg.lib;winmm.lib;gdi32.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/RelWithDebInfo/sfml-graphics.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/lib/RelWithDebInfo/sfml-graphics.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+      <Version></Version>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -HC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo -BC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML --check-stamp-file C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindOpenGL.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindJPEG.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\cmake\Modules\FindFreetype.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -HC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo -BC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML --check-stamp-file C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindOpenGL.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindJPEG.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\cmake\Modules\FindFreetype.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -HC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo -BC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML --check-stamp-file C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindOpenGL.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindJPEG.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\cmake\Modules\FindFreetype.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -HC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo -BC:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML --check-stamp-file C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML-Repo/src/SFML/Graphics/CMakeLists.txt;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindOpenGL.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindJPEG.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeParseArguments.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\cmake\Modules\FindFreetype.cmake;C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML\src\SFML\Graphics\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\BlendMode.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Color.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Export.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Font.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Glsl.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Glsl.inl" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Glyph.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\GLCheck.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\GLExtensions.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Image.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\ImageLoader.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\PrimitiveType.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Rect.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Rect.inl" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\RenderStates.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\RenderTexture.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\RenderTarget.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\RenderWindow.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Shader.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Texture.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\TextureSaver.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Transform.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Transformable.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\View.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Vertex.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\GLLoader.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Drawable.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Shape.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\CircleShape.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\RectangleShape.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\ConvexShape.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Sprite.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\Text.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\include\SFML\Graphics\VertexArray.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTextureImpl.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTextureImplFBO.hpp" />
+    <ClInclude Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTextureImplDefault.hpp" />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\BlendMode.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Color.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Font.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Glsl.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\GLCheck.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\GLExtensions.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Image.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\ImageLoader.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderStates.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTexture.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTarget.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderWindow.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Shader.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Texture.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\TextureSaver.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Transform.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Transformable.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\View.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Vertex.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\GLLoader.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Shape.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\CircleShape.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RectangleShape.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\ConvexShape.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Sprite.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\Text.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\VertexArray.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTextureImpl.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTextureImplFBO.cpp"  />
+    <ClCompile Include="C:\Users\Stephen\OneDrive\Projects\github\GameEngine\extinclude\SFML-Repo\src\SFML\Graphics\RenderTextureImplDefault.cpp"  />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/ZERO_CHECK.vcxproj">
+      <Project>51A5C07F-8F5B-37AA-B7EF-B26D0C1EFE8D</Project>
+    </ProjectReference>
+    <ProjectReference Include="C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/src/SFML/System/sfml-system.vcxproj">
+      <Project>52617CA7-40CB-3344-BD71-31353BE60411</Project>
+    </ProjectReference>
+    <ProjectReference Include="C:/Users/Stephen/OneDrive/Projects/github/GameEngine/extinclude/SFML/src/SFML/Window/sfml-window.vcxproj">
+      <Project>772EDB9C-72EF-30D8-9523-B86ED99B18EB</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

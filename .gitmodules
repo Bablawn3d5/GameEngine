@@ -1,0 +1,3 @@
+[submodule "extinclude/SFML"]
+	path = extinclude/SFML-Repo/
+	url = https://github.com/Bablawn3d5/SFML.git
