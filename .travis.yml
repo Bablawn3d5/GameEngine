@@ -3,6 +3,8 @@ compiler:
   - clang
   - gcc
 
+sudo: true
+
 # This so travis stops complaining about 'private' repos when you've checked out
 # the repository using ssh keys for convenience.
 # disable the default submodule logic
@@ -13,5 +15,9 @@ git:
 before_install:
  - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
  - git submodule update --init --recursive
+ - yes | sudo add-apt-repository ppa:kalakris/cmake
+ - sudo apt-get update -qq
+
+install: sudo apt-get update -qq
 
 script: ./scripts/travis.sh
