@@ -20,7 +20,7 @@ before_install:
  - sudo apt-get update
  # Try really hard to update cmake
  - sudo apt-get install cmake
- - sudo apt-get upgrade
+ - yes | sudo apt-get upgrade
  - which cmake
 
 install: sudo apt-get update -qq
