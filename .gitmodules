@@ -1,6 +1,6 @@
-[submodule "extinclude/SFML"]
-	path = extinclude/SFML-Repo/
-	url = git@github.com:Bablawn3d5/SFML.git
 [submodule "extinclude/entityx-repo"]
 	path = extinclude/entityx-repo
 	url = git@github.com:Bablawn3d5/entityx.git
+[submodule "extinclude/SFML-Repo"]
+	path = extinclude/SFML-Repo
+	url = git@github.com:Bablawn3d5/SFML.git
