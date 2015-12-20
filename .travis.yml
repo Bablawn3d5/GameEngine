@@ -1,0 +1,17 @@
+#
+# I use SSH URLs in my submodules for convenience. However, Travis CI is unable to
+# clone from those URLs even though the repositories are public. To fix this, I'm
+# simply manipulating the .gitmodules file with sed so it points to the public
+# URLs before initializing the submodules.
+#
+# Hope it saves you some frustration!
+#
+
+# disable the default submodule logic
+git:
+  submodules: false
+
+# use sed to replace the SSH URL with the public URL, then init and update submodules
+before_install:
+ - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
+ - git submodule update --init --recursive
