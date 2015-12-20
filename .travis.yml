@@ -24,7 +24,7 @@ before_install:
     else
       brew install cmake
     fi
-
-install: sudo apt-get update -qq
+  - which cmake
+  - cmake --version
 
 script: ./scripts/travis.sh
