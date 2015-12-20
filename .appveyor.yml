@@ -1,0 +1,11 @@
+version: 1.0.{build}
+clone_depth: 50
+build_script:
+- ps: >-
+    sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
+
+    git submodule update --depth 1 --init --recursive
+
+    cmake -DENTITYX_BUILD_TESTING=0
+
+    cmake --build . --target ALL_BUILD --config Release
