@@ -9,5 +9,5 @@ ${BABLAWN_GAMEENGINE_PATCH_VERSION})
 project(GameEngine)
 
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
-add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-repo)
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/Farquaad)
