@@ -4,7 +4,7 @@ build_script:
 - ps: >-
     sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
 
-    git submodule update --depth --init --recursive
+    git submodule update --init --recursive
 
     cmake -DENTITYX_BUILD_TESTING=0
 
