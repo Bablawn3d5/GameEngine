@@ -25,8 +25,8 @@ addons:
       # Needed for C++11 features
       - g++-4.8
       - gcc-4.8
-  sources:
-    - ubuntu-toolchain-r-test
+    sources:
+      - ubuntu-toolchain-r-test
 
 # This so travis stops complaining about 'private' repos when you've checked out
 # the repository using ssh keys for convenience.
