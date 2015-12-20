@@ -15,9 +15,11 @@ before_install:
  # use sed to replace the SSH URL with the public URL, then init and update submodules
  - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
  - git submodule update --init --recursive
+ # Install cmake
  - yes | sudo add-apt-repository ppa:george-edison55/cmake-3.x
- - sudo apt-get update -qq
+ - sudo apt-get update
+ - sudo apt-get install cmake
 
-install: sudo apt-get update -qq
+install: sudo apt-get update
 
 script: ./scripts/travis.sh
