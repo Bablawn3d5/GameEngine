@@ -32,7 +32,7 @@ git:
 before_install:
   # use sed to replace the SSH URL with the public URL, then init and update submodules
   - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
-  - git submodule update --depth 1 --init --recursive
+  - git submodule update --init --recursive
   # Install g++ and gcc 4.8 for better C++11 support
   - |
     if test $CC = gcc; then
