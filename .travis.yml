@@ -18,8 +18,11 @@ before_install:
  # Install cmake
  - yes | sudo add-apt-repository ppa:george-edison55/cmake-3.x
  - sudo apt-get update
+ # Try really hard to update cmake
  - sudo apt-get install cmake
+ - sudo apt-get upgrade
+ - which cmake
 
-install: sudo apt-get update
+install: sudo apt-get update -qq
 
 script: ./scripts/travis.sh
