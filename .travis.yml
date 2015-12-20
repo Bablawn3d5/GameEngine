@@ -24,7 +24,7 @@ before_install:
     else
       brew install cmake
     fi
-  - which cmake
-  - cmake --version
+ - which cmake
+ - cmake --version
 
 script: ./scripts/travis.sh
