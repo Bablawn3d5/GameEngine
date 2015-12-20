@@ -6,6 +6,7 @@ compiler:
 addons:
   apt:
     packages:
+      # Needed by SFML
       - libpthread-stubs0-dev
       - libgl1-mesa-dev
       - libx11-dev
@@ -21,6 +22,11 @@ addons:
       - libsndfile1-dev
       - libopenal-dev
       - libjpeg62
+      # Needed for C++11 features
+      - g++-4.8
+      - gcc-4.8
+  sources:
+    - ubuntu-toolchain-r-test
 
 # This so travis stops complaining about 'private' repos when you've checked out
 # the repository using ssh keys for convenience.
