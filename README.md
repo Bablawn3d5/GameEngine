@@ -4,5 +4,7 @@ Bablawn3d5 Game Engine
 Binds serveral C++ libraries the Bablawn uses into a covinent "engine"
 
 [EntityX](https://github.com/alecthomas/entityx)
-[Box2D](https://github.com/erincatto/Box2D) - erincatto github clone.
+
+[Box2D](https://github.com/erincatto/Box2D)
+
 [SFML](https://github.com/SFML/SFML)
