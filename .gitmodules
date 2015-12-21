@@ -4,3 +4,6 @@
 [submodule "extinclude/SFML-Repo"]
 	path = extinclude/SFML-Repo
 	url = git://github.com/Bablawn3d5/SFML.git
+[submodule "extinclude/Box2D-repo"]
+	path = extinclude/Box2D-repo
+	url = git://github.com/Bablawn3d5/Box2D.git
