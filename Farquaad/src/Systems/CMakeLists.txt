@@ -8,6 +8,7 @@ set(SRC
 
 set(INC
     ${INCROOT}/InputSystem.h
+    ${INCROOT}/../Systems.hpp
 )
 
 # Set all source files

@@ -2,17 +2,16 @@
 
 #pragma once
 
-#include <entityx\entityx.h>
+#include <entityx/entityx.h>
 
-struct Stats : Componenet`<Stats> {
+struct Stats {
  public:
-   explicit Stats(float speed = 0.0f, float maxHp = 100.0f, float currentHp = 100.0f
-      , bool godmode = false)
-      : speed(speed), maxHp(maxHp), currentHp(currentHp), godmode(godmode) {}
+   explicit Stats(float speed = 0.0f, float maxHp = 100.0f, float currentHp = 100.0f)
+      : speed(speed), maxHp(maxHp), currentHp(currentHp) {}
    ~Stats() {}
 
    float speed;
    float maxHp;
    float currentHp;
-   bool godmode;
+   bool godmode = false;
 };

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <entityx\entityx.h>
+#include <entityx/entityx.h>
 
 struct Body {
  public:

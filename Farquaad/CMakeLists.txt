@@ -32,22 +32,22 @@ if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
 endif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
 set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
-set(INCROOT ${PROJECT_SOURCE_DIR}/include/Farquaad)
+set(INCROOT ${PROJECT_SOURCE_DIR}/include)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
 
 set(
     SOURCES
     ${SRCROOT}/main.cpp
 )
-source_group("" FILES ${SOURCES})
 
 # Link all directories
 add_subdirectory(${SRCROOT})
 
 # Set source_group for Visual Studio organization
-foreach(FILE ${SOURCES})
+foreach(FILE ${INCLUDES} ${SOURCES})
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
+    get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
 
     # Remove common directory prefix to make the group
     string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
@@ -66,13 +66,20 @@ foreach(FILE ${SOURCES})
        set(GROUP "Header Files${GROUP}")
     endif()
 
+    # Check if file exists
+    if(NOT EXISTS ${FILE})
+        message( FATAL_ERROR "THE FILE YOU'VE ADDED: ${FILE} DOES NOT EXIST!" )
+    else()
+        message ( STATUS "Group added: ${GROUP} : ${FILE}")
+    endif()
+
     source_group("${GROUP}" FILES "${FILE}")
 endforeach()
 
 
 # Tell CMake to build a Farquaad executable
-add_executable(Farquaad ${SOURCES})
-include_directories(${INCLUDES})
+add_executable(Farquaad ${SOURCES} ${INCLUDES})
+include_directories(${INCROOT})
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
