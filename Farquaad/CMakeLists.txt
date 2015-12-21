@@ -8,17 +8,14 @@ ${BABLAWN_FARQUAAD_PATCH_VERSION})
 
 project(Farquaad)
 
-# Set to new behaviour, we don't mean to expand quoted variables here.
-cmake_policy(SET CMP0054 NEW)
-
 # Default compiler args
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|.*Clang)")
+if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-g -Os -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-g -O2 -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+elseif(MAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
     # /Zi - Produces a program database (PDB) that contains type information and symbolic debugging information for use with the debugger.
     # /FS - Allows multiple cl.exe processes to write to the same .pdb file
     # /DEBUG - Enable debug during linking
@@ -35,19 +32,47 @@ if(NOT DEFINED CMAKE_INSTALL_LIBDIR)
 endif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
 set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
-# TODO(SMA) : Generate a cmake file under 'src' to auto-magic include Farquaad sources.
-# Add the source files
-set(SRC_DIR "src")
-set(INC_DIR "include")
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/Farquaad)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
 
 set(
     SOURCES
-    ${SRC_DIR}/main.cpp
+    ${SRCROOT}/main.cpp
 )
+source_group("" FILES ${SOURCES})
+
+# Link all directories
+add_subdirectory(${SRCROOT})
+
+# Set source_group for Visual Studio organization
+foreach(FILE ${SOURCES})
+    # Get the directory of the source file
+    get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
+
+    # Remove common directory prefix to make the group
+    string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+
+    # Make sure we are using windows slashes
+    string(REPLACE "/" "\\" GROUP "${GROUP}")
+
+    # Remove redundant src\\
+    string(REPLACE "src\\" "" GROUP "${GROUP}")
+    string(REPLACE "\\src" "\\" GROUP "${GROUP}")
+
+    # Group into "Source Files" and "Header Files"
+    if ("${FILE}" MATCHES ".*\\.cpp")
+       set(GROUP "Source Files${GROUP}")
+    elseif("${FILE}" MATCHES ".*\\.h")
+       set(GROUP "Header Files${GROUP}")
+    endif()
+
+    source_group("${GROUP}" FILES "${FILE}")
+endforeach()
+
 
 # Tell CMake to build a Farquaad executable
-include_directories(${INC_DIR})
 add_executable(Farquaad ${SOURCES})
+include_directories(${INCLUDES})
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
