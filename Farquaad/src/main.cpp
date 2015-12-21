@@ -1,4 +1,14 @@
 #include <SFML/Graphics.hpp>
+#include <Box2D/Box2D.h>
+#include <entityx/entityx.h>
+
+//Quick test for EntityX
+struct ComponentFoo : entityx::Component<ComponentFoo> {
+    double num;
+};
+
+// Quick test for Box2d
+b2CircleShape c;
 
 int main()
 {
