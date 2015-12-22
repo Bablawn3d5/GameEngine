@@ -1,4 +1,4 @@
-// Copyright 2015 Babalawn3d5
+// Copyright 2015 Bablawn3d5
 
 #pragma once
 
@@ -18,15 +18,15 @@ struct KeyInput {
 struct InputSystem : public ex::System<InputSystem> {
     typedef std::map<const std::string, KeyInput> KeyBindMap;
 
-    KeyBindMap keyBinds;
-    sf::Window& window;
-
-    explicit InputSystem(sf::Window &target) : window(target) { };
+    explicit InputSystem(sf::Window &target) : window(target) {}
 
     void bindEventToKeyPress(const std::string string, const sf::Keyboard::Key key);
     void bindEventToKeyPress(const std::string string, const sf::Mouse::Button button);
 
     bool testEvent(const std::string eventName, sf::Event e);
 
-    void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);
+    void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
+
+    KeyBindMap keyBinds;
+    sf::Window& window;
 };

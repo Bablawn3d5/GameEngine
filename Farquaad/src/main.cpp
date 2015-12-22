@@ -1,3 +1,5 @@
+// Copyright 2015 Bablawn3d5
+
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 #include <entityx/entityx.h>
@@ -6,7 +8,7 @@
 // Quick test for Box2d
 b2CircleShape c;
 
-//Quick test for EntityX
+// Quick test for EntityX
 class Application : public entityx::EntityX {
 public:
     explicit Application(sf::RenderWindow &target) {
@@ -25,23 +27,21 @@ public:
     }
 };
 
-int main()
-{
-   sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-   sf::CircleShape shape(100.f);
-   shape.setFillColor(sf::Color::Green);
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+    sf::CircleShape shape(100.f);
+    shape.setFillColor(sf::Color::Green);
 
-   Application app(window);
+    Application app(window);
 
-   sf::Clock clock;
-   while (window.isOpen())
-   {
-      window.clear();
-      sf::Time elapsed = clock.restart();
-      app.update(elapsed.asSeconds());
-      window.draw(shape);
-      window.display();
-   }
+    sf::Clock clock;
+    while ( window.isOpen() ) {
+        window.clear();
+        sf::Time elapsed = clock.restart();
+        app.update(elapsed.asSeconds());
+        window.draw(shape);
+        window.display();
+    }
 
-   return 0;
+    return 0;
 }
