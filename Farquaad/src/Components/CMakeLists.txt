@@ -1,0 +1,27 @@
+
+set(INCROOT ${PROJECT_SOURCE_DIR}/include/Farquaad/Components)
+set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Components)
+
+set(SRC
+    ${INCROOT}/Body.hpp
+    ${INCROOT}/Stats.hpp
+)
+
+# Set include == src for components
+set(INC
+    ${SRC}
+)
+
+# Set all source files
+set(SOURCES
+    ${SOURCES}
+    ${SRC}
+    PARENT_SCOPE
+)
+
+# Set all include files
+set(INCLUDES
+    ${INCLUDES}
+    ${INC}
+    PARENT_SCOPE
+)
