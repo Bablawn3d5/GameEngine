@@ -4,9 +4,11 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Systems)
 
 set(SRC
     ${SRCROOT}/InputSystem.cpp
+    ${SRCROOT}/RenderSystem.cpp
 )
 
 set(INC
+    ${INCROOT}/RenderSystem.h
     ${INCROOT}/InputSystem.h
     ${INCROOT}/../Systems.hpp
 )
