@@ -78,7 +78,7 @@ endforeach()
 
 
 # Tell CMake to build a Farquaad executable
-add_executable(Farquaad ${SOURCES} ${INCLUDES})
+add_executable(Farquaad ${SOURCES})
 include_directories(${INCROOT})
 
 # Include SFML
