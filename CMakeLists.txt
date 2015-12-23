@@ -1,10 +1,4 @@
 cmake_minimum_required(VERSION 3.1)
-set(BABLAWN_GAMEENGINE_MAJOR_VERSION 0)
-set(BABLAWN_GAMEENGINE_MINOR_VERSION 0)
-set(BABLAWN_GAMEENGINE_PATCH_VERSION 1)
-set(BABLAWN_GAMEENGINE_VERSION ${BABLAWN_GAMEENGINE_MAJOR_VERSION}.
-${BABLAWN_GAMEENGINE_MINOR_VERSION}.
-${BABLAWN_GAMEENGINE_PATCH_VERSION})
 
 project(GameEngine)
 
@@ -16,3 +10,16 @@ add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/Farquaad)
+
+
+# Set this to binary dir by default
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR} CACHE
+        PATH "FOO install prefix" FORCE)
+endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+
+set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.0.1-${CMAKE_SYSTEM}")
+
+# Set generator to ZIP/tarball for convenience
+set(CPACK_GENERATOR "ZIP;TGZ" )
+include(CPack)

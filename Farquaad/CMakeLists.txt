@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
-set(BABLAWN_FARQUAAD_MAJOR_VERSION 0)
-set(BABLAWN_FARQUAAD_MINOR_VERSION 0)
-set(BABLAWN_FARQUAAD_PATCH_VERSION 1)
-set(BABLAWN_FARQUAAD_VERSION ${BABLAWN_FARQUAAD_MAJOR_VERSION}.
-${BABLAWN_FARQUAAD_MINOR_VERSION}.
-${BABLAWN_FARQUAAD_PATCH_VERSION})
+set(Farquaad_MAJOR_VERSION 0)
+set(Farquaad_MINOR_VERSION 0)
+set(Farquaad_PATCH_VERSION 1)
+set(Farquaad_VERSION ${Farquaad_MAJOR_VERSION}.
+${Farquaad_MINOR_VERSION}.
+${Farquaad_PATCH_VERSION})
 
 project(Farquaad)
 
@@ -42,6 +42,7 @@ set(
 
 # Link all directories
 add_subdirectory(${SRCROOT})
+include_directories(${INCROOT})
 
 # Set source_group for Visual Studio organization
 foreach(FILE ${INCLUDES} ${SOURCES})
@@ -76,10 +77,8 @@ foreach(FILE ${INCLUDES} ${SOURCES})
     source_group("${GROUP}" FILES "${FILE}")
 endforeach()
 
-
 # Tell CMake to build a Farquaad executable
 add_executable(Farquaad ${SOURCES})
-include_directories(${INCROOT})
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
@@ -111,3 +110,13 @@ set_target_properties(Box2D PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINA
 
 # Statically link Box2D
 target_link_libraries(Farquaad Box2D)
+
+
+# Set installation directory to incl Packages
+install(TARGETS Farquaad DESTINATION bin)
+if(MSVC)
+    if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
+        set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
+    endif()
+    include(InstallRequiredSystemLibraries)
+endif()
