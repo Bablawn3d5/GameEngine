@@ -9,8 +9,6 @@ Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is
 
 [SFML](https://github.com/SFML/SFML)
 
----
-
 ## Building
 
 The engine builds on Win64 **Visual Studio 2015**, **gcc-4.9**, and **clang-3.5**. Anything earlier may encounter compiler issues with the C++11 language.
@@ -26,6 +24,23 @@ cmake ..
 make
 ```
 
----
+## Distribution
+
+We primiarly use cpack to generate our distributions.
+
+```
+cd Build
+cmake -DCMAKE_INSTALL_PREFIX=`pwd`/package
+cmake ..
+
+# This will create a GameEngine-<version>-<commit>-<os>.zip and .tar file
+# under <cwd>/package
+cpack 
+```
+
+
+## Copying
+
+The Bablawn3d5 GameEngine itself is licensed and distributed under zlib license. 
 
 See `license.txt` for all related third party and open source licenses in this repository.
