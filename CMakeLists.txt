@@ -17,6 +17,7 @@ option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/jsoncpp-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/Farquaad)
 
 # Get git hash

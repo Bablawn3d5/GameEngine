@@ -5,9 +5,13 @@
 #include <entityx/entityx.h>
 #include <Farquaad/Systems.hpp>
 #include <Farquaad/Components.hpp>
+#include <json/json.h>
 
 // Quick test for Box2d
 b2CircleShape c;
+
+// Test for JSONCPP
+Json::Value v;
 
 // TODO(SMA) : Remove me and replace me with Box2D Physics
 // Updates a body's position by and arbirary set of units.

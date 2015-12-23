@@ -90,12 +90,22 @@ set_target_properties(sfml-graphics PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farqu
 set_target_properties(sfml-system PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
 
-# Copy outputs to our binary dir
+# Include EntityX
 include_directories(${EntityX_SOURCE_DIR})
 link_directories(${EntityX_LIBRARY_DIR})
+# Copy entityx outputs to our binary dir
 set_target_properties(entityx PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 set_target_properties(entityx_shared PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 target_link_libraries(Farquaad entityx entityx_shared)
+
+# Include JsonCPP
+include_directories(${JsonCPP_SOURCE_DIR}/include)
+link_directories(${JsonCPP_LIBRARY_DIR})
+target_link_libraries(Farquaad jsoncpp_lib)
+set_target_properties(jsoncpp_lib PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}" FOLDER jsoncpp)
+set_target_properties(jsoncpp_lib_static PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}" FOLDER jsoncpp)
 
 # Include Box2D
 include_directories(${Box2D_SOURCE_DIR})
