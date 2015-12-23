@@ -39,12 +39,23 @@ public:
 
         // HACK(SMA) : Create entity right in this bloated constructor.
         // TODO(SMA) : Replace me using seralized components.
-        auto entity = entities.create();
-        entity.assign<Body>();
-        entity.assign<Stats>(100.0f);
-        entity.assign<RenderableShape>(new sf::RectangleShape({ 10,10 }));
-        entity.assign<InputResponder>();
+        {
+            auto entity = entities.create();
+            entity.assign<Body>();
+            entity.assign<Stats>(100.0f);
+            entity.assign<RenderableShape>(new sf::RectangleShape({ 10,10 }));
+            entity.assign<InputResponder>();
+        }
 
+        // HACK(SMA) : Create 'background' right up in here.
+        {
+            std::unique_ptr<sf::CircleShape> shape(new sf::CircleShape(100.f));
+            shape->setFillColor(sf::Color::Green);
+
+            auto entity = entities.create();
+            entity.assign<Body>();
+            entity.assign<RenderableShape>(std::move(shape));
+        }
         systems.configure();
     }
 
@@ -59,16 +70,12 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
     window.setKeyRepeatEnabled(false);
 
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
     Application app(window);
 
     sf::Clock clock;
     while ( window.isOpen() ) {
         window.clear();
         sf::Time elapsed = clock.restart();
-        window.draw(shape);
         app.update(elapsed.asSeconds());
         window.display();
     }
