@@ -11,8 +11,6 @@ build_script:
 
     git submodule update --init --recursive
 
-    cmake -DENTITYX_BUILD_TESTING=0
+    cmake -DCMAKE_INSTALL_PREFIX=build -DENTITYX_BUILD_TESTING=0
 
     cmake --build . --target ALL_BUILD --config Release
-
-    cpack .
