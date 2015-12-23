@@ -4,12 +4,15 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Components)
 
 set(SRC
     ${INCROOT}/Body.hpp
+    ${INCROOT}/InputResponder.hpp
+    ${INCROOT}/RenderableShape.hpp
     ${INCROOT}/Stats.hpp
 )
 
 # Set include == src for components
 set(INC
     ${SRC}
+    ${INCROOT}/../Components.hpp
 )
 
 # Set all source files
