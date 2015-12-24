@@ -37,9 +37,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
 
 set(
     SOURCES
-    ${SRCROOT}/main.cpp
 )
-
 # Link all directories
 add_subdirectory(${SRCROOT})
 include_directories(${INCROOT})
@@ -78,52 +76,42 @@ foreach(FILE ${INCLUDES} ${SOURCES})
 endforeach()
 
 # Tell CMake to build a Farquaad executable
-add_executable(Farquaad ${SOURCES})
+add_library(Farquaad STATIC ${SOURCES})
+add_library(Farquaad_shared SHARED ${SOURCES})
+set_target_properties(Farquaad_shared PROPERTIES OUTPUT_NAME Farquaad)
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
-link_directories(${SFML_LIBRARY_DIR})
-
-# Copies SFML outputs to our binary dir
-set_target_properties(sfml-window PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-set_target_properties(sfml-graphics PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-set_target_properties(sfml-system PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
+target_link_libraries(Farquaad_shared sfml-window sfml-graphics sfml-system)
 
 # Include EntityX
 include_directories(${EntityX_SOURCE_DIR})
-link_directories(${EntityX_LIBRARY_DIR})
-# Copy entityx outputs to our binary dir
-set_target_properties(entityx PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-set_target_properties(entityx_shared PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-target_link_libraries(Farquaad entityx entityx_shared)
+target_link_libraries(Farquaad entityx)
+target_link_libraries(Farquaad_shared entityx entityx_shared)
 
-# Include JsonCPP
-include_directories(${JsonCPP_SOURCE_DIR}/include)
-link_directories(${JsonCPP_LIBRARY_DIR})
-target_link_libraries(Farquaad jsoncpp_lib)
-set_target_properties(jsoncpp_lib PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}" FOLDER jsoncpp)
-set_target_properties(jsoncpp_lib_static PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}" FOLDER jsoncpp)
+# Include JsonCPP statically linked
+include_directories(${jsoncpp_SOURCE_DIR}/include)
+target_link_libraries(Farquaad jsoncpp_lib_static)
+target_link_libraries(Farquaad_shared jsoncpp_lib_static)
+
+# Set folder property
+if(BUILD_SHARED_LIBS)
+    set_target_properties(jsoncpp_lib PROPERTIES FOLDER jsoncpp)
+endif()
+if(BUILD_STATIC_LIBS)
+    set_target_properties(jsoncpp_lib_static PROPERTIES FOLDER jsoncpp)
+endif()
 
 # Include Box2D
 include_directories(${Box2D_SOURCE_DIR})
-link_directories(${Box2D_LIBRARY_DIR})
-
-# Set target direct to output
-if(BOX2D_BUILD_SHARED)
-    set_target_properties(Box2D_shared PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-endif()
-
-set_target_properties(Box2D PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 
 # Statically link Box2D
 target_link_libraries(Farquaad Box2D)
-
+target_link_libraries(Farquaad_shared Box2D)
 
 # Set installation directory to incl Packages
-install(TARGETS Farquaad DESTINATION bin)
+install(TARGETS Farquaad DESTINATION lib)
 if(MSVC)
     if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
         set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
