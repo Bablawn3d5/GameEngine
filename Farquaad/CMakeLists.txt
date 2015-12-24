@@ -92,26 +92,22 @@ endforeach()
 
 # Tell CMake to build a Farquaad executable
 add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} )
-add_library(Farquaad_shared SHARED ${SOURCES} ${INCLUDES} )
-set_target_properties(Farquaad_shared PROPERTIES OUTPUT_NAME Farquaad)
 
+#Add tests
 enable_testing()
 create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
 target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
-target_link_libraries(Farquaad_shared sfml-window sfml-graphics sfml-system)
 
 # Include EntityX
 include_directories(${EntityX_SOURCE_DIR})
 target_link_libraries(Farquaad entityx)
-target_link_libraries(Farquaad_shared entityx entityx_shared)
 
 # Include JsonCPP statically linked
 include_directories(${jsoncpp_SOURCE_DIR}/include)
 target_link_libraries(Farquaad jsoncpp_lib_static)
-target_link_libraries(Farquaad_shared jsoncpp_lib_static)
 
 # Set folder property
 if(BUILD_SHARED_LIBS)
@@ -126,7 +122,6 @@ include_directories(${Box2D_SOURCE_DIR})
 
 # Statically link Box2D
 target_link_libraries(Farquaad Box2D)
-target_link_libraries(Farquaad_shared Box2D)
 
 # Set installation directory to incl Packages
 install(TARGETS Farquaad DESTINATION lib)
