@@ -8,7 +8,7 @@ set(SRC
 
 # Include hpp
 set(INC
-    ${INCROOT}/Serializeable.hpp
+    ${INCROOT}/Serializable.hpp
     ${INCROOT}/ComponentSerializer.h
     ${INCROOT}/../Core.hpp
 )
