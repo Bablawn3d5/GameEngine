@@ -8,20 +8,6 @@ ${Farquaad_PATCH_VERSION})
 
 project(Farquaad)
 
-
-macro(create_test TARGET_NAME SOURCE)
-    add_executable(${TARGET_NAME} ${SOURCE})
-    source_group("" FILES "${SOURCE}")
-    target_link_libraries(
-        ${TARGET_NAME}
-        Farquaad
-        ${ARGN}
-        )
-    set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Farquaad/tests")
-    add_dependencies (${TARGET_NAME} Farquaad)
-    add_test(${TARGET_NAME} ${TARGET_NAME})
-endmacro()
-
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11")
@@ -98,6 +84,22 @@ add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} )
 
 #Add tests
 enable_testing()
+
+macro(create_test TARGET_NAME SOURCE)
+    add_executable(${TARGET_NAME} ${SOURCE})
+    source_group("" FILES "${SOURCE}")
+    target_link_libraries(
+        ${TARGET_NAME}
+        Farquaad
+        ${ARGN}
+        )
+    add_dependencies (${TARGET_NAME} Farquaad)
+    add_test(NAME ${TARGET_NAME}
+             WORKING_DIRECTORY ${CMAKE_PROJECT_BINARY_DIR}
+             COMMAND ${TARGET_NAME})
+    set_target_properties(${TARGET_NAME} PROPERTIES DEPENDS ${TARGET_NAME} FOLDER "Farquaad/tests")
+endmacro()
+
 create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
 
 # Include SFML

@@ -37,6 +37,7 @@ OPTION(JSONCPP_WITH_CMAKE_PACKAGE "Generate and install cmake package files" OFF
 OPTION(BUILD_SHARED_LIBS "Build jsoncpp_lib as a shared library." ON)
 OPTION(BUILD_STATIC_LIBS "Build jsoncpp_lib static library." ON)
 
+enable_testing()
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)

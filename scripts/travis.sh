@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-cmake -DCMAKE_INSTALL_PREFIX="`pwd`" -DCMAKE_BUILD_TYPE=Debug -DENTITYX_BUILD_TESTING=0
+cmake -DCMAKE_INSTALL_PREFIX="`pwd`" -DCMAKE_BUILD_TYPE=Debug
 make VERBOSE=1
-make test
+ctest -C Debug
 cpack
