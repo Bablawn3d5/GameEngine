@@ -2,5 +2,5 @@
 
 #pragma once
 
-#include <Farquaad/Core/Seralizeable.hpp>
-#include <Farquaad/Core/ComponentSeralizer.h>
+#include <Farquaad/Core/Serializable.hpp>
+#include <Farquaad/Core/ComponentSerializer.h>

@@ -28,7 +28,7 @@ struct Position {
 };
 
 template<>
-struct SeralizeableHandle<Position> {
+struct SerializableHandle<Position> {
     static const std::string rootName;
 
     Position fromJSON(const Json::Value& json) {
@@ -46,7 +46,7 @@ struct SeralizeableHandle<Position> {
     }
 };
 
-const std::string SeralizeableHandle<Position>::rootName = "pos";
+const std::string SerializableHandle<Position>::rootName = "pos";
 
 std::ostream &operator<<(std::ostream &out, const Position &position) {
     out << "Position(" << position.x << ", " << position.y << ")";
@@ -62,19 +62,19 @@ std::string toString(const Json::Value &value) {
 struct ComponentSeralizerTestFixture {};
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestDefaultConstructor") {
-    ComponentSeralizer cs;
+    ComponentSerializer cs;
     REQUIRE(cs.toString() == "null");
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestJSONConstructor") {
     Json::Value root;
-    ComponentSeralizer cs0(root);
+    ComponentSerializer cs0(root);
     REQUIRE(cs0.toString() == "null");
 
     Json::Value root2;
     root2["foo"] = "bar";
     Json::Value expected = root2;
-    ComponentSeralizer cs1(root2);
+    ComponentSerializer cs1(root2);
     REQUIRE(cs1.toString() == toString(expected));
 
     // Is copy.
@@ -83,7 +83,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestJSONConstructor") {
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
-    ComponentSeralizer cs0;
+    ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null");
 
     int ret = cs0.ParseEntityString("{\"foo\" : \"bar\"}");
@@ -94,7 +94,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
-    ComponentSeralizer cs0;
+    ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null");
 
     // Empty
@@ -107,8 +107,8 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
     Position expected1(200.0f, 210.0f);
     Position p1;
     Json::Value v;
-    v[SeralizeableHandle<Position>::rootName] = Seralizeable<Position>::toJSON(expected1);
-    ComponentSeralizer cs1(v);
+    v[SerializableHandle<Position>::rootName] = Serializable<Position>::toJSON(expected1);
+    ComponentSerializer cs1(v);
     cs1.Load<Position>(p1);
     REQUIRE(p1 == expected1);
 }
@@ -116,8 +116,8 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestSaveComponent") {
     Position expected1(200.0f, 100.0f);
     Json::Value v;
-    v[SeralizeableHandle<Position>::rootName] = Seralizeable<Position>::toJSON(expected1);
-    ComponentSeralizer cs0;
+    v[SerializableHandle<Position>::rootName] = Serializable<Position>::toJSON(expected1);
+    ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null");
     std::string actual = cs0.Save(expected1);
     REQUIRE(actual == toString(v["pos"]));

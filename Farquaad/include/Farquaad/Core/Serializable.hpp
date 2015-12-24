@@ -6,11 +6,11 @@
 #include <string>
 
 template<typename T>
-class SeralizeableHandle {
+class SerializableHandle {
 public:
     static const std::string rootName;
-    SeralizeableHandle() {}
-    ~SeralizeableHandle<T>() {}
+    SerializableHandle() {}
+    ~SerializableHandle<T>() {}
 
     T fromJSON(const Json::Value&) const = 0;
     Json::Value toJSON(const T& component) const = 0;
@@ -18,23 +18,23 @@ public:
 
 // Defines that a component can be serialized by a ComponentSerializer
 template<typename T>
-class Seralizeable {
+class Serializable {
 public:
-    Seralizeable() {}
-    ~Seralizeable<T>() {}
+    Serializable() {}
+    ~Serializable<T>() {}
 
     static inline T fromJSON(const Json::Value& json) {
-        SeralizeableHandle<T> handle;
+        SerializableHandle<T> handle;
         return handle.fromJSON(json);
     }
 
     static inline Json::Value toJSON(const T& component) {
-        SeralizeableHandle<T> handle;
+        SerializableHandle<T> handle;
         return handle.toJSON(component);
     }
 
     static Json::Value getValueByRootName(const Json::Value& value) {
-        std::string componentName = SeralizeableHandle<T>::rootName;
+        std::string componentName = SerializableHandle<T>::rootName;
         return value[componentName];
     }
 };

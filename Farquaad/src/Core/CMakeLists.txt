@@ -3,13 +3,13 @@ set(INCROOT ${PROJECT_SOURCE_DIR}/include/Farquaad/Core)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Core)
 
 set(SRC
-    ${SRCROOT}/ComponentSeralizer.cpp
+    ${SRCROOT}/ComponentSerializer.cpp
 )
 
 # Include hpp
 set(INC
-    ${INCROOT}/Seralizeable.hpp
-    ${INCROOT}/ComponentSeralizer.h
+    ${INCROOT}/Serializeable.hpp
+    ${INCROOT}/ComponentSerializer.h
     ${INCROOT}/../Core.hpp
 )
 

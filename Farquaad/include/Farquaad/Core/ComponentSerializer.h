@@ -2,7 +2,7 @@
 #pragma once
 
 #include <json/json.h>
-#include <Farquaad/Core/Seralizeable.hpp>
+#include <Farquaad/Core/Serializable.hpp>
 #include <entityx/entityx.h>
 #include <array>
 #include <string>
@@ -11,10 +11,10 @@
 
 namespace ex = entityx;
 
-class ComponentSeralizer {
+class ComponentSerializer {
 public:
-    explicit ComponentSeralizer(Json::Value value = Json::Value()) : value(value) {}
-    ~ComponentSeralizer() {}
+    explicit ComponentSerializer(Json::Value value = Json::Value()) : value(value) {}
+    ~ComponentSerializer() {}
 
     template<typename T>
     void Load(T& component) const;
@@ -25,10 +25,10 @@ public:
     std::string toString();
 
     int ParseEntityString(const std::string str);
-    static int LoadFromFile(const std::string & filename, ComponentSeralizer& cs);
+    static int LoadFromFile(const std::string & filename, ComponentSerializer& cs);
 
     template<typename T>
-    static inline void LoadFromSeralizer(const ComponentSeralizer& cs, ex::Entity& e) {
+    static inline void LoadFromSeralizer(const ComponentSerializer& cs, ex::Entity& e) {
         T component;
         cs.Load<T>(&component);
         e.assign_from_copy<T>(component);
@@ -39,14 +39,14 @@ private:
 };
 
 template<typename T>
-inline void ComponentSeralizer::Load(T& component) const {
-    Json::Value val = Seralizeable<T>::getValueByRootName(value);
-    component = Seralizeable<T>::fromJSON(val);
+inline void ComponentSerializer::Load(T& component) const {
+    Json::Value val = Serializable<T>::getValueByRootName(value);
+    component = Serializable<T>::fromJSON(val);
 }
 
 template<typename T>
-inline std::string ComponentSeralizer::Save(const T& component) const {
-    Json::Value root = Seralizeable<T>::toJSON(component);
+inline std::string ComponentSerializer::Save(const T& component) const {
+    Json::Value root = Serializable<T>::toJSON(component);
     std::stringstream stream;
     stream << root;
     return stream.str();

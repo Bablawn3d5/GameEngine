@@ -1,19 +1,19 @@
 // Copyright 2015 Bablawn3d5
 
-#include <Farquaad/Core/ComponentSeralizer.h>
+#include <Farquaad/Core/ComponentSerializer.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <streambuf>
 
-std::string ComponentSeralizer::toString() {
+std::string ComponentSerializer::toString() {
     std::stringstream stream;
     stream << value;
     return stream.str();
 }
 
-int ComponentSeralizer::ParseEntityString(const std::string str) {
+int ComponentSerializer::ParseEntityString(const std::string str) {
     Json::Value root;
     Json::Reader reader;
     bool parsingSuccessful = reader.parse(str.c_str(), root);
@@ -26,7 +26,7 @@ int ComponentSeralizer::ParseEntityString(const std::string str) {
     return 1;
 }
 
-int ComponentSeralizer::LoadFromFile(const std::string & filename, ComponentSeralizer& cs) {
+int ComponentSerializer::LoadFromFile(const std::string & filename, ComponentSerializer& cs) {
     std::ifstream inputfilestream(filename);
     std::string str;
 
