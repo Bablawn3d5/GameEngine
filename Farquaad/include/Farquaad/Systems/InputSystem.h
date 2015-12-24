@@ -16,6 +16,7 @@ struct KeyInput {
 };
 
 struct InputSystem : public ex::System<InputSystem> {
+public:
     typedef std::map<const std::string, KeyInput> KeyBindMap;
 
     explicit InputSystem(sf::Window &target) : window(target) {}
@@ -27,6 +28,7 @@ struct InputSystem : public ex::System<InputSystem> {
 
     void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
 
+private:
     KeyBindMap keyBinds;
     sf::Window& window;
 };

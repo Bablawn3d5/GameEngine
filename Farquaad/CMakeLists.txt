@@ -8,6 +8,20 @@ ${Farquaad_PATCH_VERSION})
 
 project(Farquaad)
 
+
+macro(create_test TARGET_NAME SOURCE)
+    add_executable(${TARGET_NAME} ${SOURCE})
+    source_group("" FILES "${SOURCE}")
+    target_link_libraries(
+        ${TARGET_NAME}
+        Farquaad
+        ${ARGN}
+        )
+    set_target_properties(${TARGET_NAME} PROPERTIES FOLDER "Farquaad/tests")
+    add_dependencies (${TARGET_NAME} Farquaad)
+    add_test(${TARGET_NAME} ${TARGET_NAME})
+endmacro()
+
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11")
@@ -34,6 +48,7 @@ set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
+set(TESTROOT ${PROJECT_SOURCE_DIR}/tests)
 
 set(
     SOURCES
@@ -61,7 +76,7 @@ foreach(FILE ${INCLUDES} ${SOURCES})
     # Group into "Source Files" and "Header Files"
     if ("${FILE}" MATCHES ".*\\.cpp")
        set(GROUP "Source Files${GROUP}")
-    elseif("${FILE}" MATCHES ".*\\.h")
+    elseif("${FILE}" MATCHES ".*\\.h(pp)?")
        set(GROUP "Header Files${GROUP}")
     endif()
 
@@ -76,9 +91,12 @@ foreach(FILE ${INCLUDES} ${SOURCES})
 endforeach()
 
 # Tell CMake to build a Farquaad executable
-add_library(Farquaad STATIC ${SOURCES})
-add_library(Farquaad_shared SHARED ${SOURCES})
+add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} )
+add_library(Farquaad_shared SHARED ${SOURCES} ${INCLUDES} )
 set_target_properties(Farquaad_shared PROPERTIES OUTPUT_NAME Farquaad)
+
+enable_testing()
+create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
