@@ -2,6 +2,7 @@
 #pragma once
 
 #include <json/json.h>
+#include <Farquaad/Core/Seralizeable.hpp>
 #include <array>
 #include <string>
 #include <sstream>
