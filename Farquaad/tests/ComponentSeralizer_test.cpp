@@ -2,10 +2,16 @@
 #define CATCH_CONFIG_MAIN
 
 #include <Farquaad/Core.hpp>
+#include <entityx/entityx.h>
 #include <string>
 #include <sstream>
+#include <iostream>
 // TODO(SMA): Fix these includes...
 #include "entityx/3rdparty/catch.hpp"
+
+using entityx::Entity;
+using entityx::EventManager;
+using entityx::EntityManager;
 
 template <typename T>
 int size(const T &t) {
@@ -59,7 +65,11 @@ std::string toString(const Json::Value &value) {
     return s.str();
 }
 
-struct ComponentSeralizerTestFixture {};
+struct ComponentSeralizerTestFixture {
+    ComponentSeralizerTestFixture() : em(ev) {}
+    EntityManager em;
+    EventManager ev;
+};
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestDefaultConstructor") {
     ComponentSerializer cs;
@@ -86,30 +96,43 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
     ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null");
 
-    int ret = cs0.ParseEntityString("{\"foo\" : \"bar\"}");
-    REQUIRE(ret == 1);
-    Json::Value root;
-    root["foo"] = "bar";
-    REQUIRE(cs0.toString() == toString(root));
+    SECTION("Load good string") {
+        int ret = cs0.ParseEntityString("{\"foo\" : \"bar\"}");
+        REQUIRE(ret == 1);
+        Json::Value root;
+        root["foo"] = "bar";
+        REQUIRE(cs0.toString() == toString(root));
+    }
+    SECTION("Load bad string") {
+        // Redirect cerr to test
+        std::ostringstream sstream;
+        std::streambuf* errbuf = std::cerr.rdbuf(sstream.rdbuf());
+        int ret = cs0.ParseEntityString("{'bad json'}");
+        REQUIRE(ret == 0);
+        REQUIRE(cs0.toString() == "null");
+
+        // Restore std::err
+        std::cerr.rdbuf(errbuf);
+    }
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
     ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null");
 
-    // Empty
+    // Load works from empty
     Position p(1.0f, 2.0f);
-    Position expected(0.0f, 0.0f);
     cs0.Load<Position>(p);
+    Position expected(0.0f, 0.0f);
     REQUIRE(p == expected);
 
-    // With Values
-    Position expected1(200.0f, 210.0f);
+    // Load works with values loaded
+    Position expected1(250.99999999f, 210.5f);
     Position p1;
     Json::Value v;
     v[SerializableHandle<Position>::rootName] = Serializable<Position>::toJSON(expected1);
     ComponentSerializer cs1(v);
-    cs1.Load<Position>(p1);
+    cs1.Load(p1);
     REQUIRE(p1 == expected1);
 }
 
@@ -122,3 +145,64 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestSaveComponent") {
     std::string actual = cs0.Save(expected1);
     REQUIRE(actual == toString(v["pos"]));
 }
+
+TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
+    ComponentSerializer cs0;
+    REQUIRE(cs0.toString() == "null");
+
+    Position p2(20000.135f, 500.45f);
+    Json::Value v = Serializable<Position>::writeValueToRootName(p2);
+    std::istringstream stream(toString(v));
+    int ret = ComponentSerializer::LoadFromStream(stream, cs0);
+    REQUIRE(cs0.toString() == toString(v));
+    REQUIRE(ret == 1);
+    REQUIRE(cs0.toString() != "null");
+
+    Position loaded;
+    cs0.Load(loaded);
+    REQUIRE(loaded == p2);
+    // Test Percision hasn't been lost.
+    REQUIRE(loaded.x == p2.x);
+    REQUIRE(loaded.y == p2.y);
+}
+
+TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
+    REQUIRE(em.size() == 0UL);
+
+    Position p1(20000.135f, 500.45f);
+    Json::Value v = Serializable<Position>::writeValueToRootName(p1);
+    ComponentSerializer cs1(v);
+    REQUIRE(cs1.toString() == toString(v));
+
+    SECTION("Assign to valid entity") {
+        Entity e = em.create();
+        REQUIRE(e.valid());
+        REQUIRE(em.size() == 1UL);
+        REQUIRE(0 == size(em.entities_with_components<Position>()));
+        cs1.LoadAndAssignToEntity<Position>(e);
+        REQUIRE(1 == size(em.entities_with_components<Position>()));
+        REQUIRE(static_cast<bool>(e.component<Position>()));
+        auto pos = e.component<Position>();
+        REQUIRE(*pos.get() == p1);
+        e.destroy();
+    }
+    SECTION("Assign to valid entity with position") {
+        Entity e = em.create();
+        REQUIRE(e.valid());
+        REQUIRE(em.size() == 1UL);
+        Position p2(100.0f, -100.0f);
+        e.assign<Position>(p2);
+
+        REQUIRE(1 == size(em.entities_with_components<Position>()));
+        cs1.LoadAndAssignToEntity<Position>(e);
+        REQUIRE(1 == size(em.entities_with_components<Position>()));
+        REQUIRE(static_cast<bool>(e.component<Position>()));
+        auto pos = e.component<Position>();
+        REQUIRE(*pos.get() == p1);
+        e.destroy();
+    }
+}
+
+// TODO(SMA) : Finish me.
+// TEST_CASE_METHOD(ComponentSeralizerTestFixture, "LoadFromFile") {
+// }
