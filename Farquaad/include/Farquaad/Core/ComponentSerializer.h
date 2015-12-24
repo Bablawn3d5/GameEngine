@@ -22,17 +22,14 @@ public:
     template<typename T>
     std::string Save(const T& component) const;
 
-    std::string toString();
+    template<typename T>
+    inline void LoadAndAssignToEntity(ex::Entity& e) const;
+
+    const std::string toString() const;
 
     int ParseEntityString(const std::string str);
-    static int LoadFromFile(const std::string & filename, ComponentSerializer& cs);
-
-    template<typename T>
-    static inline void LoadFromSeralizer(const ComponentSerializer& cs, ex::Entity& e) {
-        T component;
-        cs.Load<T>(&component);
-        e.assign_from_copy<T>(component);
-    }
+    static int LoadFromFile(const std::string & filename, ComponentSerializer & cs);
+    static int LoadFromStream(const std::istream & stream, ComponentSerializer & cs);
 
 private:
     Json::Value value;
@@ -50,4 +47,14 @@ inline std::string ComponentSerializer::Save(const T& component) const {
     std::stringstream stream;
     stream << root;
     return stream.str();
+}
+
+template<typename T>
+inline void ComponentSerializer::LoadAndAssignToEntity(ex::Entity& e) const {
+    T component;
+    this->Load<T>(component);
+    if ( e.has_component<T>() ) {
+        e.remove<T>();
+    }
+    e.assign_from_copy<T>(component);
 }

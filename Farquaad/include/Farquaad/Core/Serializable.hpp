@@ -33,8 +33,20 @@ public:
         return handle.toJSON(component);
     }
 
-    static Json::Value getValueByRootName(const Json::Value& value) {
+    static inline const Json::Value& getValueByRootName(const Json::Value& value) {
         std::string componentName = SerializableHandle<T>::rootName;
         return value[componentName];
+    }
+
+    static inline Json::Value& getValueByRootName(Json::Value& value) {
+        std::string componentName = SerializableHandle<T>::rootName;
+        return value[componentName];
+    }
+
+    static inline Json::Value writeValueToRootName(const T& component) {
+        Json::Value ret;
+        SerializableHandle<T> handle;
+        getValueByRootName(ret) = handle.toJSON(component);
+        return ret;
     }
 };
