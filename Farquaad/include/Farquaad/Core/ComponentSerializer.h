@@ -23,7 +23,7 @@ public:
     std::string Save(const T& component) const;
 
     template<typename T>
-    inline void LoadAndAssignToEntity(ex::Entity& e) const;
+    static inline void LoadAndAssignToEntity(const ComponentSerializer & cs, ex::Entity& e);
 
     const std::string toString() const;
 
@@ -50,9 +50,9 @@ inline std::string ComponentSerializer::Save(const T& component) const {
 }
 
 template<typename T>
-inline void ComponentSerializer::LoadAndAssignToEntity(ex::Entity& e) const {
+inline void ComponentSerializer::LoadAndAssignToEntity(const ComponentSerializer & cs, ex::Entity& e) {
     T component;
-    this->Load<T>(component);
+    cs.Load<T>(component);
     if ( e.has_component<T>() ) {
         e.remove<T>();
     }

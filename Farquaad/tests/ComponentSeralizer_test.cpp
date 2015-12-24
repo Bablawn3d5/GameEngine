@@ -179,7 +179,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
         REQUIRE(e.valid());
         REQUIRE(em.size() == 1UL);
         REQUIRE(0 == size(em.entities_with_components<Position>()));
-        cs1.LoadAndAssignToEntity<Position>(e);
+        ComponentSerializer::LoadAndAssignToEntity<Position>(cs1, e);
         REQUIRE(1 == size(em.entities_with_components<Position>()));
         REQUIRE(static_cast<bool>(e.component<Position>()));
         auto pos = e.component<Position>();
@@ -194,7 +194,26 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
         e.assign<Position>(p2);
 
         REQUIRE(1 == size(em.entities_with_components<Position>()));
-        cs1.LoadAndAssignToEntity<Position>(e);
+        ComponentSerializer::LoadAndAssignToEntity<Position>(cs1, e);
+        REQUIRE(1 == size(em.entities_with_components<Position>()));
+        REQUIRE(static_cast<bool>(e.component<Position>()));
+        auto pos = e.component<Position>();
+        REQUIRE(*pos.get() == p1);
+        e.destroy();
+    }
+    SECTION("Assign to valid entity using global map.") {
+        Entity e = em.create();
+        REQUIRE(e.valid());
+        REQUIRE(em.size() == 1UL);
+        Position p2(100.0f, -100.0f);
+        e.assign<Position>(p2);
+
+        REQUIRE(1 == size(em.entities_with_components<Position>()));
+        SeralizeableComponentMap & map = SeralizeableComponentMap::get();
+        map.Register(SerializableHandle<Position>::rootName,
+                     &ComponentSerializer::LoadAndAssignToEntity<Position>);
+        REQUIRE(map.isRegistered(SerializableHandle<Position>::rootName) == true);
+        SeralizeableComponentMap::get().Create("pos", cs1, e);
         REQUIRE(1 == size(em.entities_with_components<Position>()));
         REQUIRE(static_cast<bool>(e.component<Position>()));
         auto pos = e.component<Position>();
