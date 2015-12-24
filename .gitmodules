@@ -7,3 +7,6 @@
 [submodule "extinclude/Box2D-repo"]
 	path = extinclude/Box2D-repo
 	url = git://github.com/Bablawn3d5/Box2D.git
+[submodule "extinclude/jsoncpp-repo"]
+	path = extinclude/jsoncpp-repo
+	url = https://github.com/open-source-parsers/jsoncpp.git

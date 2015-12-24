@@ -8,9 +8,11 @@
 namespace ex = entityx;
 
 struct RenderSystem : public ex::System<RenderSystem> {
+public:
     explicit RenderSystem(sf::RenderTarget &targ) : target(targ) {}
 
     void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
 
+private:
     sf::RenderTarget& target;
 };

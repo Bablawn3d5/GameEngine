@@ -11,6 +11,9 @@ project(Farquaad)
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11")
+    if (CMAKE_CXX_COMPILER_ID MATCHES "(.*Clang)")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
+    endif()
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-g -Os -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-g -O2 -DNDEBUG")
@@ -34,12 +37,11 @@ set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
+set(TESTROOT ${PROJECT_SOURCE_DIR}/tests)
 
 set(
     SOURCES
-    ${SRCROOT}/main.cpp
 )
-
 # Link all directories
 add_subdirectory(${SRCROOT})
 include_directories(${INCROOT})
@@ -63,7 +65,7 @@ foreach(FILE ${INCLUDES} ${SOURCES})
     # Group into "Source Files" and "Header Files"
     if ("${FILE}" MATCHES ".*\\.cpp")
        set(GROUP "Source Files${GROUP}")
-    elseif("${FILE}" MATCHES ".*\\.h")
+    elseif("${FILE}" MATCHES ".*\\.h(pp)?")
        set(GROUP "Header Files${GROUP}")
     endif()
 
@@ -78,42 +80,56 @@ foreach(FILE ${INCLUDES} ${SOURCES})
 endforeach()
 
 # Tell CMake to build a Farquaad executable
-add_executable(Farquaad ${SOURCES})
+add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} )
+
+#Add tests
+enable_testing()
+
+macro(create_test TARGET_NAME SOURCE)
+    add_executable(${TARGET_NAME} ${SOURCE})
+    source_group("" FILES "${SOURCE}")
+    target_link_libraries(
+        ${TARGET_NAME}
+        Farquaad
+        ${ARGN}
+        )
+    add_dependencies (${TARGET_NAME} Farquaad)
+    add_test(NAME ${TARGET_NAME}
+             WORKING_DIRECTORY ${CMAKE_PROJECT_BINARY_DIR}
+             COMMAND ${TARGET_NAME})
+    set_target_properties(${TARGET_NAME} PROPERTIES DEPENDS ${TARGET_NAME} FOLDER "Farquaad/tests")
+endmacro()
+
+create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
-link_directories(${SFML_LIBRARY_DIR})
-
-# Copies SFML outputs to our binary dir
-set_target_properties(sfml-window PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-set_target_properties(sfml-graphics PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-set_target_properties(sfml-system PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
 
-# Copy outputs to our binary dir
+# Include EntityX
 include_directories(${EntityX_SOURCE_DIR})
-link_directories(${EntityX_LIBRARY_DIR})
-set_target_properties(entityx PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-set_target_properties(entityx_shared PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-target_link_libraries(Farquaad entityx entityx_shared)
+target_link_libraries(Farquaad entityx)
+
+# Include JsonCPP statically linked
+include_directories(${jsoncpp_SOURCE_DIR}/include)
+target_link_libraries(Farquaad jsoncpp_lib_static)
+
+# Set folder property
+if(BUILD_SHARED_LIBS)
+    set_target_properties(jsoncpp_lib PROPERTIES FOLDER jsoncpp)
+endif()
+if(BUILD_STATIC_LIBS)
+    set_target_properties(jsoncpp_lib_static PROPERTIES FOLDER jsoncpp)
+endif()
 
 # Include Box2D
 include_directories(${Box2D_SOURCE_DIR})
-link_directories(${Box2D_LIBRARY_DIR})
-
-# Set target direct to output
-if(BOX2D_BUILD_SHARED)
-    set_target_properties(Box2D_shared PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
-endif()
-
-set_target_properties(Box2D PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${Farquaad_BINARY_DIR}")
 
 # Statically link Box2D
 target_link_libraries(Farquaad Box2D)
 
-
 # Set installation directory to incl Packages
-install(TARGETS Farquaad DESTINATION bin)
+install(TARGETS Farquaad DESTINATION lib)
 if(MSVC)
     if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
         set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)

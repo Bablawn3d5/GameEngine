@@ -48,7 +48,7 @@ before_install:
   # Install g++ and gcc 4.8 for better C++11 support
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
   # Clang 3.5 due to C++11 and gcc-4.9 conflicts.
-  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.5"; fi
+  - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.5" CC="clang-3.5"; fi
 
 install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
