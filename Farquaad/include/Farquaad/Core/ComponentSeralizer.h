@@ -3,11 +3,13 @@
 
 #include <json/json.h>
 #include <Farquaad/Core/Seralizeable.hpp>
+#include <entityx/entityx.h>
 #include <array>
 #include <string>
 #include <sstream>
-#include <memory>
 #include <vector>
+
+namespace ex = entityx;
 
 class ComponentSeralizer {
 public:
@@ -24,6 +26,14 @@ public:
 
     int ParseEntityString(const std::string str);
     static int LoadFromFile(const std::string & filename, ComponentSeralizer& cs);
+
+    template<typename T>
+    static inline void LoadFromSeralizer(const ComponentSeralizer& cs, ex::Entity& e) {
+        T component;
+        cs.Load<T>(&component);
+        e.assign_from_copy<T>(component);
+    }
+
 private:
     Json::Value value;
 };

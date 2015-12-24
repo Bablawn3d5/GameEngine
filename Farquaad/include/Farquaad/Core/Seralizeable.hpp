@@ -2,11 +2,8 @@
 
 #pragma once
 
-#include <entityx/entityx.h>
-#include <Farquaad/Core/ComponentSeralizer.h>
 #include <string>
-
-namespace ex = entityx;
+#include <json/json.h>
 
 // Defines that a component can be serialized by a ComponentSerializer
 template<typename T>
@@ -14,12 +11,6 @@ class Seralizeable {
 public:
     Seralizeable() {}
     ~Seralizeable<T>() {}
-
-    static inline void LoadFromSeralizer(const ComponentSeralizer& cs, ex::Entity& e) {
-        T component;
-        cs.Load<T>(&component);
-        e.assign_from_copy<T>(component);
-    }
 
     static inline T fromJSON(const Json::Value& json) {
         SeralizeableHandle<T> handle;
