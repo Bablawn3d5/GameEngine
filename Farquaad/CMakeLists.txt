@@ -110,17 +110,10 @@ target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
 include_directories(${EntityX_SOURCE_DIR})
 target_link_libraries(Farquaad entityx)
 
-# Include JsonCPP statically linked
-include_directories(${jsoncpp_SOURCE_DIR}/include)
-target_link_libraries(Farquaad jsoncpp_lib_static)
-
-# Set folder property
-if(BUILD_SHARED_LIBS)
-    set_target_properties(jsoncpp_lib PROPERTIES FOLDER jsoncpp)
-endif()
-if(BUILD_STATIC_LIBS)
-    set_target_properties(jsoncpp_lib_static PROPERTIES FOLDER jsoncpp)
-endif()
+# Include JsonCPP-amalgamate headers to avoid cmake issues.
+include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
+target_link_libraries(Farquaad jsoncpp-amalgamate)
+set_target_properties(jsoncpp-amalgamate PROPERTIES FOLDER "JsonCPP")
 
 # Include Box2D
 include_directories(${Box2D_SOURCE_DIR})
