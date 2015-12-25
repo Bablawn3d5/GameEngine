@@ -6,12 +6,13 @@
 #include <SFML/System.hpp>
 
 struct Body {
-    explicit Body(sf::Vector2f position = { 0.0f, 0.0f },
-                  sf::Vector2f direction = { 0.0f, 0.0f })
+    explicit Body(sf::Vector2f position,
+                  sf::Vector2f direction)
         : position(position), direction(direction) {
     }
-    explicit Body(float x, float y, float xDirection = 0.0f, float yDirection = 0.0f)
-        : position(x, y), direction(xDirection, yDirection) {
+    explicit Body(float px = 0.0f, float py = 0.0f,
+                  float dx = 0.0f, float dy = 0.0f)
+        : position(px, py), direction(dx, dy) {
     }
     ~Body() {}
 

@@ -3,18 +3,26 @@
 #pragma once
 
 #include <entityx/entityx.h>
-#include <SFML/System.hpp>
+#include <Box2D/Box2D.h>
 
-struct Body {
-    explicit Body(sf::Vector2f position = { 0.0f, 0.0f },
-                  sf::Vector2f direction = { 0.0f, 0.0f })
-        : position(position), direction(direction) {
+struct Physics {
+public:
+    // Pass in the height/width as pixels
+    explicit Physics(
+        b2BodyType bodyType = b2_staticBody,
+        int widthPixels = 0,
+        int heightPixels = 0) :
+        bodyType(bodyType),
+        size({ widthPixels , heightPixels }) {
+        halfSize = 0.5f * (sf::Vector2f)size;
     }
-    explicit Body(float x, float y, float xDirection = 0.0f, float yDirection = 0.0f)
-        : position(x, y), direction(xDirection, yDirection) {
-    }
-    ~Body() {}
+    ~Physics() {}
 
-    sf::Vector2f position;
-    sf::Vector2f direction;
+    b2Body* body = NULL;
+    b2BodyType bodyType;
+    sf::Vector2f halfSize;
+    sf::Vector2i size;
+
+    uint16 collosionCategory;
+    uint16 collosionMask;
 };
