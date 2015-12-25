@@ -5,14 +5,12 @@ void SeralizeableComponentMap::Register(const std::string & name, AssignentFunct
     nameToAssignor[name] = serlize_func;
 }
 
-bool SeralizeableComponentMap::isRegistered(const std::string & key) {
-    try {
-        nameToAssignor.at(key);
+bool SeralizeableComponentMap::isRegistered(const std::string & name) {
+    auto it = nameToAssignor.find(name);
+    if ( it != nameToAssignor.end() ) {
+        return 1;
     }
-    catch ( std::out_of_range  e ) {
-        return 0;
-    }
-    return 1;
+    return 0;
 }
 
 // TODO(SMA) : Throw a warning or something when requested string is
