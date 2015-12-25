@@ -4,12 +4,14 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Core)
 
 set(SRC
     ${SRCROOT}/ComponentSerializer.cpp
+    ${SRCROOT}/SeralizeableComponentMap.cpp
 )
 
 # Include hpp
 set(INC
-    ${INCROOT}/Serializable.hpp
     ${INCROOT}/ComponentSerializer.h
+    ${INCROOT}/Serializable.hpp
+    ${INCROOT}/SeralizeableComponentMap.h
     ${INCROOT}/../Core.hpp
 )
 
