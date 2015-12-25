@@ -27,6 +27,10 @@ struct BodySystem : public ex::System<BodySystem> {
 class Application : public entityx::EntityX {
 public:
     explicit Application(sf::RenderWindow &target) {
+        b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
+        std::unique_ptr<b2World> physWorld = std::unique_ptr<b2World>(new b2World(gravity));
+
+        systems.add<PhysicsSystem>(std::move(physWorld));
         auto inputSystem = systems.add<InputSystem>(target);
 
         // TODO(SMA) : Load test binds from seralized list.
@@ -40,15 +44,23 @@ public:
 
         systems.add<RenderSystem>(target);
         systems.add<BodySystem>();
+        systems.configure();
 
         // HACK(SMA) : Create entity right in this bloated constructor.
         // TODO(SMA) : Replace me using seralized components.
         {
             auto entity = entities.create();
-            entity.assign<Body>();
+            entity.assign<Body>(20.0f, 20.0f);
             entity.assign<Stats>(100.0f);
-            entity.assign<RenderableShape>(new sf::RectangleShape({ 10,10 }));
+            entity.assign<Physics>(b2_dynamicBody, 100, 100);
             entity.assign<InputResponder>();
+        }
+
+        {
+            auto entity = entities.create();
+            entity.assign<Body>(200.0f, 200.0f);
+            entity.assign<Stats>(100.0f);
+            entity.assign<Physics>(b2_staticBody, 100, 100);
         }
 
         // HACK(SMA) : Create 'background' right up in here.
@@ -60,13 +72,13 @@ public:
             entity.assign<Body>();
             entity.assign<RenderableShape>(std::move(shape));
         }
-        systems.configure();
     }
 
     void update(ex::TimeDelta dt) {
         systems.update<InputSystem>(dt);
-        systems.update<RenderSystem>(dt);
         systems.update<BodySystem>(dt);
+        systems.update<PhysicsSystem>(dt);
+        systems.update<RenderSystem>(dt);
     }
 };
 

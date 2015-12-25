@@ -4,6 +4,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Components)
 
 set(SRC
     ${INCROOT}/Body.hpp
+    ${INCROOT}/Physics.hpp
     ${INCROOT}/InputResponder.hpp
     ${INCROOT}/RenderableShape.hpp
     ${INCROOT}/Stats.hpp
