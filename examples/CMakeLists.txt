@@ -26,7 +26,7 @@ endif()
 # Tell CMake to build a Farquaad executable
 add_executable(FarquaadExamples main.cpp)
 include_directories(${Farquaad_SOURCE_DIR}/include)
-include_directories(${jsoncpp_SOURCE_DIR}/include)
+include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
 include_directories(${EntityX_SOURCE_DIR})
 include_directories(${SFML_SOURCE_DIR}/include)
 include_directories(${Box2D_SOURCE_DIR})
