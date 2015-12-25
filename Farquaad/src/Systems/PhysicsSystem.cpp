@@ -14,7 +14,6 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
             e.has_component<Stats>() ) {
             auto physics = e.component<Physics>();
             auto body = e.component<Body>();
-            auto stats = e.component<Stats>();
 
             // Something has gone horribly wrong.
             assert(physics->body == NULL);
