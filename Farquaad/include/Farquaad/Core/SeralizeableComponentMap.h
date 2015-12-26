@@ -32,3 +32,30 @@ public:
         return map;
     }
 };
+
+// Class that defines that the class is regsitered to the global ComponentMap
+// this class should always be implmented as a static member of SerializableHandle.
+// It can be treated almost as a string.
+template<class T>
+class RegisteredSerializableComponent {
+public:
+    const std::string rootName;
+    RegisteredSerializableComponent(std::string rootName) : rootName(rootName) {
+        SeralizeableComponentMap::get().Register(rootName,
+                                                 &ComponentSerializer::LoadAndAssignToEntity<T>);
+    }
+
+    operator const std::string&() const { return rootName; }
+};
+
+// Class defintion for SerializableHandle that should be specailized by each
+// component.
+template<class T>
+class SerializableHandle {
+public:
+    static const RegisteredSerializableComponent<T> rootName;
+
+    // To be overitten by template specialziations
+    T fromJSON(const Json::Value&) const = 0;
+    Json::Value toJSON(const T& component) const = 0;
+};

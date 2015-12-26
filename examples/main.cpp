@@ -5,6 +5,7 @@
 #include <entityx/entityx.h>
 #include <Farquaad/Systems.hpp>
 #include <Farquaad/Components.hpp>
+#include <Farquaad/Core.hpp>
 #include <json/json.h>
 
 // Quick test for Box2d

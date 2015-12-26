@@ -10,9 +10,7 @@ set(SRC
     ${INCROOT}/Stats.hpp
 )
 
-# Set include == src for components
 set(INC
-    ${SRC}
     ${INCROOT}/../Components.hpp
 )
 

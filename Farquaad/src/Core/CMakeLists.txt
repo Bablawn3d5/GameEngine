@@ -9,10 +9,13 @@ set(SRC
 
 # Include hpp
 set(INC
+    ${INCROOT}/JSONSerializedComponents.h
+    ${INCROOT}/JSONSerializedComponents.hpp
     ${INCROOT}/ComponentSerializer.h
     ${INCROOT}/Serializable.hpp
     ${INCROOT}/SeralizeableComponentMap.h
     ${INCROOT}/../Core.hpp
+    ${INCROOT}/../Serialization.hpp
 )
 
 # Set all source files

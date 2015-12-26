@@ -37,13 +37,13 @@ private:
 
 template<typename T>
 inline void ComponentSerializer::Load(T& component) const {
-    Json::Value val = Serializable<T>::getValueByRootName(value);
-    component = Serializable<T>::fromJSON(val);
+    Json::Value val = Serializable::getValueByRootName<T>(value);
+    component = Serializable::fromJSON<T>(val);
 }
 
 template<typename T>
 inline std::string ComponentSerializer::Save(const T& component) const {
-    Json::Value root = Serializable<T>::toJSON(component);
+    Json::Value root = Serializable::toJSON<T>(component);
     std::stringstream stream;
     stream << root;
     return stream.str();
