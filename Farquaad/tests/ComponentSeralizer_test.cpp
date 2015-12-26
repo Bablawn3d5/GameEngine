@@ -35,6 +35,7 @@ struct Position {
 
 template<>
 class SerializableHandle<Position> {
+public:
     static const RegisteredSerializableComponent<Position> rootName;
 
     Position fromJSON(const Json::Value& json) {
@@ -130,7 +131,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
     Position expected1(250.99999999f, 210.5f);
     Position p1;
     Json::Value v;
-    v["pos"] = Serializable<Position>::toJSON(expected1);
+    v["pos"] = Serializable::toJSON(expected1);
     ComponentSerializer cs1(v);
     cs1.Load(p1);
     REQUIRE(p1 == expected1);
@@ -139,7 +140,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestSaveComponent") {
     Position expected1(200.0f, 100.0f);
     Json::Value v;
-    v["pos"] = Serializable<Position>::toJSON(expected1);
+    v["pos"] = Serializable::toJSON(expected1);
     ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null");
     std::string actual = cs0.Save(expected1);
@@ -151,7 +152,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     REQUIRE(cs0.toString() == "null");
 
     Position p2(20000.135f, 500.45f);
-    Json::Value v = Serializable<Position>::writeValueToRootName(p2);
+    Json::Value v = Serializable::writeValueToRootName(p2);
     std::istringstream stream(toString(v));
     int ret = ComponentSerializer::LoadFromStream(stream, cs0);
     REQUIRE(cs0.toString() == toString(v));
@@ -170,7 +171,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
     REQUIRE(em.size() == 0UL);
 
     Position p1(20000.135f, 500.45f);
-    Json::Value v = Serializable<Position>::writeValueToRootName(p1);
+    Json::Value v = Serializable::writeValueToRootName(p1);
     ComponentSerializer cs1(v);
     REQUIRE(cs1.toString() == toString(v));
 
