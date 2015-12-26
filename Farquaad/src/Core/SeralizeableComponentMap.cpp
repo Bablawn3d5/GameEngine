@@ -2,6 +2,7 @@
 #include <Farquaad/Core/SeralizeableComponentMap.h>
 
 void SeralizeableComponentMap::Register(const std::string & name, AssignentFunction serlize_func) {
+    assert(isRegistered(name) == false);
     nameToAssignor[name] = serlize_func;
 }
 

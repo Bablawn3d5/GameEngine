@@ -4,32 +4,21 @@
 
 #include <json/json.h>
 #include <string>
-#include <map>
 #include <functional>
-#include <stdexcept>
 
-template<typename T>
-class SerializableHandle {
-public:
-    static const std::string rootName;
-
-    // To be overitten by template specialziations
-    T fromJSON(const Json::Value&) const = 0;
-    Json::Value toJSON(const T& component) const = 0;
-};
+// See SeralizeableComponentMap.h
+template<class T> class SerializableHandle;
 
 // Static handle to SerializableHandle
 template<typename T>
 class Serializable {
 public:
     static inline T fromJSON(const Json::Value& json) {
-        SerializableHandle<T> handle;
-        return handle.fromJSON(json);
+        return handle().fromJSON(json);
     }
 
     static inline Json::Value toJSON(const T& component) {
-        SerializableHandle<T> handle;
-        return handle.toJSON(component);
+        return handle().toJSON(component);
     }
 
     static inline const Json::Value& getValueByRootName(const Json::Value& value) {
@@ -44,8 +33,13 @@ public:
 
     static inline Json::Value writeValueToRootName(const T& component) {
         Json::Value ret;
-        SerializableHandle<T> handle;
-        getValueByRootName(ret) = handle.toJSON(component);
+        getValueByRootName(ret) = handle().toJSON(component);
         return ret;
+    }
+
+private:
+    static SerializableHandle<T>& handle() {
+        static SerializableHandle<T> handle;
+        return handle;
     }
 };
