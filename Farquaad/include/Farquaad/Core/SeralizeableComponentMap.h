@@ -33,8 +33,8 @@ public:
     }
 };
 
-// Class that defines that the class is regsitered to the global ComponentMap
-// this class should always be implmented as a static member of SerializableHandle.
+// Class that defines that the class is registered to the global ComponentMap
+// this class should always be implemented as a static member of SerializableHandle.
 // It can be treated almost as a string.
 template<class T>
 class RegisteredSerializableComponent {
@@ -48,14 +48,19 @@ public:
     operator const std::string&() const { return rootName; }
 };
 
-// Class defintion for SerializableHandle that should be specailized by each
+// Class definition for SerializableHandle that should be specialized by each
 // component.
+//
+// See JSONSerialziedComponents.h for component specializations
+// See JSONSerialiedPrimitiveTypes.hpp for primitive specializations
 template<class T>
 class SerializableHandle {
 public:
     static const RegisteredSerializableComponent<T> rootName;
 
-    // To be overitten by template specialziations
-    T fromJSON(const Json::Value&) const = 0;
-    Json::Value toJSON(const T& component) const = 0;
+    // To be overwritten by template specializations
+    // If you get an error here saying your instantiating a abstract
+    // class. It means you should specailize SerializableHandle<foo> somewhere.
+    virtual T fromJSON(const Json::Value&) const = 0;
+    virtual Json::Value toJSON(const T& component) const = 0;
 };

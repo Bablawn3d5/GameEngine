@@ -1,13 +1,11 @@
 // Copyright 2015 Bablawn3d5
 #pragma once
 
-#include <json/json.h>
 #include <Farquaad/Core/Serializable.hpp>
+#include <json/json.h>
 #include <entityx/entityx.h>
-#include <array>
 #include <string>
 #include <sstream>
-#include <vector>
 
 namespace ex = entityx;
 
