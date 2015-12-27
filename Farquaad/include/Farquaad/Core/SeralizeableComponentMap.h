@@ -47,20 +47,3 @@ public:
 
     operator const std::string&() const { return rootName; }
 };
-
-// Class definition for SerializableHandle that should be specialized by each
-// component.
-//
-// See JSONSerialziedComponents.h for component specializations
-// See JSONSerialiedPrimitiveTypes.hpp for primitive specializations
-template<class T>
-class SerializableHandle {
-public:
-    static const RegisteredSerializableComponent<T> rootName;
-
-    // To be overwritten by template specializations
-    // If you get an error here saying your instantiating a abstract
-    // class. It means you should specailize SerializableHandle<foo> somewhere.
-    virtual T fromJSON(const Json::Value&) const = 0;
-    virtual Json::Value toJSON(const T& component) const = 0;
-};

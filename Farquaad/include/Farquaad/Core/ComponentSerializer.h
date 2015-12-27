@@ -35,7 +35,9 @@ private:
 
 template<typename T>
 inline void ComponentSerializer::Load(T& component) const {
-    Json::Value val = Serializable::getValueByRootName<T>(value);
+    // TODO(SMA) : Move 'rootName' out of SerializableHandle and into
+    // the ComponentSerializer.
+    Json::Value val = value[SerializableHandle<T>::rootName];
     component = Serializable::fromJSON<T>(val);
 }
 

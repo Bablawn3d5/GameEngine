@@ -53,6 +53,25 @@ public:
     }
 };
 
+template<typename T>
+static inline const Json::Value& getValueByRootName(const Json::Value& value) {
+    std::string componentName = SerializableHandle<T>::rootName;
+    return value[componentName];
+}
+
+template<typename T>
+static inline Json::Value& getValueByRootName(Json::Value& value) {
+    std::string componentName = SerializableHandle<T>::rootName;
+    return value[componentName];
+}
+
+template<typename T>
+static inline Json::Value writeValueToRootName(const T& component) {
+    Json::Value ret;
+    getValueByRootName<T>(ret) = Serializable::toJSON(component);
+    return ret;
+}
+
 const RegisteredSerializableComponent<Position> SerializableHandle<Position>::rootName{ "pos" };
 
 std::ostream &operator<<(std::ostream &out, const Position &position) {
@@ -152,7 +171,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     REQUIRE(cs0.toString() == "null");
 
     Position p2(20000.135f, 500.45f);
-    Json::Value v = Serializable::writeValueToRootName(p2);
+    Json::Value v = writeValueToRootName(p2);
     std::istringstream stream(toString(v));
     int ret = ComponentSerializer::LoadFromStream(stream, cs0);
     REQUIRE(cs0.toString() == toString(v));
@@ -171,7 +190,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
     REQUIRE(em.size() == 0UL);
 
     Position p1(20000.135f, 500.45f);
-    Json::Value v = Serializable::writeValueToRootName(p1);
+    Json::Value v = writeValueToRootName(p1);
     ComponentSerializer cs1(v);
     REQUIRE(cs1.toString() == toString(v));
 
