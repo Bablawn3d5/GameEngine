@@ -12,8 +12,6 @@
 template<typename T>
 class SerializableHandle<sf::Vector2<T>> {
 public:
-    //explicit no root name.
-
     inline sf::Vector2<T> fromJSON(const Json::Value&) const;
     inline Json::Value toJSON(const sf::Vector2<T>& component) const;
 };
