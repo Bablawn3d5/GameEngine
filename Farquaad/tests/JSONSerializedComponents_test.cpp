@@ -26,6 +26,19 @@ std::ostream &operator<<(std::ostream &out, const sf::Vector2<T> &v) {
     return out;
 }
 
+bool operator==(const Stats &r, const Stats &l) {
+    return r.currentHp == l.currentHp &&
+        r.maxHp == l.maxHp &&
+        r.speed == l.speed &&
+        r.godmode == l.godmode;
+}
+
+std::ostream &operator<<(std::ostream &out, const Stats &s) {
+    out << "Stats(" << s.currentHp << "/" << s.maxHp << ","
+        << s.speed << "," << s.godmode << "," << ")";
+    return out;
+}
+
 std::ostream &operator<<(std::ostream &out, const Body &b) {
     out << "Body(" << b.direction << ", " << b.position << ")";
     return out;
@@ -39,6 +52,25 @@ std::string toString(const Json::Value &value) {
 // TODO(SMA) : Do we need this?
 struct JSONSerializedFixture {
 };
+
+TEST_CASE_METHOD(JSONSerializedFixture, "TestComponentStats") {
+    Stats s{ 100.999f, 200000.0f, -20000.0f };
+    s.godmode = true;
+    Json::Value v = Serializable::toJSON(s);
+    REQUIRE(v.isObject());
+    REQUIRE(size(v) == 4);
+    REQUIRE(v["curHP"].asFloat() == s.currentHp);
+    REQUIRE(v["maxHP"].asFloat() == s.maxHp);
+    REQUIRE(v["speed"].asFloat() == s.speed);
+    REQUIRE(v["god"].asBool() == s.godmode);
+
+    Stats actual = Serializable::fromJSON<Stats>(v);
+    REQUIRE(v["curHP"].asFloat() == actual.currentHp);
+    REQUIRE(v["maxHP"].asFloat() == actual.maxHp);
+    REQUIRE(v["speed"].asFloat() == actual.speed);
+    REQUIRE(v["god"].asBool() == actual.godmode);
+    REQUIRE(s == actual);
+}
 
 TEST_CASE_METHOD(JSONSerializedFixture, "TestComponentBody") {
     Body b{ 10.0f, 19.99f, -20.0f, 30.2451f };

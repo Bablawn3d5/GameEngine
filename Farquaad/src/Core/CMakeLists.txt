@@ -11,6 +11,7 @@ set(SRC
 set(INC
     ${INCROOT}/JSONSerializedComponents.h
     ${INCROOT}/JSONSerializedComponents.hpp
+    ${INCROOT}/JSONSerializedPrimitiveTypes.hpp
     ${INCROOT}/ComponentSerializer.h
     ${INCROOT}/Serializable.hpp
     ${INCROOT}/SeralizeableComponentMap.h

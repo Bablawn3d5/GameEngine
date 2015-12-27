@@ -3,13 +3,14 @@
 #include <Farquaad/Core/JSONSerializedComponents.h>
 #include <Farquaad/Core/Serializable.hpp>
 
-const RegisteredSerializableComponent<sf::Vector2f> SerializableHandle<sf::Vector2f>::rootName{ "vector2f" };
-
-inline sf::Vector2f SerializableHandle<sf::Vector2f>::fromJSON(const Json::Value &v) const {
-    return sf::Vector2f(v[0].asFloat(), v[1].asFloat());
+template<typename T>
+inline sf::Vector2<T> SerializableHandle<sf::Vector2<T>>::fromJSON(const Json::Value &v) const {
+    return sf::Vector2<T>(Serializable::fromJSON<T>(v[0]),
+                          Serializable::fromJSON<T>(v[1]));
 }
 
-inline Json::Value SerializableHandle<sf::Vector2f>::toJSON(const sf::Vector2f & component) const {
+template<typename T>
+inline Json::Value SerializableHandle<sf::Vector2<T>>::toJSON(const sf::Vector2<T> & component) const {
     Json::Value v = Json::arrayValue;
     v[0] = component.x;
     v[1] = component.y;
@@ -18,16 +19,20 @@ inline Json::Value SerializableHandle<sf::Vector2f>::toJSON(const sf::Vector2f &
 
 const RegisteredSerializableComponent<Body> SerializableHandle<Body>::rootName{ "body" };
 
-inline Body SerializableHandle<Body>::fromJSON(const Json::Value &v) const {
-    Body b;
-    b.direction = Serializable::fromJSON<sf::Vector2f>(v["direction"]);
-    b.position = Serializable::fromJSON<sf::Vector2f>(v["position"]);
-    return b;
+inline const SerializeFromRegistry<Body>::MemberMap SerializableHandle<Body>::GenerateMap() {
+    SerializeFromRegistry<Body>::MemberMap map;
+    AddMember(map, "direction", &Body::direction);
+    AddMember(map, "position", &Body::position);
+    return map;
 }
 
-inline Json::Value SerializableHandle<Body>::toJSON(const Body & component) const {
-    Json::Value v;
-    v["direction"] = Serializable::toJSON(component.direction);
-    v["position"] = Serializable::toJSON(component.position);
-    return v;
+const RegisteredSerializableComponent<Stats> SerializableHandle<Stats>::rootName{ "stats" };
+
+inline const SerializeFromRegistry<Stats>::MemberMap SerializableHandle<Stats>::GenerateMap() {
+    SerializeFromRegistry<Stats>::MemberMap map;
+    AddMember(map, "curHP", &Stats::currentHp);
+    AddMember(map, "maxHP", &Stats::maxHp);
+    AddMember(map, "speed", &Stats::speed);
+    AddMember(map, "god", &Stats::godmode);
+    return map;
 }
