@@ -15,7 +15,6 @@
 template<class T>
 class SerializableHandle {
 public:
-    // To be overwritten by template specializations
     virtual T fromJSON(const Json::Value&) const = 0;
     virtual Json::Value toJSON(const T& component) const = 0;
 };
@@ -63,10 +62,12 @@ public:
 
     explicit Member(Ptr memberPtr) : memberPtr(memberPtr) {}
 
+    // Assigns value from v to C's pointed member of type V
     inline void fromJSON(const Json::Value& v, C& obj) const {
         (&obj)->*memberPtr = Serializable::fromJSON<V>(v);
     }
 
+    // Serializes C's member of type V to JSON.
     inline Json::Value toJSON(const C& obj) const {
         return Serializable::toJSON((V&)((&obj)->*memberPtr));
     }
@@ -75,6 +76,9 @@ public:
 template<class C>
 class SerializeFromRegistry {
 public:
+    // HACK(SMA) : For some reason uniuqe_ptr doesn't work too well here
+    // something about the copy constructor of pair? For now use shared_ptr.
+    // Although these pointers arn't meant to be shared.
     typedef std::shared_ptr<MemberBase<C>> MemberBasePtr;
     typedef std::map<std::string, MemberBasePtr> MemberMap;
 

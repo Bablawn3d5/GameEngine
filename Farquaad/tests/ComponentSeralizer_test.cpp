@@ -53,22 +53,12 @@ public:
     }
 };
 
-template<typename T>
-static inline const Json::Value& getValueByRootName(const Json::Value& value) {
-    std::string componentName = SerializableHandle<T>::rootName;
-    return value[componentName];
-}
-
-template<typename T>
-static inline Json::Value& getValueByRootName(Json::Value& value) {
-    std::string componentName = SerializableHandle<T>::rootName;
-    return value[componentName];
-}
-
+// LEGACY(SMA) : Remove me! We shouldn't need this here as component seralizer should
+// handle this in some way.
 template<typename T>
 static inline Json::Value writeValueToRootName(const T& component) {
     Json::Value ret;
-    getValueByRootName<T>(ret) = Serializable::toJSON(component);
+    ret[SerializableHandle<Position>::rootName] = Serializable::toJSON(component);
     return ret;
 }
 
