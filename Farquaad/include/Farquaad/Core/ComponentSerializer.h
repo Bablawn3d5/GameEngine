@@ -9,6 +9,8 @@
 
 namespace ex = entityx;
 
+template<typename T> class MappedComponent;
+
 class ComponentSerializer {
 public:
     explicit ComponentSerializer(Json::Value value = Json::nullValue) : value(value) {}

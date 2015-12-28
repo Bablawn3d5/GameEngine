@@ -6,6 +6,8 @@
 #include <entityx/entityx.h>
 #include <Farquaad/Core/ComponentSerializer.h>
 
+namespace ex = entityx;
+
 // Maps component rootnames to ComponentSerializer
 class SeralizeableComponentMap {
 public:
