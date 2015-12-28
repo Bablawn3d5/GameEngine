@@ -97,7 +97,7 @@ macro(create_test TARGET_NAME SOURCE)
     add_test(NAME ${TARGET_NAME}
              WORKING_DIRECTORY ${CMAKE_PROJECT_BINARY_DIR}
              COMMAND ${TARGET_NAME})
-    set_target_properties(${TARGET_NAME} PROPERTIES DEPENDS ${TARGET_NAME} FOLDER "Farquaad/tests")
+    set_target_properties(${TARGET_NAME} PROPERTIES DEPENDS ${TARGET_NAME} FOLDER "FarquaadEngine/tests")
 endmacro()
 
 create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
@@ -106,6 +106,10 @@ create_test(JSONSerializedComponents_test ${TESTROOT}/JSONSerializedComponents_t
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
 target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
+
+# Include thor for SFML extensions
+include_directories(${thor_SOURCE_DIR}/include)
+target_link_libraries(Farquaad thor)
 
 # Include EntityX
 include_directories(${EntityX_SOURCE_DIR})

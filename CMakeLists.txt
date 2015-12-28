@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.1)
 project(GameEngine)
 
 # Set everyone to output in the same spot
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 
@@ -27,11 +27,13 @@ set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.0.1-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_
 #Disable examples by default
 option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
+option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your" ON)
 
 enable_testing()
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Thor)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/jsoncpp-amalgamate)
 add_subdirectory(${GameEngine_SOURCE_DIR}/Farquaad)
 add_subdirectory(${GameEngine_SOURCE_DIR}/examples)
