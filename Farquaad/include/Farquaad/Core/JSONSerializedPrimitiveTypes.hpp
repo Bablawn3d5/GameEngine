@@ -9,6 +9,11 @@
 
 class SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializablePrimitive() {}
+    ~SerializablePrimitive() {}
+
     template<class T>
     inline Json::Value toJSON(const T& primitive) const {
         static_assert(std::is_fundamental<T>::value,
@@ -20,6 +25,11 @@ public:
 template<>
 class SerializableHandle<bool> : public SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline bool fromJSON(const Json::Value& v) const {
         return v.asBool();
     }
@@ -28,6 +38,11 @@ public:
 template<>
 class SerializableHandle<float> : public SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline float fromJSON(const Json::Value& v) const {
         return v.asFloat();
     }
@@ -36,6 +51,11 @@ public:
 template<>
 class SerializableHandle<double> : public SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline double fromJSON(const Json::Value& v) const {
         return v.asDouble();
     }
@@ -43,6 +63,11 @@ public:
 template<>
 class SerializableHandle<int> : public SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline int fromJSON(const Json::Value& v) const {
         return v.asInt();
     }
@@ -51,6 +76,11 @@ public:
 template<>
 class SerializableHandle<const char*> : public SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline const char* fromJSON(const Json::Value& v) const {
         return v.asCString();
     }
@@ -59,6 +89,11 @@ public:
 template<>
 class SerializableHandle<std::string> : public SerializablePrimitive {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline std::string fromJSON(const Json::Value& v) const {
         return v.asString();
     }

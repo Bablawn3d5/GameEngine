@@ -12,6 +12,11 @@
 template<typename T>
 class SerializableHandle<sf::Vector2<T>> {
 public:
+    // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+    // Define these so class becomes non POD for const initalizaiton
+    SerializableHandle() {}
+    ~SerializableHandle() {}
+
     inline sf::Vector2<T> fromJSON(const Json::Value&) const;
     inline Json::Value toJSON(const sf::Vector2<T>& component) const;
 };
