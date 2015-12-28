@@ -17,16 +17,12 @@ inline Json::Value SerializableHandle<sf::Vector2<T>>::toJSON(const sf::Vector2<
     return v;
 }
 
-const RegisteredSerializableComponent<Body> SerializableHandle<Body>::rootName{ "body" };
-
 inline const SerializeFromRegistry<Body>::MemberMap SerializableHandle<Body>::GenerateMap() {
     SerializeFromRegistry<Body>::MemberMap map;
     AddMember(map, "direction", &Body::direction);
     AddMember(map, "position", &Body::position);
     return map;
 }
-
-const RegisteredSerializableComponent<Stats> SerializableHandle<Stats>::rootName{ "stats" };
 
 inline const SerializeFromRegistry<Stats>::MemberMap SerializableHandle<Stats>::GenerateMap() {
     SerializeFromRegistry<Stats>::MemberMap map;

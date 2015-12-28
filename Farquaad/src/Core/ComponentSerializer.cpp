@@ -9,7 +9,8 @@
 
 const std::string ComponentSerializer::toString() const {
     std::stringstream stream;
-    stream << value;
+    Json::StyledStreamWriter writer;
+    writer.write(stream, value);
     return stream.str();
 }
 
