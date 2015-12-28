@@ -32,13 +32,16 @@ public:
         return handle<T>().toJSON(component);
     }
 
-private:
     // If you get an error here saying your instantiating a abstract
     // class foo. It means you should specailize SerializableHandle<foo>
     // somewhere.
     template<typename T>
-    static SerializableHandle<T>& handle() {
-        static SerializableHandle<T> handle;
+    static const SerializableHandle<T>& handle() {
+        static_assert(!std::is_abstract<SerializableHandle<T>>::value,
+                      "SerializableHandle should be implemented somehwere");
+        static_assert(std::is_default_constructible<SerializableHandle<T>>::value,
+                      "SerializableHandle should have a defualt constuctor");
+        static const SerializableHandle<T> handle;
         return handle;
     }
 };

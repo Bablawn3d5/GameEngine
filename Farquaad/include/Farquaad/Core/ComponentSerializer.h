@@ -11,17 +11,20 @@ namespace ex = entityx;
 
 class ComponentSerializer {
 public:
-    explicit ComponentSerializer(Json::Value value = Json::Value()) : value(value) {}
+    explicit ComponentSerializer(Json::Value value = Json::nullValue) : value(value) {}
     ~ComponentSerializer() {}
 
     template<typename T>
     void Load(T& component) const;
 
     template<typename T>
-    std::string Save(const T& component) const;
+    Json::Value Save(const T& component) const;
 
     template<typename T>
-    static inline void LoadAndAssignToEntity(const ComponentSerializer & cs, ex::Entity& e);
+    static inline void LoadComponentToEntity(const ComponentSerializer & cs, ex::Entity& e);
+
+    template<typename T>
+    static inline Json::Value SaveEntityComponent(const ComponentSerializer & cs, ex::Entity& e);
 
     const std::string toString() const;
 
@@ -35,26 +38,26 @@ private:
 
 template<typename T>
 inline void ComponentSerializer::Load(T& component) const {
-    // TODO(SMA) : Move 'rootName' out of SerializableHandle and into
-    // the ComponentSerializer.
-    Json::Value val = value[SerializableHandle<T>::rootName];
-    component = Serializable::fromJSON<T>(val);
+    const MappedComponent<T>& handle = Serializable::handle<T>();
+    component = Serializable::fromJSON<T>(value[handle.rootName]);
 }
 
 template<typename T>
-inline std::string ComponentSerializer::Save(const T& component) const {
-    Json::Value root = Serializable::toJSON<T>(component);
-    std::stringstream stream;
-    stream << root;
-    return stream.str();
+inline Json::Value ComponentSerializer::Save(const T& component) const {
+    const MappedComponent<T>& handle = Serializable::handle<T>();
+    Json::Value v;
+    v[handle.rootName] = Serializable::toJSON<T>(component);
+    return v;
 }
 
 template<typename T>
-inline void ComponentSerializer::LoadAndAssignToEntity(const ComponentSerializer & cs, ex::Entity& e) {
+inline void ComponentSerializer::LoadComponentToEntity(const ComponentSerializer & cs, ex::Entity& e) {
     T component;
     cs.Load<T>(component);
-    if ( e.has_component<T>() ) {
-        e.remove<T>();
-    }
-    e.assign_from_copy<T>(component);
+    e.replace<T>(component);
+}
+
+template<typename T>
+inline Json::Value ComponentSerializer::SaveEntityComponent(const ComponentSerializer & cs, ex::Entity& e) {
+    return Json::nullValue;
 }

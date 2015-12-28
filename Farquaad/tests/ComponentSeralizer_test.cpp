@@ -2,6 +2,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include <Farquaad/Core.hpp>
+#include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>
@@ -34,18 +35,18 @@ struct Position {
 };
 
 template<>
-class SerializableHandle<Position> {
+class SerializableHandle<Position> : public MappedComponent<Position> {
 public:
-    static const RegisteredSerializableComponent<Position> rootName;
+    SerializableHandle() : MappedComponent("pos") {}
 
-    Position fromJSON(const Json::Value& json) {
+    Position fromJSON(const Json::Value& json) const {
         Position p;
         p.x = json["x"].asFloat();
         p.y = json["y"].asFloat();
         return p;
     }
 
-    Json::Value toJSON(const Position& component) {
+    Json::Value toJSON(const Position& component) const {
         Json::Value v;
         v["x"] = component.x;
         v["y"] = component.y;
@@ -58,11 +59,10 @@ public:
 template<typename T>
 static inline Json::Value writeValueToRootName(const T& component) {
     Json::Value ret;
-    ret[SerializableHandle<Position>::rootName] = Serializable::toJSON(component);
+    const MappedComponent<T>& handle = Serializable::handle<T>();
+    ret[handle.rootName] = Serializable::toJSON(component);
     return ret;
 }
-
-const RegisteredSerializableComponent<Position> SerializableHandle<Position>::rootName{ "pos" };
 
 std::ostream &operator<<(std::ostream &out, const Position &position) {
     out << "Position(" << position.x << ", " << position.y << ")";
@@ -70,9 +70,10 @@ std::ostream &operator<<(std::ostream &out, const Position &position) {
 }
 
 std::string toString(const Json::Value &value) {
-    std::stringstream s;
-    s << value;
-    return s.str();
+    std::stringstream stream;
+    Json::StyledStreamWriter writer;
+    writer.write(stream, value);
+    return stream.str();
 }
 
 struct ComponentSeralizerTestFixture {
@@ -83,13 +84,13 @@ struct ComponentSeralizerTestFixture {
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestDefaultConstructor") {
     ComponentSerializer cs;
-    REQUIRE(cs.toString() == "null");
+    REQUIRE(cs.toString() == "null\n");
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestJSONConstructor") {
     Json::Value root;
     ComponentSerializer cs0(root);
-    REQUIRE(cs0.toString() == "null");
+    REQUIRE(cs0.toString() == "null\n");
 
     Json::Value root2;
     root2["foo"] = "bar";
@@ -104,7 +105,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestJSONConstructor") {
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
     ComponentSerializer cs0;
-    REQUIRE(cs0.toString() == "null");
+    REQUIRE(cs0.toString() == "null\n");
 
     SECTION("Load good string") {
         int ret = cs0.ParseEntityString("{\"foo\" : \"bar\"}");
@@ -119,7 +120,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
         std::streambuf* errbuf = std::cerr.rdbuf(sstream.rdbuf());
         int ret = cs0.ParseEntityString("{'bad json'}");
         REQUIRE(ret == 0);
-        REQUIRE(cs0.toString() == "null");
+        REQUIRE(cs0.toString() == "null\n");
 
         // Restore std::err
         std::cerr.rdbuf(errbuf);
@@ -128,7 +129,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
     ComponentSerializer cs0;
-    REQUIRE(cs0.toString() == "null");
+    REQUIRE(cs0.toString() == "null\n");
 
     // Load works from empty
     Position p(1.0f, 2.0f);
@@ -151,14 +152,14 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestSaveComponent") {
     Json::Value v;
     v["pos"] = Serializable::toJSON(expected1);
     ComponentSerializer cs0;
-    REQUIRE(cs0.toString() == "null");
-    std::string actual = cs0.Save(expected1);
-    REQUIRE(actual == toString(v["pos"]));
+    REQUIRE(cs0.toString() == "null\n");
+    Json::Value actual = cs0.Save(expected1);
+    REQUIRE(actual == v);
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     ComponentSerializer cs0;
-    REQUIRE(cs0.toString() == "null");
+    REQUIRE(cs0.toString() == "null\n");
 
     Position p2(20000.135f, 500.45f);
     Json::Value v = writeValueToRootName(p2);
@@ -166,7 +167,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     int ret = ComponentSerializer::LoadFromStream(stream, cs0);
     REQUIRE(cs0.toString() == toString(v));
     REQUIRE(ret == 1);
-    REQUIRE(cs0.toString() != "null");
+    REQUIRE(cs0.toString() != "null\n");
 
     Position loaded;
     cs0.Load(loaded);
@@ -189,7 +190,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
         REQUIRE(e.valid());
         REQUIRE(em.size() == 1UL);
         REQUIRE(0 == size(em.entities_with_components<Position>()));
-        ComponentSerializer::LoadAndAssignToEntity<Position>(cs1, e);
+        ComponentSerializer::LoadComponentToEntity<Position>(cs1, e);
         REQUIRE(1 == size(em.entities_with_components<Position>()));
         REQUIRE(static_cast<bool>(e.component<Position>()));
         auto pos = e.component<Position>();
@@ -204,24 +205,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
         e.assign<Position>(p2);
 
         REQUIRE(1 == size(em.entities_with_components<Position>()));
-        ComponentSerializer::LoadAndAssignToEntity<Position>(cs1, e);
-        REQUIRE(1 == size(em.entities_with_components<Position>()));
-        REQUIRE(static_cast<bool>(e.component<Position>()));
-        auto pos = e.component<Position>();
-        REQUIRE(*pos.get() == p1);
-        e.destroy();
-    }
-    SECTION("Assign to valid entity using global map.") {
-        Entity e = em.create();
-        REQUIRE(e.valid());
-        REQUIRE(em.size() == 1UL);
-        Position p2(100.0f, -100.0f);
-        e.assign<Position>(p2);
-
-        REQUIRE(1 == size(em.entities_with_components<Position>()));
-        SeralizeableComponentMap & map = SeralizeableComponentMap::get();
-        REQUIRE(map.isRegistered("pos") == true);
-        SeralizeableComponentMap::get().Create("pos", cs1, e);
+        ComponentSerializer::LoadComponentToEntity<Position>(cs1, e);
         REQUIRE(1 == size(em.entities_with_components<Position>()));
         REQUIRE(static_cast<bool>(e.component<Position>()));
         auto pos = e.component<Position>();

@@ -17,18 +17,22 @@ public:
 };
 
 template<>
-class SerializableHandle<Body> : public SerializeFromRegistry<Body> {
+class SerializableHandle<Body> : public SerializeFromRegistry<Body>,
+    public MappedComponent<Body> {
 public:
-    static const RegisteredSerializableComponent<Body> rootName;
-    SerializableHandle() : SerializeFromRegistry<Body>(this->GenerateMap()) {}
+    SerializableHandle() : SerializeFromRegistry<Body>(this->GenerateMap()),
+        MappedComponent("body") {
+    }
     const SerializeFromRegistry<Body>::MemberMap GenerateMap();
 };
 
 template<>
-class SerializableHandle<Stats> : public SerializeFromRegistry<Stats> {
+class SerializableHandle<Stats> : public SerializeFromRegistry<Stats>,
+    public MappedComponent<Stats> {
 public:
-    static const RegisteredSerializableComponent<Stats> rootName;
-    SerializableHandle() : SerializeFromRegistry<Stats>(this->GenerateMap()) {}
+    SerializableHandle() : SerializeFromRegistry<Stats>(this->GenerateMap()),
+        MappedComponent("stats") {
+    }
     const SerializeFromRegistry<Stats>::MemberMap GenerateMap();
 };
 

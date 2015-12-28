@@ -9,24 +9,30 @@
 // Maps component rootnames to ComponentSerializer
 class SeralizeableComponentMap {
 public:
-    typedef std::function<void(const ComponentSerializer& cs, ex::Entity&)> AssignentFunction;
-    typedef std::map<const std::string, AssignentFunction > MapType;
-    MapType nameToAssignor;
+    typedef std::function<void(const ComponentSerializer& cs, ex::Entity&)> LoadFunciton;
+    typedef std::function<Json::Value(const ComponentSerializer& cs, ex::Entity&)> SaveFunction;
+    typedef std::map<const std::string, LoadFunciton > LoadMap;
+    typedef std::map<const std::string, SaveFunction > SaveMap;
+    LoadMap nameToLoadFunc;
+    SaveMap nameToSaveFunc;
 
     SeralizeableComponentMap() = default;
     ~SeralizeableComponentMap() = default;
 
     // Register a new assignor to the map.
-    void Register(const std::string& name, AssignentFunction serlize_func);
+    void RegisterLoad(const std::string& name, LoadFunciton serlize_func);
+    void RegisterSave(const std::string& name, SaveFunction serlize_func);
 
     // Returns true if key is regsitered with this map.
-    bool isRegistered(const std::string& key);
+    bool isRegistered(const std::string& key) {
+        auto it = nameToLoadFunc.find(key);
+        if ( it != nameToLoadFunc.end() ) {
+            return 1;
+        }
+        return 0;
+    }
 
-    // Creates a entity given the string
-    void Create(const std::string name, const ComponentSerializer& cs,
-                ex::Entity& e) const;
-
-    // Returns global instance of the SerlizedComponentMap
+    // Returns global instance of the SeralizeableComponentMap
     static SeralizeableComponentMap & get() {
         static SeralizeableComponentMap map;
         return map;
@@ -34,15 +40,14 @@ public:
 };
 
 // Class that defines that the class is registered to the global ComponentMap
-// this class should always be implemented as a static member of SerializableHandle.
 // It can be treated almost as a string.
 template<class T>
-class RegisteredSerializableComponent {
+class MappedComponent {
 public:
     const std::string rootName;
-    RegisteredSerializableComponent(std::string rootName) : rootName(rootName) {
-        SeralizeableComponentMap::get().Register(rootName,
-                                                 &ComponentSerializer::LoadAndAssignToEntity<T>);
+    explicit MappedComponent(const std::string rootName) : rootName(rootName) {
+        SeralizeableComponentMap::get().RegisterLoad(rootName,
+                                                     &ComponentSerializer::LoadComponentToEntity<T>);
     }
 
     operator const std::string&() const { return rootName; }
