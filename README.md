@@ -38,6 +38,57 @@ cmake ..
 cpack 
 ```
 
+##  Serializer 
+
+The serializer comes bundled with the enigne, intergartes bindings for jsoncpp:
+
+
+```
+  Body b{10,10};
+  Json::Value v = Serializable::toJSON(b);
+  // Will output {"position" : [10,10]}
+  std::cout << v;
+```
+
+Going from JSON to Objects is simple too:
+
+```
+  Json::Value v;
+  std::stringstream s;
+  s << "{\"position\":[10,-10]}";
+  s >> v;
+
+  // Body will be initalized with position = (10, -10);
+  Body b =  Serializable::fromJSON<Body>(v);
+```
+
+Extending the serializer to new types is as easy as defining a SerializableHandle, and mapping members to a MemberMap:
+
+```
+// Some new component
+struct Position {
+    sf::Vector2f position;
+    int someInt;
+    bool someBool;
+};
+
+// Defined in some header file:
+template<>
+class SerializableHandle<Position> : public SerializeFromRegistry<Position> {
+public:
+    SerializableHandle() : SerializeFromRegistry<Position>(this->GenerateMap()) {
+    }
+
+    inline const SerializeFromRegistry<Position>::MemberMap SerializableHandle<Position>::GenerateMap() {
+        SerializeFromRegistry<Position>::MemberMap map;
+        AddMember(map, "position", &Position::position);
+        AddMember(map, "someInt", &Position::someInt);
+        AddMember(map, "someBool", &Position::someBool);
+        return map;
+    }
+}
+
+```
 
 ## Copying
 
