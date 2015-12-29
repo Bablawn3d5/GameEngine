@@ -4,6 +4,10 @@
 #include <Farquaad/Components.hpp>
 #include <string>
 
+void InputSystem::setKeybinds(const KeyBindMap & binds) {
+    this->keyBinds = binds;
+}
+
 void InputSystem::bindEventToKeyPress(const std::string string, sf::Keyboard::Key key) {
     KeyInput bind;
     bind.userInputType = KeyboardInput;

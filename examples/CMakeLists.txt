@@ -33,7 +33,21 @@ include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
 include_directories(${EntityX_SOURCE_DIR})
 include_directories(${SFML_SOURCE_DIR}/include)
 include_directories(${Box2D_SOURCE_DIR})
+include_directories(${thor_SOURCE_DIR}/include)
+include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 
+# Add target to copy files
+file(GLOB ConfigFiles ${FarquaadExamples_SOURCE_DIR}/*.json)
+
+add_custom_target(CopyConfigs)
+foreach(ConfigFile ${ConfigFiles})
+  add_custom_command(TARGET CopyConfigs PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy "${ConfigFile}"
+                              "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
+  install(FILES ${ConfigFile} DESTINATION bin)
+endforeach()
+add_dependencies(FarquaadExamples CopyConfigs)
 target_link_libraries(FarquaadExamples Farquaad)
 
 # Set installation directory to incl Packages

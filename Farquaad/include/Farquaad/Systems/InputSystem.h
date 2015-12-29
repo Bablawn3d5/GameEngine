@@ -27,10 +27,9 @@ struct InputSystem : public ex::System<InputSystem> {
 public:
     typedef std::map<const std::string, KeyInput> KeyBindMap;
 
-    explicit InputSystem(sf::Window &target)
-        : window(target) {
-    }
+    explicit InputSystem(sf::Window &target) : window(target) {}
 
+    void setKeybinds(const KeyBindMap &);
     void bindEventToKeyPress(const std::string string, const sf::Keyboard::Key key);
     void bindEventToKeyPress(const std::string string, const sf::Mouse::Button button);
 

@@ -1,4 +1,4 @@
-version: 0.0.{build}
+version: 0.0.1-{build}
 branches:
   only:
   - master
@@ -14,3 +14,5 @@ build_script:
     cmake -DCMAKE_INSTALL_PREFIX=build -DENTITYX_BUILD_TESTING=0
 
     cmake --build . --target ALL_BUILD --config Release
+test_script:
+- ps: ctest -C Release
