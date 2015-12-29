@@ -6,6 +6,9 @@
 #include <Farquaad/Systems.hpp>
 #include <Farquaad/Components.hpp>
 #include <Farquaad/Core.hpp>
+#include <Farquaad/Serialization.hpp>
+#include <Farquaad/Thor/ResourceLoader.hpp>
+#include <Thor/Resources.hpp>
 #include <json/json.h>
 
 // Quick test for Box2d
@@ -27,21 +30,13 @@ struct BodySystem : public ex::System<BodySystem> {
 // Quick test for EntityX
 class Application : public entityx::EntityX {
 public:
-    explicit Application(sf::RenderWindow &target) {
+    explicit Application(sf::RenderWindow &target, Json::Value& v) {
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
         std::unique_ptr<b2World> physWorld = std::unique_ptr<b2World>(new b2World(gravity));
 
         systems.add<PhysicsSystem>(std::move(physWorld));
         auto inputSystem = systems.add<InputSystem>(target);
-
-        // TODO(SMA) : Load test binds from seralized list.
-        // HACK(SMA) : Add Test Binds directly in applicaiton creation.
-        inputSystem->bindEventToKeyPress("MoveUp", sf::Keyboard::W);
-        inputSystem->bindEventToKeyPress("MoveDown", sf::Keyboard::S);
-        inputSystem->bindEventToKeyPress("MoveLeft", sf::Keyboard::A);
-        inputSystem->bindEventToKeyPress("MoveRight", sf::Keyboard::D);
-
-        inputSystem->bindEventToKeyPress("Use", sf::Keyboard::E);
+        inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         systems.add<RenderSystem>(target);
         systems.add<BodySystem>();
@@ -87,7 +82,17 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
     window.setKeyRepeatEnabled(false);
 
-    Application app(window);
+    Json::Value configs;
+    try {
+        thor::ResourceHolder<Json::Value, std::string> holder;
+        configs = holder.acquire("config", Resources::loadJSON("Config.json"));
+    }
+    catch ( Json::RuntimeError e ) {
+        std::cerr << "Something went wrong loading the Config.json:" << std::endl
+            << e.what() << std::endl;
+    }
+
+    Application app(window, configs);
 
     sf::Clock clock;
     while ( window.isOpen() ) {

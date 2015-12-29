@@ -4,6 +4,7 @@ add_subdirectory(${SRCROOT}/Components)
 add_subdirectory(${SRCROOT}/Systems)
 add_subdirectory(${SRCROOT}/Events)
 add_subdirectory(${SRCROOT}/Core)
+add_subdirectory(${SRCROOT}/Thor)
 
 # Pass sources and includes to parent
 set(SOURCES

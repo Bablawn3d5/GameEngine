@@ -1,0 +1,9 @@
+{
+  "keys": {
+    "MoveUp" : "KEY_W",
+    "MoveDown" : "KEY_S",
+    "MoveRight" : "KEY_D",
+    "MoveLeft" : "KEY_A",
+    "Use" : "KEY_E"
+  }
+}
