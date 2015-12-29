@@ -33,3 +33,4 @@ EntityX under MIT
 imgui under MIT
 glm under MIT
 jsoncpp under Public Domain
+Thor under the zlib license
