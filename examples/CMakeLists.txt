@@ -45,14 +45,13 @@ foreach(ConfigFile ${ConfigFiles})
                      COMMAND ${CMAKE_COMMAND} -E
                          copy "${ConfigFile}"
                               "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
-  message( OUT: "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
+  install(FILES ${ConfigFile} DESTINATION bin)
 endforeach()
 add_dependencies(FarquaadExamples CopyConfigs)
 target_link_libraries(FarquaadExamples Farquaad)
 
 # Set installation directory to incl Packages
 install(TARGETS FarquaadExamples DESTINATION bin)
-install(FILES ConfigFiles DESTINATION bin)
 if(MSVC)
     if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
         set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
