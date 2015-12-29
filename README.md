@@ -9,6 +9,10 @@ Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is
 
 [SFML](https://github.com/SFML/SFML)
 
+[jsoncpp](https://github.com/open-source-parsers/jsoncpp.git)
+
+[Thor](https://github.com/Bromeon/Thor)
+
 ## Building
 
 The engine builds on Win64 **Visual Studio 2015**, **gcc-4.9**, and **clang-3.5**. Anything earlier may encounter compiler issues with the C++11 language.
