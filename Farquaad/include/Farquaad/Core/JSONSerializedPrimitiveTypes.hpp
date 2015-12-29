@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <Farquaad/Core/Serializable.hpp>
 #include <json/json.h>
 #include <string>
 
