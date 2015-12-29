@@ -43,7 +43,7 @@ add_custom_target(CopyConfigs)
 foreach(ConfigFile ${ConfigFiles})
   add_custom_command(TARGET CopyConfigs PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E
-                         CopyConfigs "${ConfigFile}"
+                         copy "${ConfigFile}"
                               "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
   message( OUT: "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
 endforeach()
