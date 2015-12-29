@@ -9,7 +9,7 @@
 
 namespace Resources {
 thor::ResourceLoader<Json::Value> loadJSON(const char* filename) {
-    auto& loadingFunc = [=]() {
+    const auto& loadingFunc = [=]() {
         std::ifstream fileStream(filename);
         Json::Value v;
         fileStream >> v;
