@@ -6,12 +6,13 @@
 
 void InputSystem::bindEventToKeyPress(const std::string string, sf::Keyboard::Key key) {
     KeyInput bind;
-    bind.EventType = sf::Event::KeyPressed;
-    bind.KeyCode = key;
+    bind.userInputType = KeyboardInput;
+    bind.eventType = sf::Event::KeyPressed;
+    bind.keyCode = key;
     keyBinds["+" + string] = bind;
 
-    bind.EventType = sf::Event::KeyReleased;
-    bind.KeyCode = key;
+    bind.eventType = sf::Event::KeyReleased;
+    bind.keyCode = key;
     keyBinds["-" + string] = bind;
 
     return;
@@ -19,12 +20,13 @@ void InputSystem::bindEventToKeyPress(const std::string string, sf::Keyboard::Ke
 
 void InputSystem::bindEventToKeyPress(const std::string string, sf::Mouse::Button button) {
     KeyInput bind;
-    bind.EventType = sf::Event::MouseButtonPressed;
-    bind.MouseButton = button;
+    bind.userInputType = MouseInput;
+    bind.eventType = sf::Event::MouseButtonPressed;
+    bind.mouseButton = button;
     keyBinds["+" + string] = bind;
 
-    bind.EventType = sf::Event::MouseButtonReleased;
-    bind.MouseButton = button;
+    bind.eventType = sf::Event::MouseButtonReleased;
+    bind.mouseButton = button;
     keyBinds["-" + string] = bind;
 
     return;
@@ -42,14 +44,14 @@ bool InputSystem::testEvent(const std::string eventName, sf::Event e) {
     KeyInput& k = keyBinds[eventName];
 
     // Mouse event
-    if ( k.EventType == e.type &&
-        k.MouseButton == e.mouseButton.button ) {
+    if ( k.eventType == e.type &&
+        k.mouseButton == e.mouseButton.button ) {
         return (true);
     }
 
     // Keyboard event
-    if ( k.EventType == e.type &&
-        k.KeyCode == e.key.code ) {
+    if ( k.eventType == e.type &&
+        k.keyCode == e.key.code ) {
         return (true);
     }
     return (false);

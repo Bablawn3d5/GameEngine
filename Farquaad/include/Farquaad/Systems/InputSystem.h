@@ -9,18 +9,26 @@
 
 namespace ex = entityx;
 
+enum UserInputType {
+    KeyboardInput,
+    MouseInput,
+    JoystickInput
+};
+
 struct KeyInput {
-    sf::Event::EventType EventType;
-    sf::Keyboard::Key KeyCode;
-    sf::Mouse::Button MouseButton;
+    UserInputType userInputType;
+    sf::Event::EventType eventType;
+    // Default these to something so they don't wildly get set.
+    sf::Keyboard::Key keyCode = sf::Keyboard::Unknown;
+    sf::Mouse::Button mouseButton = sf::Mouse::ButtonCount;
 };
 
 struct InputSystem : public ex::System<InputSystem> {
 public:
     typedef std::map<const std::string, KeyInput> KeyBindMap;
 
-    explicit InputSystem(sf::Window &target, KeyBindMap& keybinds = KeyBindMap())
-        : window(target), keyBinds(keybinds) {
+    explicit InputSystem(sf::Window &target)
+        : window(target) {
     }
 
     void bindEventToKeyPress(const std::string string, const sf::Keyboard::Key key);

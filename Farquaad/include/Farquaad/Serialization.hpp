@@ -2,4 +2,7 @@
 
 #pragma once
 
-#include <Farquaad/Core/JSONSerializedComponents.h>
+#include <Farquaad/Core/Serializable.hpp>
+#include <Farquaad/Core/JSONSerializedPrimitiveTypes.hpp>
+#include <Farquaad/Core/JSONSerializedComponents.hpp>
+#include <Farquaad/Core/JSONSerializedSystemObjects.hpp>

@@ -14,6 +14,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     if (CMAKE_CXX_COMPILER_ID MATCHES "(.*Clang)")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
     endif()
+    if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU)")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-local-typedefs")
+    endif()
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-g -Os -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-g -O2 -DNDEBUG")
@@ -102,6 +105,7 @@ endmacro()
 
 create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
 create_test(JSONSerializedComponents_test ${TESTROOT}/JSONSerializedComponents_test.cpp)
+create_test(JSONSerializedSystemObjects_test ${TESTROOT}/JSONSerializedSystemObjects_test.cpp)
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
@@ -109,6 +113,7 @@ target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
 
 # Include thor for SFML extensions
 include_directories(${thor_SOURCE_DIR}/include)
+include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 target_link_libraries(Farquaad thor)
 
 # Include EntityX

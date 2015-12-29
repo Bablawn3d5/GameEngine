@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <cassert>
 
 // Class definition for SerializableHandle that should be specialized by each
 // component.
@@ -102,6 +103,8 @@ public:
     template<typename V>
     static inline void AddMember(MemberMap& members,
                                  std::string name, V C::* memberPtr) {
+        static_assert(!std::is_abstract<SerializableHandle<V>>::value,
+                      "SerializableHandle for memberPtr type V should be implemented somehwere");
         assert(isRegistered(members, name) == false);
         // Attempt to workaround unique_ptr issue.
         members.insert(std::make_pair(name,
