@@ -17,7 +17,7 @@ void SFMLB2DDebug::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
     sf::ConvexShape polygon(vertexCount);
     sf::Vector2f center;
     for ( int i = 0; i < vertexCount; i++ ) {
-        sf::Vector2f& transformedVec = cast(vertices[i]);
+        sf::Vector2f transformedVec = cast(vertices[i]);
         polygon.setPoint(i, transformedVec);
     }
     polygon.setOutlineThickness(-1.0f);
@@ -29,7 +29,7 @@ void SFMLB2DDebug::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
 void SFMLB2DDebug::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) {
     sf::ConvexShape polygon(vertexCount);
     for ( int i = 0; i < vertexCount; i++ ) {
-        sf::Vector2f& transformedVec = cast(vertices[i]);
+        sf::Vector2f transformedVec = cast(vertices[i]);
         polygon.setPoint(i, transformedVec);
     }
     polygon.setOutlineThickness(-1.0f);
