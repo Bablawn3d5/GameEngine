@@ -5,19 +5,24 @@
 #include <entityx/entityx.h>
 #include <SFML/Window.hpp>
 #include <Farquaad/Components.hpp>
+#include <Farquaad/Box2D/SFMLB2DDebug.h>
 #include <Box2D/Box2D.h>
 #include <map>
 #include <string>
+#include <vector>
 
 namespace ex = entityx;
 
 struct PhysicsSystem : public ex::System<PhysicsSystem>,
     public ex::Receiver<PhysicsSystem> {
 public:
-    std::unique_ptr<b2World> physicsWorld;
+    std::shared_ptr<b2World> physicsWorld;
 
-    explicit PhysicsSystem(std::unique_ptr<b2World> physicsWorld) :
-        physicsWorld(std::move(physicsWorld)) {
+    explicit PhysicsSystem(std::shared_ptr<b2World> physicsWorld,
+                           SFMLB2DDebug* drawer = NULL) :
+        physicsWorld(physicsWorld) {
+        if ( physicsWorld != NULL && drawer != NULL )
+            physicsWorld->SetDebugDraw(drawer);
     }
     ~PhysicsSystem() {}
 

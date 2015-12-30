@@ -5,6 +5,7 @@ add_subdirectory(${SRCROOT}/Systems)
 add_subdirectory(${SRCROOT}/Events)
 add_subdirectory(${SRCROOT}/Core)
 add_subdirectory(${SRCROOT}/Thor)
+add_subdirectory(${SRCROOT}/Box2D)
 
 # Pass sources and includes to parent
 set(SOURCES

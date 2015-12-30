@@ -8,6 +8,7 @@
 #include <Farquaad/Core.hpp>
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Thor/ResourceLoader.hpp>
+#include <Farquaad/Box2D/SFMLB2DDebug.h>
 #include <Thor/Resources.hpp>
 #include <json/json.h>
 
@@ -30,11 +31,17 @@ struct BodySystem : public ex::System<BodySystem> {
 // Quick test for EntityX
 class Application : public entityx::EntityX {
 public:
+    std::shared_ptr<b2World> physWorld;
+    std::shared_ptr<SFMLB2DDebug> debugDraw;
+
     explicit Application(sf::RenderWindow &target, Json::Value& v) {
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
-        std::unique_ptr<b2World> physWorld = std::unique_ptr<b2World>(new b2World(gravity));
+        physWorld = std::make_shared<b2World>(gravity);
+        debugDraw = std::make_shared<SFMLB2DDebug>(target);
+        debugDraw->SetFlags(b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit |
+                            b2Draw::e_aabbBit | b2Draw::e_pairBit);
 
-        systems.add<PhysicsSystem>(std::move(physWorld));
+        systems.add<PhysicsSystem>(physWorld, debugDraw.get());
         auto inputSystem = systems.add<InputSystem>(target);
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
@@ -75,6 +82,7 @@ public:
         systems.update<BodySystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
+        physWorld->DrawDebugData();
     }
 };
 
