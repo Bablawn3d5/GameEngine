@@ -3,6 +3,7 @@ set(INCROOT ${PROJECT_SOURCE_DIR}/include/Farquaad/Core)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Core)
 
 set(SRC
+    ${SRCROOT}/EntitySerializer.cpp
     ${SRCROOT}/ComponentSerializer.cpp
     ${SRCROOT}/SeralizeableComponentMap.cpp
 )
@@ -14,6 +15,7 @@ set(INC
     ${INCROOT}/JSONSerializedPrimitiveTypes.hpp
     ${INCROOT}/JSONSerializedSystemObjects.hpp
     ${INCROOT}/ComponentSerializer.h
+    ${INCROOT}/EntitySerializer.h
     ${INCROOT}/Serializable.hpp
     ${INCROOT}/SeralizeableComponentMap.h
     ${INCROOT}/../Core.hpp

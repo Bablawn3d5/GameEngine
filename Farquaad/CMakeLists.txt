@@ -104,6 +104,7 @@ macro(create_test TARGET_NAME SOURCE)
 endmacro()
 
 create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
+create_test(EntitySeralizer_test ${TESTROOT}/EntitySeralizer_test.cpp)
 create_test(JSONSerializedComponents_test ${TESTROOT}/JSONSerializedComponents_test.cpp)
 create_test(JSONSerializedSystemObjects_test ${TESTROOT}/JSONSerializedSystemObjects_test.cpp)
 
