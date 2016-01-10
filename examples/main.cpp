@@ -18,16 +18,6 @@ b2CircleShape c;
 // Test for JSONCPP
 Json::Value v;
 
-// TODO(SMA) : Remove me and replace me with Box2D Physics
-// Updates a body's position by and arbirary set of units.
-struct BodySystem : public ex::System<BodySystem> {
-    void update(ex::EntityManager &es, ex::EventManager &events, ex::TimeDelta dt) override {
-        es.each<Body, Stats>([dt](ex::Entity entity, Body &body, Stats& stat) {
-            body.position += body.direction * static_cast<float>(stat.speed * dt);
-        });
-    };
-};
-
 // Quick test for EntityX
 class Application : public entityx::EntityX {
 public:
@@ -46,7 +36,6 @@ public:
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         systems.add<RenderSystem>(target);
-        systems.add<BodySystem>();
         systems.configure();
 
         // HACK(SMA) : Create entity right in this bloated constructor.
@@ -79,7 +68,6 @@ public:
 
     void update(ex::TimeDelta dt) {
         systems.update<InputSystem>(dt);
-        systems.update<BodySystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
         physWorld->DrawDebugData();
