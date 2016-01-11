@@ -80,6 +80,7 @@ TEST_CASE_METHOD(EntitySeralizerTestFixture, "TestSave") {
     expected["inputresponder"] = Serializable::toJSON<InputResponder>(r);
     Json::Value actual = es.Save(e);
     REQUIRE(expected == actual);
+    e.destroy();
 }
 
 TEST_CASE_METHOD(EntitySeralizerTestFixture, "TestLoad") {
@@ -103,4 +104,5 @@ TEST_CASE_METHOD(EntitySeralizerTestFixture, "TestLoad") {
     REQUIRE(1 == size(em.entities_with_components<Stats>()));
     REQUIRE(*e.component<Body>().get() == b);
     REQUIRE(*e.component<Stats>().get() == s);
+    e.destroy();
 }
