@@ -7,13 +7,36 @@
 namespace ex = entityx;
 
 void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt) {
+    // Resync physics components that are 'dirty'.
+    em.each<Physics>(
+        [this](ex::Entity entity, Physics& physics) {
+        if ( physics.isDirty == false ) {
+            return;
+        }
+
+        physics.isDirty = false;
+        physics.halfSize = 0.5f * (sf::Vector2f)physics.size;
+
+        if ( physics.body == NULL ) {
+            return;
+        }
+
+        // TODO(SMA) : Resync body changes
+        if ( entity.has_component<Body>() ) {
+        }
+
+        // TODO(SMA) : Resync stat changes
+        if ( entity.has_component<Stats>() ) {
+        }
+    });
+
     for ( auto e : entitiesToCreatePhysicsFor ) {
         // Intialize physics components to new Entities
         if ( e.has_component<Physics>() &&
             e.has_component<Body>() &&
             e.has_component<Stats>() ) {
-            auto physics = e.component<Physics>();
-            auto body = e.component<Body>();
+            auto physics = e.component<Physics>().get();
+            auto body = e.component<Body>().get();
 
             // Something has gone horribly wrong.
             assert(physics->body == NULL);

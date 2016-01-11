@@ -15,8 +15,11 @@ public:
         bodyType(bodyType),
         size({ widthPixels , heightPixels }) {
         halfSize = 0.5f * (sf::Vector2f)size;
+        isDirty = true;
     }
     ~Physics() {}
+
+    bool isDirty;
 
     b2Body* body = NULL;
     b2BodyType bodyType;

@@ -122,7 +122,7 @@ public:
     }
 
     inline Json::Value toJSON(const C& obj) const {
-        Json::Value v;
+        Json::Value v = Json::objectValue;
         for ( const auto& pair : members ) {
             const auto& name = pair.first;
             const auto& memberPtr = pair.second;

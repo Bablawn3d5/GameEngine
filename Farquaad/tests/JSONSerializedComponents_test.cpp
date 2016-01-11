@@ -1,4 +1,4 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2015-2016 Bablawn3d5
 #define CATCH_CONFIG_MAIN
 
 #include <Farquaad/Serialization.hpp>
@@ -89,6 +89,60 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestComponentBody") {
     REQUIRE(v["position"][1].asFloat() == actual.position.y);
     REQUIRE(actual.direction == b.direction);
     REQUIRE(actual.position == b.position);
+}
+
+TEST_CASE_METHOD(JSONSerializedFixture, "TestInputResponder") {
+    InputResponder responder;
+    Json::Value v = Serializable::toJSON(responder);
+    REQUIRE(v.isObject());
+}
+
+TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
+    Physics p{ b2_staticBody, -100, 100 };
+    SECTION("Physics Size") {
+        Json::Value v = Serializable::toJSON(p);
+        REQUIRE(v.isObject());
+        REQUIRE(size(v) == 2);
+        REQUIRE(v["bodyType"].asString() == "STATIC");
+        REQUIRE(v["size"][0].asFloat() == p.size.x);
+        REQUIRE(v["size"][1].asFloat() == p.size.y);
+
+        Physics actual = Serializable::fromJSON<Physics>(v);
+        REQUIRE(actual.bodyType == p.bodyType);
+        REQUIRE(actual.size.x == p.size.x);
+        REQUIRE(actual.size.y == p.size.y);
+    }
+    SECTION("Static Body") {
+        Json::Value v = Serializable::toJSON(p);
+        REQUIRE(v.isObject());
+        REQUIRE(size(v) == 2);
+        REQUIRE(v["bodyType"].asString() == "STATIC");
+
+        Physics actual = Serializable::fromJSON<Physics>(v);
+        REQUIRE(actual.bodyType == p.bodyType);
+    }
+
+    SECTION("Dynamic Body") {
+        p.bodyType = b2_dynamicBody;
+        Json::Value v = Serializable::toJSON(p);
+        REQUIRE(v.isObject());
+        REQUIRE(size(v) == 2);
+        REQUIRE(v["bodyType"].asString() == "DYNAMIC");
+
+        Physics actual = Serializable::fromJSON<Physics>(v);
+        REQUIRE(actual.bodyType == p.bodyType);
+    }
+
+    SECTION("Kinematic Body") {
+        p.bodyType = b2_kinematicBody;
+        Json::Value v = Serializable::toJSON(p);
+        REQUIRE(v.isObject());
+        REQUIRE(size(v) == 2);
+        REQUIRE(v["bodyType"].asString() == "KINEMATIC");
+
+        Physics actual = Serializable::fromJSON<Physics>(v);
+        REQUIRE(actual.bodyType == p.bodyType);
+    }
 }
 
 TEST_CASE_METHOD(JSONSerializedFixture, "TestVector2f") {

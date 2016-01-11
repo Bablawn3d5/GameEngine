@@ -37,15 +37,29 @@ include_directories(${thor_SOURCE_DIR}/include)
 include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 
 # Add target to copy files
-file(GLOB ConfigFiles ${FarquaadExamples_SOURCE_DIR}/*.json)
+file(GLOB ConfigFiles
+    ${FarquaadExamples_SOURCE_DIR}/*.json
+    ${FarquaadExamples_SOURCE_DIR}/Resources/*.json)
 
 add_custom_target(CopyConfigs)
 foreach(ConfigFile ${ConfigFiles})
-  add_custom_command(TARGET CopyConfigs PRE_BUILD
+    # Get the directory of the source file
+    get_filename_component(PARENT_DIR "${ConfigFile}" DIRECTORY)
+    get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
+
+    # Remove common directory prefix to make the group
+    string(REPLACE "${FarquaadExamples_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+
+    add_custom_command(TARGET CopyConfigs PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         make_directory "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/" )
+    add_custom_command(TARGET CopyConfigs PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E
                          copy "${ConfigFile}"
-                              "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}" )
-  install(FILES ${ConfigFile} DESTINATION bin)
+                              "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
+                     DEPENDS ${ConfigFile}
+                     COMMENT "Copying ${ConfigFile}" )
+    install(FILES ${ConfigFile} DESTINATION bin)
 endforeach()
 add_dependencies(FarquaadExamples CopyConfigs)
 target_link_libraries(FarquaadExamples Farquaad)
