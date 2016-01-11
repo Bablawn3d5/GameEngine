@@ -1,4 +1,4 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2015-2016 Bablawn3d5
 
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
@@ -11,12 +11,6 @@
 #include <Farquaad/Box2D/SFMLB2DDebug.h>
 #include <Thor/Resources.hpp>
 #include <json/json.h>
-
-// Quick test for Box2d
-b2CircleShape c;
-
-// Test for JSONCPP
-Json::Value v;
 
 // Quick test for EntityX
 class Application : public entityx::EntityX {
@@ -39,20 +33,13 @@ public:
         systems.configure();
 
         // HACK(SMA) : Create entity right in this bloated constructor.
-        // TODO(SMA) : Replace me using seralized components.
-        {
+        thor::ResourceHolder<Json::Value, std::string> holder;
+        for ( auto items : v["entities"] ) {
+            auto json = holder.acquire(items.asString(),
+                                       Resources::loadJSON(items.asString()));
+            EntitySerializer es(json);
             auto entity = entities.create();
-            entity.assign<Body>(20.0f, 20.0f);
-            entity.assign<Stats>(100.0f);
-            entity.assign<Physics>(b2_dynamicBody, 100, 100);
-            entity.assign<InputResponder>();
-        }
-
-        {
-            auto entity = entities.create();
-            entity.assign<Body>(200.0f, 200.0f);
-            entity.assign<Stats>(100.0f);
-            entity.assign<Physics>(b2_staticBody, 100, 100);
+            es.Load(entity);
         }
 
         // HACK(SMA) : Create 'background' right up in here.
@@ -78,15 +65,16 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
     window.setKeyRepeatEnabled(false);
 
-    Json::Value configs;
-    try {
-        thor::ResourceHolder<Json::Value, std::string> holder;
-        configs = holder.acquire("config", Resources::loadJSON("Config.json"));
+    // HACK(SMA) : Initalize these component serializers so they become registered.
+    {
+        Serializable::handle<Body>();
+        Serializable::handle<Stats>();
+        Serializable::handle<Physics>();
+        Serializable::handle<InputResponder>();
     }
-    catch ( Json::RuntimeError e ) {
-        std::cerr << "Something went wrong loading the Config.json:" << std::endl
-            << e.what() << std::endl;
-    }
+
+    thor::ResourceHolder<Json::Value, std::string> holder;
+    Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));
 
     Application app(window, configs);
 

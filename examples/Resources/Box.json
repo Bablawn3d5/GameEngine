@@ -1,0 +1,12 @@
+{
+    "body" : {
+        "position" : [ 240, 240 ]
+    },
+    "stats" : {
+        "speed" : 100.0
+    },
+    "physics" : {
+        "bodyType" : "STATIC",
+        "size" : [ 50, 50 ]
+    }
+}

@@ -8,6 +8,7 @@ std::string EntitySerializer::toString() const {
 
 void EntitySerializer::Load(ex::Entity entity) const {
     auto& map = SeralizeableComponentMap::get();
+    assert(map.nameToLoadFunc.size() != 0);
     for ( auto& key : map.nameToLoadFunc ) {
         key.second(this->cs, entity);
     }
@@ -16,6 +17,7 @@ void EntitySerializer::Load(ex::Entity entity) const {
 Json::Value EntitySerializer::Save(ex::Entity entity) const {
     Json::Value v;
     auto& map = SeralizeableComponentMap::get();
+    assert(map.nameToSaveFunc.size() != 0);
     for ( auto& key : map.nameToSaveFunc ) {
         auto json = key.second(this->cs, entity);
         v[key.first] = json[key.first];

@@ -1,8 +1,7 @@
 // Copyright 2016 Bablawn3d5
 #pragma once
 
-#include <Farquaad/Core/ComponentSerializer.h>
-#include <Farquaad/Core/JSONSerializedComponents.hpp>
+#include <Farquaad/Serialization.hpp>
 #include <entityx/entityx.h>
 #include <json/json.h>
 #include <string>

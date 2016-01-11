@@ -1,0 +1,13 @@
+{
+    "body" : {
+        "position" : [ 20, 20 ]
+    },
+    "stats" : {
+        "speed" : 200.0
+    },
+    "physics" : {
+        "bodyType" : "DYNAMIC",
+        "size" : [100, 100]
+    },
+    "inputresponder" : {}
+}
