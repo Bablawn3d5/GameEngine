@@ -1,4 +1,4 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2015-2016 Bablawn3d5
 #define CATCH_CONFIG_MAIN
 
 #include <Farquaad/Core.hpp>
@@ -127,6 +127,19 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
     }
 }
 
+TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestHasComponent") {
+    ComponentSerializer cs0;
+    REQUIRE(cs0.toString() == "null\n");
+    REQUIRE(cs0.HasComponent<Position>() == false);
+
+    // Load works with values loaded
+    Position expected1(250.99999999f, 210.5f);
+    Json::Value v;
+    v["pos"] = Serializable::toJSON(expected1);
+    ComponentSerializer cs1(v);
+    REQUIRE(cs1.HasComponent<Position>() == true);
+}
+
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
     ComponentSerializer cs0;
     REQUIRE(cs0.toString() == "null\n");
@@ -177,6 +190,10 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     REQUIRE(loaded.y == p2.y);
 }
 
+// TODO(SMA) : Figure out how to test me.
+// TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
+// }
+
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
     REQUIRE(em.size() == 0UL);
 
@@ -212,8 +229,32 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
         REQUIRE(*pos.get() == p1);
         e.destroy();
     }
+
+    SECTION("Assign from empty serializer") {
+        ComponentSerializer cs2;
+        REQUIRE(cs2.toString() == "null\n");
+        Entity e = em.create();
+        REQUIRE(e.valid());
+        REQUIRE(em.size() == 1UL);
+        REQUIRE(0 == size(em.entities_with_components<Position>()));
+        ComponentSerializer::LoadComponentToEntity<Position>(cs2, e);
+        REQUIRE(0 == size(em.entities_with_components<Position>()));
+        e.destroy();
+    }
 }
 
-// TODO(SMA) : Finish me.
-// TEST_CASE_METHOD(ComponentSeralizerTestFixture, "LoadFromFile") {
-// }
+TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestSaveEntity") {
+    REQUIRE(em.size() == 0UL);
+
+    Position p1(20000.135f, 500.45f);
+    Entity e = em.create();
+    e.assign_from_copy<Position>(p1);
+    REQUIRE(e.valid());
+    REQUIRE(em.size() == 1UL);
+
+    ComponentSerializer cs1;
+    Json::Value v = ComponentSerializer::SaveEntityComponent<Position>(cs1, e);
+    Json::Value expected = writeValueToRootName(p1);
+    REQUIRE(toString(expected) == toString(v));
+    e.destroy();
+}

@@ -1,4 +1,4 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2015-2016 Bablawn3d5
 
 #pragma once
 
@@ -27,11 +27,19 @@ public:
 
     // Returns true if key is regsitered with this map.
     bool isRegistered(const std::string& key) {
+        bool is_loaded = false;
+        bool is_saved = false;
+
         auto it = nameToLoadFunc.find(key);
         if ( it != nameToLoadFunc.end() ) {
-            return 1;
+            is_loaded = true;
         }
-        return 0;
+
+        auto its = nameToSaveFunc.find(key);
+        if ( its != nameToSaveFunc.end() ) {
+            is_saved = true;
+        }
+        return is_loaded && is_saved;
     }
 
     // Returns global instance of the SeralizeableComponentMap
@@ -50,6 +58,8 @@ public:
     explicit MappedComponent(const std::string rootName) : rootName(rootName) {
         SeralizeableComponentMap::get().RegisterLoad(rootName,
                                                      &ComponentSerializer::LoadComponentToEntity<T>);
+        SeralizeableComponentMap::get().RegisterSave(rootName,
+                                                     &ComponentSerializer::SaveEntityComponent<T>);
     }
 
     operator const std::string&() const { return rootName; }

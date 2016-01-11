@@ -7,4 +7,6 @@ void SeralizeableComponentMap::RegisterLoad(const std::string & name, LoadFuncit
 }
 
 void SeralizeableComponentMap::RegisterSave(const std::string & name, SaveFunction serlize_func) {
+    assert(isRegistered(name) == false);
+    nameToSaveFunc[name] = serlize_func;
 }
