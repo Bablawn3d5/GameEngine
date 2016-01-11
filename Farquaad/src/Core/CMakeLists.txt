@@ -10,7 +10,7 @@ set(SRC
 
 # Include hpp
 set(INC
-    ${INCROOT}/JSONSerializedComponents.h
+    ${INCROOT}/JSONSerializedBox2D.hpp
     ${INCROOT}/JSONSerializedComponents.hpp
     ${INCROOT}/JSONSerializedPrimitiveTypes.hpp
     ${INCROOT}/JSONSerializedSystemObjects.hpp

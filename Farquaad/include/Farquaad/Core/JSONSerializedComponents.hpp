@@ -1,11 +1,10 @@
-// Copyright 2015 Bablawn3d5
-
-// Copyright 2015 Bablawn3d5
+// Copyright 2015-2016 Bablawn3d5
 
 #pragma once
 
 #include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <Farquaad/Core/JSONSerializedPrimitiveTypes.hpp>
+#include <Farquaad/Core/JSONSerializedBox2D.hpp>
 #include <Farquaad/Components.hpp>
 #include <json/json.h>
 #include <map>
@@ -62,6 +61,36 @@ public:
         AddMember(map, "maxHP", &Stats::maxHp);
         AddMember(map, "speed", &Stats::speed);
         AddMember(map, "god", &Stats::godmode);
+        return map;
+    }
+};
+
+template<>
+class SerializableHandle<Physics> : public SerializeFromRegistry<Physics>,
+    public MappedComponent<Physics> {
+public:
+    SerializableHandle() : SerializeFromRegistry<Physics>(this->GenerateMap()),
+        MappedComponent("physics") {
+    }
+
+    inline const SerializeFromRegistry<Physics>::MemberMap GenerateMap() {
+        SerializeFromRegistry<Physics>::MemberMap map;
+        AddMember(map, "bodyType", &Physics::bodyType);
+        AddMember(map, "size", &Physics::size);
+        return map;
+    }
+};
+
+template<>
+class SerializableHandle<InputResponder> : public SerializeFromRegistry<InputResponder>,
+    public MappedComponent<InputResponder> {
+public:
+    SerializableHandle() : SerializeFromRegistry<InputResponder>(this->GenerateMap()),
+        MappedComponent("inputresponder") {
+    }
+
+    inline const SerializeFromRegistry<InputResponder>::MemberMap GenerateMap() {
+        SerializeFromRegistry<InputResponder>::MemberMap map;
         return map;
     }
 };
