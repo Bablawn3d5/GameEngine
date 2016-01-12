@@ -32,5 +32,6 @@ BOX2D under the zlib license
 EntityX under MIT
 imgui under MIT
 glm under MIT
+Catch under Boost Software License - v1.0
 jsoncpp under Public Domain
 Thor under the zlib license

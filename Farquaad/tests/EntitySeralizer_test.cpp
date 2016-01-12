@@ -1,13 +1,10 @@
 // Copyright 2016 Bablawn3d5
-#define CATCH_CONFIG_MAIN
-
 #include <Farquaad/Core.hpp>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>
 #include <iostream>
-// TODO(SMA): Fix these includes...
-#include "entityx/3rdparty/catch.hpp"
+#include <catch.hpp>
 
 using entityx::Entity;
 using entityx::EventManager;

@@ -1,14 +1,11 @@
 // Copyright 2015-2016 Bablawn3d5
-#define CATCH_CONFIG_MAIN
-
 #include <Farquaad/Serialization.hpp>
 #include <SFML/System.hpp>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>
 #include <iostream>
-// TODO(SMA): Fix these includes...
-#include "entityx/3rdparty/catch.hpp"
+#include <catch.hpp>
 
 template <typename T>
 int size(const T &t) {

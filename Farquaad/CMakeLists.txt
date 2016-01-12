@@ -83,25 +83,33 @@ foreach(FILE ${INCLUDES} ${SOURCES})
 endforeach()
 
 # Tell CMake to build a Farquaad executable
-add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} )
+add_library(Farquaad STATIC ${SOURCES} ${INCLUDES})
 
 #Add tests
 enable_testing()
 
 macro(create_test TARGET_NAME SOURCE)
-    add_executable(${TARGET_NAME} ${SOURCE})
-    source_group("" FILES "${SOURCE}")
+    set(TEST_SOURCES
+        ${SOURCE}
+        ${catch-amalgamate_SOURCE_DIR}/catch.hpp
+        ${TESTROOT}/main.cpp)
+    add_executable(${TARGET_NAME} ${TEST_SOURCES})
+    include_directories(${catch-amalgamate_SOURCE_DIR})
+    source_group("" FILES "${TEST_SOURCES}")
     target_link_libraries(
         ${TARGET_NAME}
         Farquaad
         ${ARGN}
         )
-    add_dependencies (${TARGET_NAME} Farquaad)
+    add_dependencies (${TARGET_NAME} Farquaad catchmain)
     add_test(NAME ${TARGET_NAME}
              WORKING_DIRECTORY ${CMAKE_PROJECT_BINARY_DIR}
              COMMAND ${TARGET_NAME})
     set_target_properties(${TARGET_NAME} PROPERTIES DEPENDS ${TARGET_NAME} FOLDER "FarquaadEngine/tests")
 endmacro()
+
+add_executable(catchmain ${TESTROOT}/main.cpp)
+set_target_properties(catchmain PROPERTIES DEPENDS catchmain FOLDER "FarquaadEngine/tests")
 
 create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
 create_test(EntitySeralizer_test ${TESTROOT}/EntitySeralizer_test.cpp)
