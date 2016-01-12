@@ -1,6 +1,4 @@
-// Copyright 2015 Bablawn3d5
-#define CATCH_CONFIG_MAIN
-
+// Copyright 2015-2016 Bablawn3d5
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core/JSONSerializedSystemObjects.hpp>
 #include <Farquaad/Systems.hpp>
@@ -8,8 +6,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-// TODO(SMA): Fix these includes...
-#include "entityx/3rdparty/catch.hpp"
+#include <catch.hpp>
 
 template <typename T>
 int csize(const T &t) {

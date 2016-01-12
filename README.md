@@ -1,7 +1,7 @@
 # GameEngine [![Build Status](https://travis-ci.org/Bablawn3d5/GameEngine.svg?branch=master)](https://travis-ci.org/Bablawn3d5/GameEngine) [![Build status](https://ci.appveyor.com/api/projects/status/4kyg48lhpudisk6f/branch/master?svg=true)](https://ci.appveyor.com/project/PHEN-/gameengine/branch/master)
 Bablawn3d5 Game Engine
 
-Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is quite bulky, as we intend to keep all major package requirements part of the repo. 
+Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is quite bulky, as we intend to keep all major package requirements part of the repo.
 
 [EntityX](https://github.com/alecthomas/entityx)
 
@@ -10,6 +10,8 @@ Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is
 [SFML](https://github.com/SFML/SFML)
 
 [jsoncpp](https://github.com/open-source-parsers/jsoncpp.git)
+
+[Catch](https://github.com/philsquared/Catch)
 
 [Thor](https://github.com/Bromeon/Thor)
 
@@ -39,10 +41,10 @@ cmake ..
 
 # This will create a GameEngine-<version>-<commit>-<os>.zip and .tar file
 # under <cwd>/package
-cpack 
+cpack
 ```
 
-##  Serializer 
+##  Serializer
 
 The serializer comes bundled with the enigne, intergartes bindings for jsoncpp:
 
@@ -96,6 +98,6 @@ public:
 
 ## Copying
 
-The Bablawn3d5 GameEngine itself is licensed and distributed under zlib license. 
+The Bablawn3d5 GameEngine itself is licensed and distributed under zlib license.
 
 See `license.txt` for all related third party and open source licenses in this repository.
