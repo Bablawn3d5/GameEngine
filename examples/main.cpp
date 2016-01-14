@@ -1,16 +1,17 @@
 // Copyright 2015-2016 Bablawn3d5
 
+#include <boost/python.hpp>
+#include <Farquaad/Serialization.hpp>
+#include <json/json.h>
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 #include <entityx/entityx.h>
 #include <Farquaad/Systems.hpp>
 #include <Farquaad/Components.hpp>
 #include <Farquaad/Core.hpp>
-#include <Farquaad/Serialization.hpp>
 #include <Farquaad/Thor/ResourceLoader.hpp>
 #include <Farquaad/Box2D/SFMLB2DDebug.h>
 #include <Thor/Resources.hpp>
-#include <json/json.h>
 
 // Quick test for EntityX
 class Application : public entityx::EntityX {
@@ -51,6 +52,9 @@ public:
             entity.assign<Body>();
             entity.assign<RenderableShape>(std::move(shape));
         }
+    }
+
+    ~Application() {
     }
 
     void update(ex::TimeDelta dt) {

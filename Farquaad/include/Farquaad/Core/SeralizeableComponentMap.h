@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include <Farquaad/Core/ComponentSerializer.h>
 #include <json/json.h>
 #include <entityx/entityx.h>
-#include <Farquaad/Core/ComponentSerializer.h>
 
 namespace ex = entityx;
 

@@ -1,6 +1,8 @@
 // Copyright 2015-2016 Bablawn3d5
-#include <Farquaad/Core.hpp>
+#include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core/SeralizeableComponentMap.h>
+#include <Farquaad/Core/ComponentSerializer.h>
+#include <Farquaad/Core.hpp>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>

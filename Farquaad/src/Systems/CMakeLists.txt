@@ -6,12 +6,14 @@ set(SRC
     ${SRCROOT}/InputSystem.cpp
     ${SRCROOT}/PhysicsSystem.cpp
     ${SRCROOT}/RenderSystem.cpp
+    ${SRCROOT}/PythonSystem.cpp
 )
 
 set(INC
     ${INCROOT}/RenderSystem.h
     ${INCROOT}/PhysicsSystem.h
     ${INCROOT}/InputSystem.h
+    ${INCROOT}/PythonSystem.h
     ${INCROOT}/../Systems.hpp
 )
 

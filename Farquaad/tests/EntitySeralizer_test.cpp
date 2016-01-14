@@ -1,4 +1,5 @@
 // Copyright 2016 Bablawn3d5
+#include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
 #include <entityx/entityx.h>
 #include <string>

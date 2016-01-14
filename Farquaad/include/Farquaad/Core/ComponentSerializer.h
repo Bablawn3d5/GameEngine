@@ -2,7 +2,6 @@
 #pragma once
 
 #include <Farquaad/Core/Serializable.hpp>
-#include <Farquaad/Components.hpp>
 #include <json/json.h>
 #include <entityx/entityx.h>
 #include <string>
