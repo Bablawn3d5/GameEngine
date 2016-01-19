@@ -24,18 +24,45 @@ execute_process(
 
 set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.0.1-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_NAME}")
 
-#Disable examples by default
+# Disable examples by default
 option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
 option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your" ON)
 
 enable_testing()
+
+# HACK(SMA): Your on your own kid-o for boost and python libs
+find_package(PythonLibs 2.7 REQUIRED)
+message(status "** Python Include: ${PYTHON_INCLUDE_DIRS}")
+message(status "** Python Libraries: ${PYTHON_LIBRARIES}")
+if(NOT PYTHONLIBS_FOUND)
+    set(PYTHON_ROOT "" CACHE PATH "PYTHON top-level directory")
+    message("---> Python 2.7 directory not found. Set PYTHON_ROOT to Pyons's top-level path (containing \"include\" and \"lib\" directories).\n")
+endif()
+
+find_package(Boost 1.59.0 COMPONENTS python REQUIRED)
+message(status "** Boost Include: ${Boost_INCLUDE_DIR}")
+message(status "** Boost Dir: ${Boost_LIBRARY_DIRS}")
+message(status "** Boost Libraries: ${Boost_LIBRARIES}")
+if(NOT Boost_FOUND)
+    set(BOOST_ROOT "" CACHE PATH "BOOST top-level directory")
+    message("---> Boost 1.59 directory not found. Set BOOST_ROOT to Boost's top-level path (containing \"include\" and \"lib\" directories).\n")
+else()
+    SET(Boost_USE_STATIC_LIBS     OFF)
+    SET(Boost_USE_MULTITHREADED    ON)
+    SET(Boost_USE_STATIC_RUNTIME     OFF)
+endif()
+
+
+# TODO(SMA) : Use ExternalProject_Add to conditionally build external libs.
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Thor)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/catch-amalgamate)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/jsoncpp-amalgamate)
+
+# Meat of our 'engine'
 add_subdirectory(${GameEngine_SOURCE_DIR}/Farquaad)
 add_subdirectory(${GameEngine_SOURCE_DIR}/examples)
 

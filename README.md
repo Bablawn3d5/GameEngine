@@ -19,9 +19,11 @@ Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is
 
 The engine builds on Win64 **Visual Studio 2015**, **gcc-4.9**, and **clang-3.5**. Anything earlier may encounter compiler issues with the C++11 language.
 
+You will need to install Python 2.7 and Boost.Python version 1.59 on your system to build from source.
+
 Build scripts are built using CMake 3.1.0 or Higher.
 
-There's a number of prequisit libraries needed on Linux64 and MacOSX, see `.travis.yml` for the list of packages.
+There's a number of prerequisite libraries needed on Linux64 and MacOSX, see `.travis.yml` for the list of packages.
 
 ```
 mkdir Build
@@ -32,7 +34,7 @@ make
 
 ## Distribution
 
-We primiarly use cpack to generate our distributions.
+We primarily use cpack to generate our distributions.
 
 ```
 cd Build
@@ -46,7 +48,7 @@ cpack
 
 ##  Serializer
 
-The serializer comes bundled with the enigne, intergartes bindings for jsoncpp:
+The serializer comes bundled with the engine, intergartes bindings for jsoncpp:
 
 
 ```
@@ -99,5 +101,7 @@ public:
 ## Copying
 
 The Bablawn3d5 GameEngine itself is licensed and distributed under zlib license.
+
+Copyright 2015-2016 Bablawn3d5, all rights reserved.
 
 See `license.txt` for all related third party and open source licenses in this repository.

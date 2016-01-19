@@ -5,14 +5,35 @@ branches:
 pull_requests:
   do_not_increment_build_number: true
 clone_depth: 50
+cache: C:\deps\
 build_script:
 - ps: >-
     sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
 
     git submodule update --init --recursive
 
-    cmake -DCMAKE_INSTALL_PREFIX=build -DENTITYX_BUILD_TESTING=0
+    pushd .
+
+    cd C:\Libraries\boost_1_59_0
+
+    .\bootstrap.bat --prefix="C:/deps/boost-install"
+
+    .\b2.exe headers
+
+    .\b2.exe --prefix="C:/deps/boost-install" variant=release link=shared --with-python install -d0
+
+    ls C:\deps\boost-install
+
+    ls C:\deps\boost-install\lib
+
+    ls C:\deps\boost-install\include
+
+    popd
+
+    cmake -DCMAKE_INSTALL_PREFIX=build -DBoost_DEBUG=ON -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=C:/deps/boost-install
 
     cmake --build . --target ALL_BUILD --config Release
+
+    cp C:/deps/boost-install/lib/*.* ./Release/
 test_script:
-- ps: ctest -C Release
+- ps: ctest -VV -C Release

@@ -8,6 +8,7 @@ set(SRC
     ${INCROOT}/InputResponder.hpp
     ${INCROOT}/RenderableShape.hpp
     ${INCROOT}/Stats.hpp
+    ${INCROOT}/PythonScript.hpp
 )
 
 set(INC

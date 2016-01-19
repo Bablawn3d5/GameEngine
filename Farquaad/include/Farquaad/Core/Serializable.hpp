@@ -2,11 +2,14 @@
 
 #pragma once
 
+#include <boost/python.hpp>
 #include <json/json.h>
 #include <memory>
 #include <map>
 #include <string>
 #include <cassert>
+
+namespace py = boost::python;
 
 // Class definition for SerializableHandle that should be specialized by each
 // component.
@@ -18,6 +21,7 @@ class SerializableHandle {
 public:
     virtual T fromJSON(const Json::Value&) const = 0;
     virtual Json::Value toJSON(const T& component) const = 0;
+    virtual void initPy(py::class_<T>& py) const = 0;
 };
 
 // Static handle to SerializableHandle
@@ -31,6 +35,11 @@ public:
     template<typename T>
     static inline Json::Value toJSON(const T& component) {
         return handle<T>().toJSON(component);
+    }
+
+    template<typename T>
+    static inline void initPy(py::class_<T>& py) {
+        handle<T>().initPy(py);
     }
 
     // If you get an error here saying your instantiating a abstract
@@ -55,6 +64,7 @@ public:
 
     virtual void fromJSON(const Json::Value&, C&) const = 0;
     virtual Json::Value toJSON(const C&) const = 0;
+    virtual void initPy(py::class_<C>& py, std::string name) const = 0;
 };
 
 // Defines serialization for a particular member
@@ -74,6 +84,10 @@ public:
     // Serializes C's member of type V to JSON.
     inline Json::Value toJSON(const C& obj) const {
         return Serializable::toJSON((V&)((&obj)->*memberPtr));
+    }
+
+    inline void initPy(py::class_<C>& py, std::string name) const {
+        py.def_readwrite(name.c_str(), memberPtr);
     }
 };
 
@@ -131,6 +145,13 @@ public:
         return v;
     }
 
+    inline void initPy(py::class_<C>& py) const {
+        for ( const auto& pair : members ) {
+            const auto& name = pair.first;
+            const auto& ptr = pair.second;
+            ptr->initPy(py, name);
+        }
+    }
 private:
     MemberMap members;
 };

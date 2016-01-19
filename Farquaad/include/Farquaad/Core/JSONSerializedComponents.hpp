@@ -29,6 +29,11 @@ public:
         v[1] = component.y;
         return v;
     }
+
+    inline void initPy(py::class_<sf::Vector2<T>>& py) {
+        py.def_readwrite("x", &sf::Vector2<T>::x)
+            .def_readwrite("y", &sf::Vector2<T>::y);
+    }
 };
 
 template<>
