@@ -53,6 +53,12 @@ else()
     SET(Boost_USE_STATIC_RUNTIME     OFF)
 endif()
 
+# Include Built Copy of Python27.dll
+# Find Python DLLS
+find_file(PYTHON_LIBRARY_DLL NAMES Python27.dll python2.7.dll)
+SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
+       ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} "${PYTHON_LIBRARY_DLL}")
+
 
 # TODO(SMA) : Use ExternalProject_Add to conditionally build external libs.
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)

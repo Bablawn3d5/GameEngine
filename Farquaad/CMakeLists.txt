@@ -22,8 +22,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS_RELEASE "-g -O2 -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 elseif(MAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
-    # Define HAVE_ROUND for pymath.h
-    add_definitions(/DHAVE_ROUND)
     # /MP - Enable parallel builds
     set(CMAKE_CXX_FLAGS "/MP")
     # /Zi - Produces a program database (PDB) that contains type information and symbolic debugging information for use with the debugger.
@@ -86,6 +84,8 @@ endforeach()
 # Tell CMake to build a Farquaad library
 # HACK(SMA) : We're mis-linking dynamic and static libs somehwere.
 # We should fix this eventually.
+# Define HAVE_ROUND for pymath.h
+add_definitions(/DHAVE_ROUND)
 add_library(Farquaad STATIC ${SOURCES} ${INCLUDES})
 
 # Add tests
@@ -131,20 +131,20 @@ if(MSVC)
           ${Boost_PYTHON_LIBRARY_RELEASE} NAME_WE)
     get_filename_component(UTF_PATH
           ${Boost_PYTHON_LIBRARY_RELEASE} PATH)
-        install(FILES ${UTF_PATH}/${UTF_BASE_NAME}.dll
-          DESTINATION bin
-          CONFIGURATIONS Release RelWithDebInfo
-        )
+    install(FILES ${UTF_PATH}/${UTF_BASE_NAME}.dll
+      DESTINATION bin
+      CONFIGURATIONS Release RelWithDebInfo
+    )
 
     get_filename_component(UTF_BASE_NAME_DEBUG
           ${Boost_PYTHON_LIBRARY_DEBUG} NAME_WE)
-        install(FILES ${UTF_PATH}/${UTF_BASE_NAME_DEBUG}.dll
-          DESTINATION bin
-          CONFIGURATIONS Debug
-        )
-
-    if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
-        set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
-    endif()
-    include(InstallRequiredSystemLibraries)
+    install(FILES ${UTF_PATH}/${UTF_BASE_NAME_DEBUG}.dll
+      DESTINATION bin
+      CONFIGURATIONS Debug
+    )
 endif()
+
+if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
+    set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
+endif()
+include(InstallRequiredSystemLibraries)
