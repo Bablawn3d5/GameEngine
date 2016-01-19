@@ -74,24 +74,25 @@ target_link_libraries(FarquaadExamples Farquaad)
 # Set installation directory to incl Packages
 install(TARGETS FarquaadExamples DESTINATION bin)
 if(MSVC)
+    # Copy Boost DLLs
     get_filename_component(UTF_BASE_NAME
           ${Boost_PYTHON_LIBRARY_RELEASE} NAME_WE)
     get_filename_component(UTF_PATH
           ${Boost_PYTHON_LIBRARY_RELEASE} PATH)
-        install(FILES ${UTF_PATH}/${UTF_BASE_NAME}.dll
-          DESTINATION bin
-          CONFIGURATIONS Release RelWithDebInfo
-        )
+    install(FILES ${UTF_PATH}/${UTF_BASE_NAME}.dll
+      DESTINATION bin
+      CONFIGURATIONS Release RelWithDebInfo
+    )
 
     get_filename_component(UTF_BASE_NAME_DEBUG
           ${Boost_PYTHON_LIBRARY_DEBUG} NAME_WE)
-        install(FILES ${UTF_PATH}/${UTF_BASE_NAME_DEBUG}.dll
-          DESTINATION bin
-          CONFIGURATIONS Debug
-        )
-
-    if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
-        set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
-    endif()
-    include(InstallRequiredSystemLibraries)
+    install(FILES ${UTF_PATH}/${UTF_BASE_NAME_DEBUG}.dll
+      DESTINATION bin
+      CONFIGURATIONS Debug
+    )
 endif()
+
+if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
+    set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
+endif()
+include(InstallRequiredSystemLibraries)
