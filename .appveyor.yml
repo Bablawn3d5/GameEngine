@@ -12,23 +12,25 @@ build_script:
 
     git submodule update --init --recursive
 
-    pushd .
+    if (!(Test-Path C:\deps\boost-install)) {
+        pushd .
 
-    cd C:\Libraries\boost_1_59_0
+        cd C:\Libraries\boost_1_59_0
 
-    .\bootstrap.bat --prefix="C:/deps/boost-install"
+        .\bootstrap.bat --prefix="C:/deps/boost-install"
 
-    .\b2.exe headers
+        .\b2.exe headers
 
-    .\b2.exe --prefix="C:/deps/boost-install" variant=release link=shared --with-python install -d0
+        .\b2.exe --prefix="C:/deps/boost-install" variant=release link=shared --with-python install -d0
 
-    ls C:\deps\boost-install
+        ls C:\deps\boost-install
 
-    ls C:\deps\boost-install\lib
+        ls C:\deps\boost-install\lib
 
-    ls C:\deps\boost-install\include
+        ls C:\deps\boost-install\include
 
-    popd
+        popd
+    }
 
     cmake -DCMAKE_INSTALL_PREFIX=build -DBoost_DEBUG=ON -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=C:/deps/boost-install
 
