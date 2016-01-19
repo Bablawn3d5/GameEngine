@@ -1,44 +1,16 @@
 // Copyright 2016 Bablawn3d5
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
+#include <Common.h>
 #include <entityx/entityx.h>
+#include <catch.hpp>
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <catch.hpp>
 
 using entityx::Entity;
 using entityx::EventManager;
 using entityx::EntityManager;
-
-template <typename T>
-int size(const T &t) {
-    int n = 0;
-    for ( auto i : t ) {
-        ++n;
-        (void)i;  // Unused on purpose, suppress warning
-    }
-    return n;
-}
-
-bool operator==(const Body &r, const Body &l) {
-    return r.direction == l.direction &&
-        r.position == r.position;
-}
-
-bool operator==(const Stats &r, const Stats &l) {
-    return r.currentHp == l.currentHp &&
-        r.maxHp == l.maxHp &&
-        r.speed == l.speed &&
-        r.godmode == l.godmode;
-}
-
-std::string toString(const Json::Value &value) {
-    std::stringstream stream;
-    Json::StyledStreamWriter writer;
-    writer.write(stream, value);
-    return stream.str();
-}
 
 struct EntitySeralizerTestFixture {
     EntitySeralizerTestFixture() : em(ev) {}
@@ -46,7 +18,7 @@ struct EntitySeralizerTestFixture {
     EventManager ev;
 };
 
-TEST_CASE_METHOD(EntitySeralizerTestFixture, "TestDefaultConstructor") {
+TEST_CASE_METHOD(EntitySeralizerTestFixture, "EntitySeralizerTestDefaultConstructor") {
     EntitySerializer es;
     REQUIRE(es.toString() == "null\n");
 }
@@ -96,7 +68,7 @@ TEST_CASE_METHOD(EntitySeralizerTestFixture, "TestLoad") {
     expected["body"] = Serializable::toJSON<Body>(b);
     expected["stats"] = Serializable::toJSON<Stats>(s);
     EntitySerializer es(expected);
-    REQUIRE(es.toString() == toString(expected));
+    REQUIRE(es.toString() == toStyledString(expected));
     es.Load(e);
     REQUIRE(1 == size(em.entities_with_components<Body>()));
     REQUIRE(1 == size(em.entities_with_components<Stats>()));

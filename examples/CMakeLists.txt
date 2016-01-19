@@ -25,7 +25,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
     set(CMAKE_CXX_FLAGS_RELEASE "/Ox -DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Ox /Zi /FS /DEBUG")
     # Define HAVE_ROUND for pymath.h not being defined by windows.
-    add_definitions( /DHAVE_ROUND )
+    add_definitions(/DHAVE_ROUND)
 endif()
 
 # Tell CMake to build a Farquaad executable

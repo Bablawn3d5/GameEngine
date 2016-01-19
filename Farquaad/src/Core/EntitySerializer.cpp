@@ -20,6 +20,7 @@ Json::Value EntitySerializer::Save(ex::Entity entity) const {
     assert(map.nameToSaveFunc.size() != 0);
     for ( auto& key : map.nameToSaveFunc ) {
         auto json = key.second(this->cs, entity);
+        if ( json == Json::nullValue ) continue;
         v[key.first] = json[key.first];
     }
 

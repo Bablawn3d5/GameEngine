@@ -2,69 +2,12 @@
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core/JSONSerializedSystemObjects.hpp>
 #include <Farquaad/Systems.hpp>
+#include <Common.h>
 #include <json/json.h>
+#include <catch.hpp>
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <catch.hpp>
-
-template <typename T>
-int csize(const T &t) {
-    int n = 0;
-    for ( auto i : t ) {
-        ++n;
-        (void)i;  // Unused on purpose, suppress warning
-    }
-    return n;
-}
-
-std::ostream &operator<<(std::ostream &out, const KeyInput &v) {
-    out << "KeyInput(" << v.userInputType << ", " <<
-        v.keyCode << ", " <<
-        v.mouseButton << ", " <<
-        v.eventType << ")";
-    return out;
-}
-
-bool operator==(const KeyInput& a, const KeyInput& b) {
-    return a.userInputType == b.userInputType &&
-        a.keyCode == b.keyCode &&
-        a.mouseButton == b.mouseButton &&
-        a.eventType == b.eventType;
-}
-
-bool operator!=(const KeyInput& a, const KeyInput& b) {
-    return !(a == b);
-}
-
-std::ostream &operator<<(std::ostream &out, const InputSystem::KeyBindMap& a) {
-    for ( auto& pair : a ) {
-        std::string s = pair.first;
-        out << "Key( " << s << " ) : " << pair.second << std::endl;
-    }
-    return out;
-}
-
-bool operator==(const InputSystem::KeyBindMap& a, const InputSystem::KeyBindMap& b) {
-    for ( auto& pair : a ) {
-        std::string s = pair.first;
-        if ( b.at(s) != a.at(s) )
-            return 0;
-    }
-
-    for ( auto& pair : b ) {
-        std::string s = pair.first;
-        if ( b.at(s) != a.at(s) )
-            return 0;
-    }
-
-    return 1;
-}
-
-std::string toString(const Json::Value &value) {
-    Json::FastWriter w;
-    return w.write(value);
-}
 
 KeyInput createKeyPressInput(sf::Keyboard::Key key) {
     KeyInput bind;

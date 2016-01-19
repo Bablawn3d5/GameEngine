@@ -3,77 +3,16 @@
 #include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <Farquaad/Core/ComponentSerializer.h>
 #include <Farquaad/Core.hpp>
+#include <Common.h>
+#include <catch.hpp>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <catch.hpp>
 
 using entityx::Entity;
 using entityx::EventManager;
 using entityx::EntityManager;
-
-template <typename T>
-int size(const T &t) {
-    int n = 0;
-    for ( auto i : t ) {
-        ++n;
-        (void)i;  // Unused on purpose, suppress warning
-    }
-    return n;
-}
-
-struct Position {
-    explicit Position(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
-
-    bool operator==(const Position &other) const {
-        return x == other.x && y == other.y;
-    }
-
-    float x, y;
-};
-
-template<>
-class SerializableHandle<Position> : public MappedComponent<Position> {
-public:
-    SerializableHandle() : MappedComponent("pos") {}
-
-    Position fromJSON(const Json::Value& json) const {
-        Position p;
-        p.x = json["x"].asFloat();
-        p.y = json["y"].asFloat();
-        return p;
-    }
-
-    Json::Value toJSON(const Position& component) const {
-        Json::Value v;
-        v["x"] = component.x;
-        v["y"] = component.y;
-        return v;
-    }
-};
-
-// LEGACY(SMA) : Remove me! We shouldn't need this here as component seralizer should
-// handle this in some way.
-template<typename T>
-static inline Json::Value writeValueToRootName(const T& component) {
-    Json::Value ret;
-    const MappedComponent<T>& handle = Serializable::handle<T>();
-    ret[handle.rootName] = Serializable::toJSON(component);
-    return ret;
-}
-
-std::ostream &operator<<(std::ostream &out, const Position &position) {
-    out << "Position(" << position.x << ", " << position.y << ")";
-    return out;
-}
-
-std::string toString(const Json::Value &value) {
-    std::stringstream stream;
-    Json::StyledStreamWriter writer;
-    writer.write(stream, value);
-    return stream.str();
-}
 
 struct ComponentSeralizerTestFixture {
     ComponentSeralizerTestFixture() : em(ev) {}
@@ -81,7 +20,7 @@ struct ComponentSeralizerTestFixture {
     EventManager ev;
 };
 
-TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestDefaultConstructor") {
+TEST_CASE_METHOD(ComponentSeralizerTestFixture, "ComponentSeralizerTestDefaultConstructor") {
     ComponentSerializer cs;
     REQUIRE(cs.toString() == "null\n");
 }
@@ -95,11 +34,11 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestJSONConstructor") {
     root2["foo"] = "bar";
     Json::Value expected = root2;
     ComponentSerializer cs1(root2);
-    REQUIRE(cs1.toString() == toString(expected));
+    REQUIRE(cs1.toString() == toStyledString(expected));
 
     // Is copy.
     root2["bar"] = 2;
-    REQUIRE(cs1.toString() == toString(expected));
+    REQUIRE(cs1.toString() == toStyledString(expected));
 }
 
 TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
@@ -111,7 +50,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestParseEntityString") {
         REQUIRE(ret == 1);
         Json::Value root;
         root["foo"] = "bar";
-        REQUIRE(cs0.toString() == toString(root));
+        REQUIRE(cs0.toString() == toStyledString(root));
     }
     SECTION("Load bad string") {
         // Redirect cerr to test
@@ -174,10 +113,10 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     REQUIRE(cs0.toString() == "null\n");
 
     Position p2(20000.135f, 500.45f);
-    Json::Value v = writeValueToRootName(p2);
+    Json::Value v = cs0.Save<Position>(p2);
     std::istringstream stream(toString(v));
     int ret = ComponentSerializer::LoadFromStream(stream, cs0);
-    REQUIRE(cs0.toString() == toString(v));
+    REQUIRE(cs0.toString() == toStyledString(v));
     REQUIRE(ret == 1);
     REQUIRE(cs0.toString() != "null\n");
 
@@ -197,9 +136,10 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadAndAssignToEntity") {
     REQUIRE(em.size() == 0UL);
 
     Position p1(20000.135f, 500.45f);
-    Json::Value v = writeValueToRootName(p1);
+    ComponentSerializer cs0;
+    Json::Value v = cs0.Save<Position>(p1);
     ComponentSerializer cs1(v);
-    REQUIRE(cs1.toString() == toString(v));
+    REQUIRE(cs1.toString() == toStyledString(v));
 
     SECTION("Assign to valid entity") {
         Entity e = em.create();
@@ -253,7 +193,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestSaveEntity") {
 
     ComponentSerializer cs1;
     Json::Value v = ComponentSerializer::SaveEntityComponent<Position>(cs1, e);
-    Json::Value expected = writeValueToRootName(p1);
+    Json::Value expected = cs1.Save<Position>(p1);
     REQUIRE(toString(expected) == toString(v));
     e.destroy();
 }

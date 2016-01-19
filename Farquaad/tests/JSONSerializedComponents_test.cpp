@@ -1,50 +1,12 @@
 // Copyright 2015-2016 Bablawn3d5
 #include <Farquaad/Serialization.hpp>
+#include <Common.h>
 #include <SFML/System.hpp>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <catch.hpp>
-
-template <typename T>
-int size(const T &t) {
-    int n = 0;
-    for ( auto i : t ) {
-        ++n;
-        (void)i;  // Unused on purpose, suppress warning
-    }
-    return n;
-}
-
-template<typename T>
-std::ostream &operator<<(std::ostream &out, const sf::Vector2<T> &v) {
-    out << "Vector2(" << v.x << ", " << v.y << ")";
-    return out;
-}
-
-bool operator==(const Stats &r, const Stats &l) {
-    return r.currentHp == l.currentHp &&
-        r.maxHp == l.maxHp &&
-        r.speed == l.speed &&
-        r.godmode == l.godmode;
-}
-
-std::ostream &operator<<(std::ostream &out, const Stats &s) {
-    out << "Stats(" << s.currentHp << "/" << s.maxHp << ","
-        << s.speed << "," << s.godmode << "," << ")";
-    return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const Body &b) {
-    out << "Body(" << b.direction << ", " << b.position << ")";
-    return out;
-}
-
-std::string toString(const Json::Value &value) {
-    Json::FastWriter w;
-    return w.write(value);
-}
 
 // TODO(SMA) : Do we need this?
 struct JSONSerializedFixture {

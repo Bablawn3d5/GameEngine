@@ -23,9 +23,9 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 elseif(MAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
     # Define HAVE_ROUND for pymath.h
-    # FIXME(SMA) : This doesn't correctly include the macro definition for
-    # some reason???
-    add_definitions(-DHAVE_ROUND)
+    add_definitions(/DHAVE_ROUND)
+    # /MP - Enable parallel builds
+    set(CMAKE_CXX_FLAGS "/MP")
     # /Zi - Produces a program database (PDB) that contains type information and symbolic debugging information for use with the debugger.
     # /FS - Allows multiple cl.exe processes to write to the same .pdb file
     # /DEBUG - Enable debug during linking
@@ -44,14 +44,11 @@ set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 set(INCROOT ${PROJECT_SOURCE_DIR}/include)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src)
-set(TESTROOT ${PROJECT_SOURCE_DIR}/tests)
 
-set(
-    SOURCES
-)
 # Link all directories
 add_subdirectory(${SRCROOT})
 include_directories(${INCROOT})
+
 
 # Set source_group for Visual Studio organization
 foreach(FILE ${INCLUDES} ${SOURCES})
@@ -91,37 +88,12 @@ endforeach()
 # We should fix this eventually.
 add_library(Farquaad STATIC ${SOURCES} ${INCLUDES})
 
-#Add tests
+# Add tests
+add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
 enable_testing()
-
-macro(create_test TARGET_NAME SOURCE)
-    set(TEST_SOURCES
-        ${SOURCE}
-        ${catch-amalgamate_SOURCE_DIR}/catch.hpp
-        ${TESTROOT}/main.cpp)
-    add_executable(${TARGET_NAME} ${TEST_SOURCES})
-    include_directories(${catch-amalgamate_SOURCE_DIR})
-    source_group("" FILES "${TEST_SOURCES}")
-    target_link_libraries(
-        ${TARGET_NAME}
-        Farquaad
-        ${ARGN}
-        )
-    add_dependencies (${TARGET_NAME} Farquaad catchmain)
-    add_test(NAME ${TARGET_NAME}
-             WORKING_DIRECTORY ${CMAKE_PROJECT_BINARY_DIR}
-             COMMAND ${TARGET_NAME})
-    set_target_properties(${TARGET_NAME} PROPERTIES DEPENDS ${TARGET_NAME} FOLDER "FarquaadEngine/tests")
-endmacro()
-
-add_executable(catchmain ${TESTROOT}/main.cpp)
-set_target_properties(catchmain PROPERTIES DEPENDS catchmain FOLDER "FarquaadEngine/tests")
-
-create_test(ComponentSeralizer_test ${TESTROOT}/ComponentSeralizer_test.cpp)
-create_test(EntitySeralizer_test ${TESTROOT}/EntitySeralizer_test.cpp)
-create_test(JSONSerializedComponents_test ${TESTROOT}/JSONSerializedComponents_test.cpp)
-create_test(JSONSerializedSystemObjects_test ${TESTROOT}/JSONSerializedSystemObjects_test.cpp)
-create_test(PythonSeralizer_test ${TESTROOT}/PythonSeralizer_test.cpp)
+add_test(NAME all_tests
+         WORKING_DIRECTORY ${CMAKE_PROJECT_BINARY_DIR}
+         COMMAND all_tests )
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
