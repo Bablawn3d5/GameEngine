@@ -12,7 +12,7 @@ build_script:
 
     git submodule update --init --recursive
 
-    if (Test-Path C:\deps\boost-install) {
+    if (!(Test-Path C:\deps\boost-install)) {
         pushd .
 
         cd C:\Libraries\boost_1_59_0
