@@ -10,9 +10,6 @@
 namespace ex = entityx;
 namespace py = boost::python;
 
-PythonSystem::PythonSystem() {}
-PythonSystem::~PythonSystem() {}
-
 void PythonSystem::update(ex::EntityManager & em,
                           ex::EventManager & events, ex::TimeDelta dt) {
     em.each<PythonScript>(
@@ -27,6 +24,10 @@ void PythonSystem::update(ex::EntityManager & em,
             throw;
         }
     });
+}
+
+void PythonSystem::add_path(const std::string &path) {
+    py_paths.push_back(path);
 }
 
 struct EntityToPythonEntity {
@@ -46,6 +47,7 @@ static std::string Entity_Id_repr(ex::Entity::Id id) {
 struct PythonEntity {
     explicit PythonEntity(ex::EntityManager* em, ex::Entity::Id id) :
         _entity(ex::Entity(em, id)) {
+        assert(_entity.valid());
     }
     virtual ~PythonEntity() {}
 
@@ -77,23 +79,6 @@ ex::Entity::Id EntityManager_configure(ex::EntityManager& em, py::object self) {
     return entity.id();
 }
 
-/**
-* A helper function for class_ to assign a component to an entity.
-*/
-template <typename Component>
-void assign_to(Component& component, ex::EntityManager& em, ex::Entity::Id id) {
-    em.assign<Component>(id, component);
-}
-
-/**
-* A helper function for retrieving an existing component associated with an
-* entity.
-*/
-template <typename Component>
-Component* get_component(ex::EntityManager& em, ex::Entity::Id id) {
-    return em.component<Component>(id).get();
-}
-
 BOOST_PYTHON_MODULE(_entityx) {
     py::to_python_converter<ex::Entity, EntityToPythonEntity>();
     py::implicitly_convertible<PythonEntity, ex::Entity>();
@@ -114,8 +99,8 @@ BOOST_PYTHON_MODULE(_entityx) {
 
     py::class_<PythonScript>("PythonScript", py::init<py::object>())
         .def("assign_to", &assign_to<PythonScript>)
-        // Return a raw pointer here.
-        .def("get_component", &get_component<PythonScript>, py::return_internal_reference<>())
+        .def("get_component", &get_component<PythonScript>,
+             py::return_value_policy<py::reference_existing_object>())
         .staticmethod("get_component");
 
     py::class_<ex::EntityManager, boost::noncopyable>("EntityManager", py::no_init)
@@ -125,4 +110,97 @@ BOOST_PYTHON_MODULE(_entityx) {
 
     py::class_<ex::EventManager, boost::noncopyable >("EventManager", py::no_init)
         .def("emit", emit);
+}
+
+void PythonSystem::initialize_python_module() {
+    assert(PyImport_AppendInittab("_entityx", init_entityx) != -1 && "Failed to initialize _entityx Python module");
+}
+
+bool PythonSystem::intialized = false;
+
+PythonSystem::PythonSystem(ex::EntityManager* em, const fs::path& p) : em(em) {
+    if ( !intialized ) {
+        initialize_python_module();
+    }
+    // HACK(SMA) : Throw away wide characters
+    std::string str = p.string();
+    // Write to tempoaray char[] for PySys_SetPath
+    std::vector<char> lib_paths(str.begin(), str.end());
+    lib_paths.push_back('\0');
+
+    // Set path so we can find the python27.zip
+    Py_NoSiteFlag = 1;
+    Py_SetPythonHome(&lib_paths[0]);
+    Py_InitializeEx(0);
+
+    // Assuming python27.zip is our python lib zip.
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("sys.path = ['.','python27.zip']");
+
+    if ( !intialized ) {
+        init_entityx();
+        intialized = true;
+    }
+}
+
+PythonSystem::~PythonSystem() {
+    try {
+        py::object entityx = py::import("_entityx");
+        entityx.attr("_entity_manager").del();
+        entityx.attr("_event_manager").del();
+        py::object sys = py::import("sys");
+        py::object gc = py::import("gc");
+        gc.attr("collect")();
+    }
+    catch ( ... ) {
+        PyErr_Print();
+        PyErr_Clear();
+        throw;
+    }
+}
+
+void PythonSystem::configure(ex::EventManager& ev) {
+    ev.subscribe<ex::ComponentAddedEvent<PythonScript>>(*this);
+
+    try {
+        py::object main_module = py::import("__main__");
+        py::object main_namespace = main_module.attr("__dict__");
+
+        py::object sys = py::import("sys");
+
+        // Add paths to interpreter sys.path
+        for ( auto path : py_paths ) {
+            py::str dir = path.c_str();
+            sys.attr("path").attr("insert")(0, dir);
+        }
+
+        py::object entityx = py::import("_entityx");
+        entityx.attr("_entity_manager") = boost::ref(em);
+        entityx.attr("_event_manager") = boost::ref(ev);
+    }
+    catch ( ... ) {
+        PyErr_Print();
+        PyErr_Clear();
+        throw;
+    }
+}
+
+void PythonSystem::receive(const ex::ComponentAddedEvent<PythonScript> &event) {
+    // If the component was created in C++ it won't have a Python object
+    // associated with it. Create one.
+    if ( !event.component->object ) {
+        py::object module = py::import(event.component->module.c_str());
+        py::object cls = module.attr(event.component->cls.c_str());
+        py::object from_raw_entity = cls.attr("_from_raw_entity");
+        if ( py::len(event.component->args) == 0 ) {
+            ex::ComponentHandle<PythonScript> p = event.component;
+            p->object = from_raw_entity(event.entity.id());
+        } else {
+            py::list args;
+            args.append(event.entity.id());
+            args.extend(event.component->args);
+            ex::ComponentHandle<PythonScript> p = event.component;
+            p->object = from_raw_entity(*py::tuple(args));
+        }
+    }
 }

@@ -13,7 +13,37 @@ set(TEST_SOURCES
     ${TESTROOT}/JSONSerializedComponents_test.cpp
     ${TESTROOT}/JSONSerializedSystemObjects_test.cpp
     ${TESTROOT}/PythonSeralizer_test.cpp
+
 )
+
+# Add target to copy files
+file(GLOB ScriptFiles
+    ${TESTROOT}/scripts/entityx/*.py
+    ${TESTROOT}/scripts/entityx/tests/*.py
+    ${PYTHON27_STD_ZIP})
+
+add_custom_target(CopyScriptFiles SOURCES ${ScriptFiles})
+foreach(ScriptFile ${ScriptFiles})
+    # Get the directory of the source file
+    get_filename_component(PARENT_DIR "${ScriptFile}" DIRECTORY)
+    get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
+
+    # Remove common directory prefix to make the group
+    string(REPLACE "${TESTROOT}" "" GROUP "${PARENT_DIR}")
+    string(REPLACE "${PYTHON27_STD_ZIP_DIR}" "" GROUP "${GROUP}")
+
+    add_custom_command(TARGET CopyScriptFiles PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         make_directory "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/" )
+    add_custom_command(TARGET CopyScriptFiles PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy "${ScriptFile}"
+                              "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
+                     DEPENDS ${ScriptFile}
+                     COMMENT "Copying ${ScriptFile}")
+    source_group("${GROUP}" FILES "${ScriptFile}")
+    install(FILES ${ScriptFile} DESTINATION bin/${GROUP})
+endforeach()
 
 # Include common test headers
 include_directories(${TESTROOT})
@@ -35,9 +65,11 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIR})
 
 # Build Executable
-# Define HAVE_ROUND for python on windows
 enable_testing()
+# Define HAVE_ROUND for python on windows
 add_definitions(/DHAVE_ROUND)
+# Statically link boost
+add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
 add_executable(all_tests ${TEST_SOURCES})
 include_directories(${catch-amalgamate_SOURCE_DIR})
 source_group("" FILES "${TEST_SOURCES}")
@@ -45,32 +77,13 @@ target_link_libraries(
     all_tests
     Farquaad
     )
-add_dependencies (all_tests Farquaad)
+add_dependencies (all_tests Farquaad CopyScriptFiles)
 set_target_properties(all_tests PROPERTIES
     DEPENDS all_tests
     FOLDER "FarquaadEngine/tests")
 
 # Set installation directory to incl Packages
 install(TARGETS all_tests DESTINATION bin)
-if(MSVC)
-    # Copy Boost DLLs
-    get_filename_component(UTF_BASE_NAME
-          ${Boost_PYTHON_LIBRARY_RELEASE} NAME_WE)
-    get_filename_component(UTF_PATH
-          ${Boost_PYTHON_LIBRARY_RELEASE} PATH)
-    install(FILES ${UTF_PATH}/${UTF_BASE_NAME}.dll
-      DESTINATION bin
-      CONFIGURATIONS Release RelWithDebInfo
-    )
-
-    get_filename_component(UTF_BASE_NAME_DEBUG
-          ${Boost_PYTHON_LIBRARY_DEBUG} NAME_WE)
-    install(FILES ${UTF_PATH}/${UTF_BASE_NAME_DEBUG}.dll
-      DESTINATION bin
-      CONFIGURATIONS Debug
-    )
-endif()
-
 if (CMAKE_BUILD_TYPE STREQUAL 'Debug')
     set(CMAKE_INSTALL_DEBUG_LIBRARIES 1)
 endif()
