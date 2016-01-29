@@ -38,6 +38,12 @@ bool operator==(const InputSystem::KeyBindMap& a, const InputSystem::KeyBindMap&
 std::string toString(const Json::Value &value);
 std::string toStyledString(const Json::Value &value);
 
+struct Direction {
+    Direction(float x = 0.0, float y = 0.0) : x(x), y(y) {}
+
+    float x, y;
+};
+
 struct Position {
     explicit Position(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
 
