@@ -5,3 +5,4 @@
 #include <Farquaad/Systems/InputSystem.h>
 #include <Farquaad/Systems/PhysicsSystem.h>
 #include <Farquaad/Systems/RenderSystem.h>
+#include <Farquaad/Systems/MoveSystem.h>

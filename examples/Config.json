@@ -1,4 +1,5 @@
 {
+  "app_title" : "This is example. Yay.",
   "keys" : {
     "MoveUp" : "KEY_W",
     "MoveDown" : "KEY_S",

@@ -65,57 +65,32 @@ void InputSystem::update(ex::EntityManager &em,
                          ex::EventManager &events, ex::TimeDelta dt) {
     sf::Event Event;
 
-    sf::Vector2f direction;
-    bool processedEvents = false;
+    // Store responders in a refrence vec, and clear old responses
+    // FIXME(SMA) : This lookup may be expensive when we have tons of entities.
+    std::vector<std::reference_wrapper<InputResponder>> responders;
+    em.each<InputResponder>(
+      [&](ex::Entity entity, InputResponder &responder) {
+      responder.responds.clear();
+      responders.push_back(responder);
+    });
+
     // Poll window Events
     while ( window.pollEvent(Event) ) {
-        // Specail Case: Window closed
-        // TODO(SMA) : Handle window close.
-        if ( Event.type == sf::Event::Closed ) {
-            window.close();
-        }
+      // Specail Case: Window closed
+      // TODO(SMA) : Handle other window cases.
+      // TODO(SMA) : Brodcast window close
+      if ( Event.type == sf::Event::Closed ) {
+        window.close();
+      }
 
-        // TODO(SMA): Iterate though entities that subscribe to events
-        // and do stuff when a event is triggered.
-        // HACK(SMA): For now, register some static events.
-        if ( testEvent("+MoveUp", Event) ) {
-            direction.y -= 1;
+      // HACK (SMA) : Push event name into all responders
+      // This looks cancerous but it works.
+      for ( auto responder : responders ) {
+        for ( auto pairs : keyBinds ) {
+          if ( testEvent(pairs.first, Event) ) {
+            responder.get().responds.push_back(pairs.first);
+          }
         }
-        if ( testEvent("+MoveDown", Event) ) {
-            direction.y += 1;
-        }
-        if ( testEvent("+MoveLeft", Event) ) {
-            direction.x -= 1;
-        }
-        if ( testEvent("+MoveRight", Event) ) {
-            direction.x += 1;
-        }
-
-        if ( testEvent("-MoveUp", Event) ) {
-            direction.y += 1;
-        }
-        if ( testEvent("-MoveDown", Event) ) {
-            direction.y -= 1;
-        }
-        if ( testEvent("-MoveLeft", Event) ) {
-            direction.x += 1;
-        }
-        if ( testEvent("-MoveRight", Event) ) {
-            direction.x -= 1;
-        }
-
-        if ( testEvent("+Use", Event) ) {
-            std::cout << "Use !" << std::endl;
-        }
-        processedEvents = true;
+      }
     }
-
-    if ( processedEvents == false )
-        return;
-
-    // Process direction.
-    em.each<Body, InputResponder>(
-        [this, &direction](ex::Entity, Body& body, InputResponder& responder) {
-        body.direction += direction;
-    });
 }

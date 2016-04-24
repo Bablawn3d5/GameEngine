@@ -13,6 +13,10 @@
 #include <Farquaad/Box2D/SFMLB2DDebug.h>
 #include <Thor/Resources.hpp>
 
+#include <Farquaad/Systems/PythonSystem.h>
+
+namespace fs = boost::filesystem;
+
 // Quick test for EntityX
 class Application : public entityx::EntityX {
 public:
@@ -31,6 +35,12 @@ public:
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         systems.add<RenderSystem>(target);
+        systems.add<MoveSystem>();
+
+        std::string path = fs::current_path().string();
+        auto pythonSystem = systems.add<PythonSystem>(&entities, path.c_str());
+        pythonSystem->add_path("Foo");
+
         systems.configure();
 
         // HACK(SMA) : Create entity right in this bloated constructor.
@@ -59,6 +69,7 @@ public:
 
     void update(ex::TimeDelta dt) {
         systems.update<InputSystem>(dt);
+        systems.update<MoveSystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
         physWorld->DrawDebugData();
@@ -66,10 +77,11 @@ public:
 };
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "");
     window.setKeyRepeatEnabled(false);
 
     // HACK(SMA) : Initalize these component serializers so they become registered.
+    // FIXME(SMA) : These cause JSON objects to be held in memory permanantly. FIXME.
     {
         Serializable::handle<Body>();
         Serializable::handle<Stats>();
@@ -79,15 +91,20 @@ int main() {
 
     thor::ResourceHolder<Json::Value, std::string> holder;
     Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));
+    const std::string title = configs["app_title"].asString();
 
     Application app(window, configs);
 
     sf::Clock clock;
     while ( window.isOpen() ) {
-        window.clear();
-        sf::Time elapsed = clock.restart();
-        app.update(elapsed.asSeconds());
-        window.display();
+      window.clear();
+      sf::Time elapsed = clock.restart();
+      app.update(elapsed.asSeconds());
+      window.display();
+      int fps = static_cast<int>(1.f / elapsed.asSeconds());
+      std::stringstream ss;
+      ss << title << " | FPS: " << fps;
+      window.setTitle(ss.str());
     }
 
     return 0;
