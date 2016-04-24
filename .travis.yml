@@ -11,8 +11,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise
-      - llvm-toolchain-precise-3.7
+      - llvm-toolchain-precise-3.8
     packages:
       # Needed by SFML
       - libpthread-stubs0-dev
@@ -33,6 +32,7 @@ addons:
       - libstdc++-5-dev
       # Compilers
       - g++-5
+      - clang
       - clang-3.8
       # Debugging
       - valgrind
