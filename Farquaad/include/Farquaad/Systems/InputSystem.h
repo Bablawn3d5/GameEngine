@@ -37,6 +37,7 @@ public:
 
     void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
 
+    sf::Event events;
 private:
     KeyBindMap keyBinds;
     sf::Window& window;

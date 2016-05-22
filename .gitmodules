@@ -16,3 +16,9 @@
 [submodule "extinclude/Python27Lib-Repo"]
 	path = extinclude/Python27Lib-Repo
 	url = https://github.com/Bablawn3d5/Python27StandardLib-minimal.git
+[submodule "extinclude/imgui-sfml-repo"]
+	path = extinclude/imgui-amalgamate/imgui-sfml-repo
+	url = git://github.com/Bablawn3d5/imgui-sfml.git
+[submodule "extinclude/imgui-repo"]
+	path = extinclude/imgui-amalgamate/imgui-repo
+	url = git://github.com/Bablawn3d5/imgui.git
