@@ -9,7 +9,7 @@
 	url = git://github.com/Bablawn3d5/Box2D.git
 [submodule "extinclude/jsoncpp-repo"]
 	path = extinclude/jsoncpp-repo
-	url = https://github.com/open-source-parsers/jsoncpp.git
+	url = https://github.com/Bablawn3d5/jsoncpp.git
 [submodule "extinclude/Thor"]
 	path = extinclude/Thor
 	url = git://github.com/Bablawn3d5/Thor.git
