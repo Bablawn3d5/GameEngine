@@ -8,6 +8,7 @@ set(SRC
     ${SRCROOT}/MoveSystem.cpp
     ${SRCROOT}/RenderSystem.cpp
     ${SRCROOT}/PythonSystem.cpp
+    ${SRCROOT}/ImGuiSystem.cpp
 )
 
 set(INC
@@ -16,6 +17,7 @@ set(INC
     ${INCROOT}/MoveSystem.h
     ${INCROOT}/InputSystem.h
     ${INCROOT}/PythonSystem.h
+    ${INCROOT}/ImGuiSystem.h
     ${INCROOT}/../Systems.hpp
 )
 

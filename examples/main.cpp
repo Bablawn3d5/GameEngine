@@ -14,6 +14,7 @@
 #include <Thor/Resources.hpp>
 
 #include <Farquaad/Systems/PythonSystem.h>
+#include <string>
 
 namespace fs = boost::filesystem;
 
@@ -23,7 +24,7 @@ public:
     std::shared_ptr<b2World> physWorld;
     std::shared_ptr<SFMLB2DDebug> debugDraw;
 
-    explicit Application(sf::RenderWindow &target, Json::Value& v) {
+    explicit Application(sf::RenderWindow &target, Json::Value& v) { // NOLINT
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
         physWorld = std::make_shared<b2World>(gravity);
         debugDraw = std::make_shared<SFMLB2DDebug>(target);
@@ -36,6 +37,7 @@ public:
 
         systems.add<RenderSystem>(target);
         systems.add<MoveSystem>();
+        systems.add<ImGuiSystem>(target);
 
         std::string path = fs::current_path().string();
         auto pythonSystem = systems.add<PythonSystem>(&entities, path.c_str());
@@ -72,6 +74,7 @@ public:
         systems.update<MoveSystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
+        systems.update<ImGuiSystem>(dt);
         physWorld->DrawDebugData();
     }
 };
@@ -101,10 +104,6 @@ int main() {
       sf::Time elapsed = clock.restart();
       app.update(elapsed.asSeconds());
       window.display();
-      int fps = static_cast<int>(1.f / elapsed.asSeconds());
-      std::stringstream ss;
-      ss << title << " | FPS: " << fps;
-      window.setTitle(ss.str());
     }
 
     return 0;

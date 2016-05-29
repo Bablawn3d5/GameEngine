@@ -2,6 +2,7 @@
 
 #include <Farquaad/Systems/InputSystem.h>
 #include <Farquaad/Components.hpp>
+#include "imgui-SFML.h"
 #include <string>
 
 void InputSystem::setKeybinds(const KeyBindMap & binds) {
@@ -76,6 +77,9 @@ void InputSystem::update(ex::EntityManager &em,
 
     // Poll window Events
     while ( window.pollEvent(Event) ) {
+      // HACK(SMA) : Process the event right here.
+      ImGui::SFML::ProcessEvent(Event);
+
       // Specail Case: Window closed
       // TODO(SMA) : Handle other window cases.
       // TODO(SMA) : Brodcast window close
@@ -85,8 +89,8 @@ void InputSystem::update(ex::EntityManager &em,
 
       // HACK (SMA) : Push event name into all responders
       // This looks cancerous but it works.
-      for ( auto responder : responders ) {
-        for ( auto pairs : keyBinds ) {
+      for ( auto& responder : responders ) {
+        for ( auto& pairs : keyBinds ) {
           if ( testEvent(pairs.first, Event) ) {
             responder.get().responds.push_back(pairs.first);
           }

@@ -63,6 +63,7 @@ include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIR})
+include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
 
 # Build Executable
 enable_testing()
@@ -73,6 +74,8 @@ add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
 add_executable(all_tests ${TEST_SOURCES})
 include_directories(${catch-amalgamate_SOURCE_DIR})
 source_group("" FILES "${TEST_SOURCES}")
+target_link_libraries(all_tests ${SFML_DEPENDENCIES} ${SFML_LIBRARIES})
+target_link_libraries(all_tests thor)
 target_link_libraries(
     all_tests
     Farquaad

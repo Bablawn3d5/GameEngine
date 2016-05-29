@@ -12,7 +12,7 @@ project(Farquaad)
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++11 -DBOOST_STATIC -DBOOST_NO_AUTO_PTR -Wno-error=deprecated-declarations -Wno-unused-local-typedefs")
     if (CMAKE_CXX_COMPILER_ID MATCHES "(.*Clang)")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Qunused-arguments")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Qunused-arguments -Wno-format-pedantic")
     endif()
     if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU)")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-local-typedefs")
@@ -49,7 +49,7 @@ include_directories(${INCROOT})
 
 
 # Set source_group for Visual Studio organization
-foreach(FILE ${INCLUDES} ${SOURCES})
+foreach(FILE ${INCLUDES} ${SOURCES} ${IMGUI_AMALGAMATE_SOURCES})
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
     get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
@@ -88,7 +88,7 @@ endforeach()
 add_definitions(/DHAVE_ROUND)
 # Statically link boost
 add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
-add_library(Farquaad STATIC ${SOURCES} ${INCLUDES})
+add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} ${IMGUI_AMALGAMATE_SOURCES})
 
 # Add tests
 add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
@@ -99,7 +99,7 @@ add_test(NAME all_tests
 
 # Include SFML
 include_directories(${SFML_SOURCE_DIR}/include)
-target_link_libraries(Farquaad sfml-window sfml-graphics sfml-system)
+target_link_libraries(Farquaad ${SFML_DEPENDENCIES} ${SFML_LIBRARIES})
 
 # Include thor for SFML extensions
 include_directories(${thor_SOURCE_DIR}/include)
@@ -124,6 +124,11 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIR})
 target_link_libraries(Farquaad ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+
+# Include ImGui
+include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
+link_directories(${IMGUI_AMALGAMATE_LIBRARY_DIR})
+target_link_libraries(Farquaad ${IMGUI_AMALGAMATE_LIBRARIES})
 
 # Set installation directory to incl Packages
 install(TARGETS Farquaad DESTINATION lib)

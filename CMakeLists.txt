@@ -68,6 +68,7 @@ add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Thor)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/catch-amalgamate)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/jsoncpp-amalgamate)
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/imgui-amalgamate)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Python27Lib-Repo)
 
 # Meat of our 'engine'
