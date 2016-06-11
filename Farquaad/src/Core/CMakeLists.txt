@@ -5,19 +5,15 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Core)
 set(SRC
     ${SRCROOT}/EntitySerializer.cpp
     ${SRCROOT}/ComponentSerializer.cpp
-    ${SRCROOT}/SeralizeableComponentMap.cpp
 )
 
 # Include hpp
 set(INC
-    ${INCROOT}/JSONSerializedBox2D.hpp
-    ${INCROOT}/JSONSerializedComponents.hpp
-    ${INCROOT}/JSONSerializedPrimitiveTypes.hpp
-    ${INCROOT}/JSONSerializedSystemObjects.hpp
+    ${INCROOT}/MetaRegister.hpp
     ${INCROOT}/ComponentSerializer.h
     ${INCROOT}/EntitySerializer.h
     ${INCROOT}/Serializable.hpp
-    ${INCROOT}/SeralizeableComponentMap.h
+    ${INCROOT}/SerializableHandle.hpp
     ${INCROOT}/../Core.hpp
     ${INCROOT}/../Serialization.hpp
 )

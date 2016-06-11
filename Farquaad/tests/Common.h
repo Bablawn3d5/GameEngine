@@ -1,12 +1,16 @@
 // Copyright 2016 Bablawn3d5
 
+#pragma once
+
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
-#include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <Farquaad/Core/ComponentSerializer.h>
-#include <Farquaad/Core.hpp>
+#include <Farquaad/Components.hpp>
+#include <Farquaad/Systems/InputSystem.h>
 #include <entityx/entityx.h>
 #include <json/json.h>
+#include <string>
+#include <Meta.h>
 
 template <typename T>
 int size(const T &t) {
@@ -39,7 +43,7 @@ std::string toString(const Json::Value &value);
 std::string toStyledString(const Json::Value &value);
 
 struct Direction {
-    Direction(float x = 0.0, float y = 0.0) : x(x), y(y) {}
+    explicit Direction(float x = 0.0, float y = 0.0) : x(x), y(y) {}
 
     float x, y;
 };
@@ -54,10 +58,25 @@ struct Position {
     float x, y;
 };
 
+namespace meta {
+template <>
+constexpr auto registerName<Position>() {
+  return "pos";
+}
+
+template <>
+inline auto registerMembers<Position>() {
+  return members(
+    member("x", &Position::x),
+    member("y", &Position::y)
+    );
+}
+} // namespace meta
+
 template<>
-class SerializableHandle<Position> : public MappedComponent<Position> {
+class SerializableHandle<Position>  {
 public:
-    SerializableHandle() : MappedComponent("pos") {}
+    SerializableHandle() {}
 
     Position fromJSON(const Json::Value& json) const {
         Position p;

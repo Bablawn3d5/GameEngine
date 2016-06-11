@@ -114,7 +114,11 @@ BOOST_PYTHON_MODULE(_entityx) {
 }
 
 void PythonSystem::initialize_python_module() {
-    assert(PyImport_AppendInittab("_entityx", init_entityx) != -1 && "Failed to initialize _entityx Python module");
+    assert(PyImport_AppendInittab("_entityx", init_entityx) != -1 && 
+           "Failed to initialize _entityx Python module");
+#ifdef NDEBUG
+    PyImport_AppendInittab("_entityx", init_entityx);
+#endif
 }
 
 bool PythonSystem::intialized = false;

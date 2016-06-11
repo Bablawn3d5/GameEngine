@@ -22,3 +22,6 @@
 [submodule "extinclude/imgui-repo"]
 	path = extinclude/imgui-amalgamate/imgui-repo
 	url = git://github.com/Bablawn3d5/imgui.git
+[submodule "extinclude/MetaStuff-repo"]
+	path = extinclude/MetaStuff-repo
+	url = https://github.com/Bablawn3d5/MetaStuff.git

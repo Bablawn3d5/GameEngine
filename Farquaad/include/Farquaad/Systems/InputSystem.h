@@ -25,7 +25,7 @@ struct KeyInput {
 
 struct InputSystem : public ex::System<InputSystem> {
 public:
-    typedef std::map<const std::string, KeyInput> KeyBindMap;
+    typedef std::unordered_map<std::string, KeyInput> KeyBindMap;
 
     explicit InputSystem(sf::Window &target) : window(target) {}
 

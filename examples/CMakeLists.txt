@@ -63,6 +63,10 @@ endforeach()
 add_definitions(/DHAVE_ROUND)
 # Statically link boost
 add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
+
+if(NOT BUILD_SHARED_LIBS)
+    add_definitions(-DSFML_STATIC)
+endif()
 # Tell CMake to build a Farquaad executable
 add_executable(FarquaadExamples main.cpp)
 include_directories(${Farquaad_SOURCE_DIR}/include)
@@ -75,6 +79,7 @@ include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
+include_directories(${METASTUFF_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIR})
 

@@ -88,6 +88,9 @@ endforeach()
 add_definitions(/DHAVE_ROUND)
 # Statically link boost
 add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
+if(NOT BUILD_SHARED_LIBS)
+    add_definitions(-DSFML_STATIC)
+endif()
 add_library(Farquaad STATIC ${SOURCES} ${INCLUDES} ${IMGUI_AMALGAMATE_SOURCES})
 
 # Add tests
@@ -129,6 +132,10 @@ target_link_libraries(Farquaad ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
 link_directories(${IMGUI_AMALGAMATE_LIBRARY_DIR})
 target_link_libraries(Farquaad ${IMGUI_AMALGAMATE_LIBRARIES})
+
+# Include MetaStuff
+message("Metastuff - ${METASTUFF_INCLUDE_DIRS}")
+include_directories(${METASTUFF_INCLUDE_DIRS})
 
 # Set installation directory to incl Packages
 install(TARGETS Farquaad DESTINATION lib)

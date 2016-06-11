@@ -21,7 +21,7 @@ namespace fs = boost::filesystem;
 // HACK(SMA) : Just shove this here for now.
 BOOST_PYTHON_MODULE(_entityx_components) {
   Serializable::initPy<Body>(py::class_<Body>("Body", py::init<>()));
-  Serializable::initPy<Physics>(py::class_<Physics>("Pyscics", py::init<>()));
+  Serializable::initPy<Physics>(py::class_<Physics>("Physics", py::init<>()));
   Serializable::initPy<Stats>(py::class_<Stats>("Stats", py::init<>()));
 
   // TODO(SMA) : Seralize me 
@@ -53,11 +53,14 @@ public:
 
         std::string path_exec = fs::current_path().string();
         std::string path_scripts = (fs::current_path() / "scripts").string();
+        assert(
+          PyImport_AppendInittab("_entityx_components", init_entityx_components) != -1
+          && "Failed to initialize _entityx_components Python module");
+#ifdef NDEBUG
+        PyImport_AppendInittab("_entityx_components", init_entityx_components);
+#endif
         auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
         pythonSystem->add_path(path_scripts.c_str());
-        assert(
-          PyImport_AppendInittab("_entityx_components", init_entityx_components) != -1 
-          && "Failed to initialize _entityx_components Python module");
         systems.configure();
 
         // HACK(SMA) : Create entity right in this bloated constructor.

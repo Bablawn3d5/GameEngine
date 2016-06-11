@@ -2,7 +2,6 @@
 
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
-#include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <Farquaad/Core/ComponentSerializer.h>
 #include <Farquaad/Core.hpp>
 #include <entityx/entityx.h>

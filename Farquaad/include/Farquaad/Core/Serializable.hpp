@@ -3,6 +3,8 @@
 #pragma once
 
 #include <boost/python.hpp>
+#include <Meta.h>
+#include <Farquaad/Core/MetaRegister.hpp>
 #include <json/json.h>
 #include <memory>
 #include <map>
@@ -13,15 +15,49 @@ namespace py = boost::python;
 
 // Class definition for SerializableHandle that should be specialized by each
 // component.
-//
-// See JSONSerialziedComponents.h for component specializations
-// See JSONSerialiedPrimitiveTypes.hpp for primitive specializations
 template<class T>
 class SerializableHandle {
 public:
-    virtual T fromJSON(const Json::Value&) const = 0;
-    virtual Json::Value toJSON(const T& component) const = 0;
-    virtual void initPy(py::class_<T>& py) const = 0;
+  T fromJSON(const Json::Value& v) const {
+    T obj;
+    if ( v.isNull() ) { return obj; }
+    meta::doForAllMembers<T>(
+      [&v, &obj](const auto& member) {
+      using memeber_type = meta::get_member_type<decltype(member)>;
+      const auto& name = member.getName();
+      member.set(obj, Serializable::fromJSON<memeber_type>(v[name]));
+    });
+    return obj;
+  }
+
+  Json::Value toJSON(const T& component) const {
+    Json::Value v = Json::objectValue;
+    //for ( const auto& pair : members ) {
+    //  const auto& name = pair.first;
+    //  const auto& memberPtr = pair.second;
+    //  v[name] = memberPtr->toJSON(obj);
+    //}
+    meta::doForAllMembers<T>(
+      [&v, &component](const auto& member) {
+      using memeber_type = meta::get_member_type<decltype(member)>;
+      const auto& name = member.getName();
+      v[name] = Serializable::toJSON<memeber_type>(member.get(component));
+    });
+    return v;
+  }
+
+  void initPy(py::class_<T>& py) const {
+    meta::doForAllMembers<T>(
+      [&py](const auto& member) {
+      using memeber_type = meta::get_member_type<decltype(member)>;
+      const auto& name = member.getName();
+      py.def_readwrite(name, member.getPtr());
+    });
+    py.def("assign_to", &assign_to<T>)
+      .def("get_component", &get_component<T>,
+           py::return_value_policy<py::reference_existing_object>())
+      .staticmethod("get_component");
+  }
 };
 
 // Static handle to SerializableHandle
@@ -56,106 +92,4 @@ public:
     }
 };
 
-// Base class for Member serialization
-template<typename C>
-class MemberBase {
-public:
-    virtual ~MemberBase() = default;
-
-    virtual void fromJSON(const Json::Value&, C&) const = 0;
-    virtual Json::Value toJSON(const C&) const = 0;
-    virtual void initPy(py::class_<C>& py, std::string name) const = 0;
-};
-
-// Defines serialization for a particular member
-template<typename V, typename C>
-class Member : public MemberBase<C> {
-public:
-    typedef V C::* Ptr;
-    Ptr memberPtr;
-
-    explicit Member(Ptr memberPtr) : memberPtr(memberPtr) {}
-
-    // Assigns value from v to C's pointed member of type V
-    inline void fromJSON(const Json::Value& v, C& obj) const {
-        (&obj)->*memberPtr = Serializable::fromJSON<V>(v);
-    }
-
-    // Serializes C's member of type V to JSON.
-    inline Json::Value toJSON(const C& obj) const {
-        return Serializable::toJSON((V&)((&obj)->*memberPtr));
-    }
-
-    inline void initPy(py::class_<C>& py, std::string name) const {
-        py.def_readwrite(name.c_str(), memberPtr);
-    }
-};
-
-template<class C>
-class SerializeFromRegistry {
-public:
-    // HACK(SMA) : For some reason uniuqe_ptr doesn't work too well here
-    // something about the copy constructor of pair? For now use shared_ptr.
-    // Although these pointers arn't meant to be shared.
-    typedef std::shared_ptr<MemberBase<C>> MemberBasePtr;
-    typedef std::map<std::string, MemberBasePtr> MemberMap;
-
-    explicit SerializeFromRegistry(const MemberMap& map) : members(map) {}
-    virtual ~SerializeFromRegistry() {}
-
-    virtual const MemberMap GenerateMap() = 0;
-
-    template<class K, class V>
-    static bool isRegistered(const std::map<K, V>& map, const std::string& key) {
-        auto it = map.find(key);
-        if ( it != map.end() ) {
-            return 1;
-        }
-        return 0;
-    }
-
-    template<typename V>
-    static inline void AddMember(MemberMap& members,
-                                 std::string name, V C::* memberPtr) {
-        static_assert(!std::is_abstract<SerializableHandle<V>>::value,
-                      "SerializableHandle for memberPtr type V should be implemented somehwere");
-        assert(isRegistered(members, name) == false);
-        // Attempt to workaround unique_ptr issue.
-        members.insert(std::make_pair(name,
-                                      MemberBasePtr(new Member<V, C>(memberPtr))));
-    }
-
-    inline C fromJSON(const Json::Value& v) const {
-        C obj;
-        for ( const auto& pair : members ) {
-            const auto& name = pair.first;
-            const auto& memberPtr = pair.second;
-            memberPtr->fromJSON(v[name], obj);
-        }
-        return obj;
-    }
-
-    inline Json::Value toJSON(const C& obj) const {
-        Json::Value v = Json::objectValue;
-        for ( const auto& pair : members ) {
-            const auto& name = pair.first;
-            const auto& memberPtr = pair.second;
-            v[name] = memberPtr->toJSON(obj);
-        }
-        return v;
-    }
-
-    inline void initPy(py::class_<C>& py) const {
-        for ( const auto& pair : members ) {
-            const auto& name = pair.first;
-            const auto& ptr = pair.second;
-            ptr->initPy(py, name);
-        }
-        py.def("assign_to", &assign_to<C>)
-          .def("get_component", &get_component<C>,
-               py::return_value_policy<py::reference_existing_object>())
-          .staticmethod("get_component");
-    }
-private:
-    MemberMap members;
-};
+#include <Farquaad/Core/SerializableHandle.hpp>

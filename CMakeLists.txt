@@ -6,6 +6,8 @@ project(GameEngine)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;" CACHE STRING "Limited configurations" FORCE)
+mark_as_advanced(CMAKE_CONFIGURATION_TYPES)
 
 
 # Set this to binary dir by default
@@ -22,12 +24,14 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.0.1-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_NAME}")
+set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.1.0-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_NAME}")
 
 # Disable examples by default
+option(BUILD_SHARED_LIBS "Link SFML as shared or not" OFF)
+option(SFML_OPENGL_ES "Build using ES opengl for non-desktop?" OFF)
 option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
-option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your" ON)
+option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your"  ON)
 
 enable_testing()
 
@@ -60,12 +64,39 @@ find_file(PYTHON_LIBRARY_DLL NAMES Python27.dll python2.7.dll)
 SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS
        ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} "${PYTHON_LIBRARY_DLL}")
 
+if(THOR_SFML_IS_BUILT)
+    set(SFML_LIBRARIES "sfml-graphics" "sfml-window" "sfml-audio" "sfml-system")
+    add_definitions(-DSFML_STATIC)
+endif()
+
+if(NOT BUILD_SHARED_LIBS)
+    set(THOR_SHARED_LIBS OFF CACHE PATH "BOOST top-level directory")
+endif()
+
+
+#Fake finding SFML
+# find_package(SFML 2 COMPONENTS graphics window system audio)
+# message(status "** SFML Include: ${SFML_INCLUDE_DIR}")
+# message(status "** SFML Dir: ${SFML_LIBRARY_DIRS}")
+# message(status "** SFML Libraries: ${SFML_LIBRARIES}")
+# if(SFML_FOUND)
+# elseif(THOR_SFML_IS_BUILT)
+#     set(SFML_LIBRARIES "sfml-graphics" "sfml-window" "sfml-audio" "sfml-system")
+# else()
+#     set(SFML_ROOT "" CACHE PATH "SFML top-level directory")
+#     message("\n-> SFML directory not found. Set SFML_ROOT to SFML's top-level path (containing \"include\" and \"lib\" directories).")
+#     message("-> Make sure the SFML libraries with the same configuration (Release/Debug, Static/Dynamic) exist.\n")
+# endif()
+
 
 # TODO(SMA) : Use ExternalProject_Add to conditionally build external libs.
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Thor)
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo)
+#HACK(SMA) : Set metatstuff include dir
+set(METASTUFF_INCLUDE_DIRS ${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo/include)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/catch-amalgamate)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/jsoncpp-amalgamate)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/imgui-amalgamate)
