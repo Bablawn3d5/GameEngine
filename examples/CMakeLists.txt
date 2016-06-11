@@ -26,6 +26,39 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Ox /Zi /FS /DEBUG")
 endif()
 
+set(SCRIPTDIR ${PROJECT_SOURCE_DIR}/scripts)
+
+# Add target to copy files
+file(GLOB ScriptFiles
+    ${SCRIPTDIR}/action/*.py
+    ${PYTHON27_STD_ZIP})
+
+add_custom_target(CopyActionScriptFiles SOURCES ${ScriptFiles})
+
+# Set target copy and install.
+foreach(ScriptFile ${ScriptFiles})
+    # Get the directory of the source file
+    get_filename_component(PARENT_DIR "${ScriptFile}" DIRECTORY)
+    get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
+
+    # Remove common directory prefix to make the group
+    string(REPLACE "${PROJECT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+    string(REPLACE "${PYTHON27_STD_ZIP_DIR}" "" GROUP "${GROUP}")
+
+    add_custom_command(TARGET CopyActionScriptFiles PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         make_directory "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/" )
+    add_custom_command(TARGET CopyActionScriptFiles PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E
+                         copy "${ScriptFile}"
+                              "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
+                     DEPENDS ${ScriptFile}
+                     COMMENT "Copying ${ScriptFile}")
+    source_group("${GROUP}" FILES "${ScriptFile}")
+    install(FILES ${ScriptFile} DESTINATION bin/${GROUP})
+endforeach()
+
+
 # Define HAVE_ROUND for pymath.h not being defined by windows.
 add_definitions(/DHAVE_ROUND)
 # Statically link boost
@@ -71,7 +104,7 @@ foreach(ConfigFile ${ConfigFiles})
     install(FILES ${ConfigFile} DESTINATION bin/${GROUP})
 endforeach()
 
-add_dependencies(FarquaadExamples CopyConfigs)
+add_dependencies(FarquaadExamples CopyConfigs CopyActionScriptFiles)
 target_link_libraries(FarquaadExamples Farquaad)
 
 

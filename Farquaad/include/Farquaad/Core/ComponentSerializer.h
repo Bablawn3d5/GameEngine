@@ -20,7 +20,7 @@ public:
     bool HasComponent() const;
 
     template<typename T>
-    void Load(T& component) const; // NOLINT
+    T Load() const; // NOLINT
 
     template<typename T>
     Json::Value Save(ex::ComponentHandle<T>& component) const; // NOLINT
@@ -51,9 +51,9 @@ inline bool ComponentSerializer::HasComponent() const {
 }
 
 template<typename T>
-inline void ComponentSerializer::Load(T& component) const {
+inline T ComponentSerializer::Load() const {
     const MappedComponent<T>& handle = Serializable::handle<T>();
-    component = Serializable::fromJSON<T>(value[handle.rootName]);
+    return Serializable::fromJSON<T>(value[handle.rootName]);
 }
 
 template<typename T> inline
@@ -74,8 +74,7 @@ void ComponentSerializer::LoadComponentToEntity(const ComponentSerializer & cs, 
     if ( !cs.HasComponent<T>() ) {
         return;
     }
-    T component;
-    cs.Load<T>(component);
+    T component(cs.Load<T>());
     e.replace<T>(component);
 }
 

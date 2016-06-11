@@ -41,7 +41,6 @@ class Component(object):
         self._kwargs = kwargs
 
     def _build(self, entity_id):
-        print "Compoent ID:" + str(entity_id)
         component = self._cls.get_component(_entityx._entity_manager, entity_id)
         if not component:
             component = self._cls(*self._args, **self._kwargs)
@@ -103,15 +102,6 @@ class Entity(_entityx.Entity):
         self = Entity.__new__(cls, entity_id=entity_id)
         cls.__init__(self, *args, **kwargs)
         return self
-
-    def Component(self, cls, *args, **kwargs):
-        entity_id = self._entity_id
-        component = cls.get_component(_entityx._entity_manager, entity_id)
-        if not component:
-            component = cls(*args, **kwargs)
-            component.assign_to(_entityx._entity_manager, entity_id)
-            return self.Component(cls, *args, **kwargs)
-        return component
 
 
 def emit(event):

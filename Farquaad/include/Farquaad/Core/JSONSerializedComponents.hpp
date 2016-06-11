@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <Farquaad/Components/PythonScript.hpp>
 #include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <Farquaad/Core/JSONSerializedPrimitiveTypes.hpp>
 #include <Farquaad/Core/JSONSerializedBox2D.hpp>
@@ -34,6 +35,28 @@ public:
         py.def_readwrite("x", &sf::Vector2<T>::x)
             .def_readwrite("y", &sf::Vector2<T>::y);
     }
+};
+
+template<>
+class SerializableHandle<PythonScript> : public MappedComponent<PythonScript> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() : MappedComponent("pythons") {}
+  ~SerializableHandle() {}
+
+  inline PythonScript fromJSON(const Json::Value &v) const {
+    // TODO(SMA) : Seralize and deseralize python class args
+    PythonScript p(v["modulename"].asString(), v["class"].asString());
+    return p;
+  }
+
+  inline Json::Value toJSON(const PythonScript & component) const {
+    Json::Value v = Json::objectValue;
+    v["modulename"] = component.module;
+    v["class"] = component.cls;
+    return v;
+  }
 };
 
 template<>

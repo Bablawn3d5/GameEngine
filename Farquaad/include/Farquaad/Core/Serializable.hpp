@@ -151,6 +151,10 @@ public:
             const auto& ptr = pair.second;
             ptr->initPy(py, name);
         }
+        py.def("assign_to", &assign_to<C>)
+          .def("get_component", &get_component<C>,
+               py::return_value_policy<py::reference_existing_object>())
+          .staticmethod("get_component");
     }
 private:
     MemberMap members;

@@ -18,6 +18,18 @@
 
 namespace fs = boost::filesystem;
 
+// HACK(SMA) : Just shove this here for now.
+BOOST_PYTHON_MODULE(_entityx_components) {
+  Serializable::initPy<Body>(py::class_<Body>("Body", py::init<>()));
+  Serializable::initPy<Physics>(py::class_<Physics>("Pyscics", py::init<>()));
+  Serializable::initPy<Stats>(py::class_<Stats>("Stats", py::init<>()));
+
+  // TODO(SMA) : Seralize me 
+  py::class_< sf::Vector2<float> >("Vec2f", py::init<>())
+    .def_readwrite("x", &sf::Vector2<float>::x)
+    .def_readwrite("y", &sf::Vector2<float>::y);
+}
+
 // Quick test for EntityX
 class Application : public entityx::EntityX {
 public:
@@ -39,10 +51,13 @@ public:
         systems.add<MoveSystem>();
         systems.add<ImGuiSystem>(target);
 
-        std::string path = fs::current_path().string();
-        auto pythonSystem = systems.add<PythonSystem>(&entities, path.c_str());
-        pythonSystem->add_path("Foo");
-
+        std::string path_exec = fs::current_path().string();
+        std::string path_scripts = (fs::current_path() / "scripts").string();
+        auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
+        pythonSystem->add_path(path_scripts.c_str());
+        assert(
+          PyImport_AppendInittab("_entityx_components", init_entityx_components) != -1 
+          && "Failed to initialize _entityx_components Python module");
         systems.configure();
 
         // HACK(SMA) : Create entity right in this bloated constructor.
@@ -73,6 +88,7 @@ public:
     void update(ex::TimeDelta dt) {
         systems.update<InputSystem>(dt);
         systems.update<MoveSystem>(dt);
+        systems.update<PythonSystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
         systems.update<ImGuiSystem>(dt);
@@ -90,6 +106,7 @@ int main() {
         Serializable::handle<Body>();
         Serializable::handle<Stats>();
         Serializable::handle<Physics>();
+        Serializable::handle<PythonScript>();
         Serializable::handle<InputResponder>();
     }
 

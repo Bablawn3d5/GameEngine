@@ -19,7 +19,7 @@
 #pragma clang diagnostic ignored "-Wint-to-void-pointer-cast"   // warning : cast to 'void *' from smaller integer type 'int'
 #pragma clang diagnostic ignored "-Wformat-security"            // warning : warning: format string is not a string literal
 #pragma clang diagnostic ignored "-Wexit-time-destructors"      // warning : declaration requires an exit-time destructor       // exit-time destruction order is undefined. if MemFree() leads to users code that has been disabled before exit it might cause problems. ImGui coding style welcomes static/globals.
-#pragma clang diagnostic ignored "-Wreserved-id-macro"          // warning : macro name is a reserved identifier                // 
+#pragma clang diagnostic ignored "-Wreserved-id-macro"          // warning : macro name is a reserved identifier                //
 #elif defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"          // warning: cast to pointer from integer of different size
 #pragma GCC diagnostic ignored "-Wformat-security"              // warning : format string is not a string literal (potentially insecure)
@@ -42,7 +42,7 @@ void ImGuiSystem::update(ex::EntityManager & em,
     ImGui::Begin("Debug");
     ImGui::Text("FPS: %d", (int) (1.f/dt) );
     ImGui::NewLine();
-    
+
     ImGui::SetNextWindowCollapsed(true, ImGuiSetCond_FirstUseEver);
 
     if ( ImGui::CollapsingHeader("Entites:") ) {
@@ -70,7 +70,7 @@ void ImGuiSystem::update(ex::EntityManager & em,
               //Json::Value members = object[key];
               //for ( auto& member : members.getMemberNames() ) {
               //  // HACK(SMA) : Create one static box for all fields
-              //  // we should really have one box per member 
+              //  // we should really have one box per member
               //  static char buf[32] = "";
               //  ImGui::Text(member.c_str());
               //  ImGui::PushItemWidth(-1);
