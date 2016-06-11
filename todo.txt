@@ -1,0 +1,8 @@
+TODO:
+
+- Move CopyScript to Top Level
+- Script pre/post build copy over isn't working again.
+- Scripts arn't being installed into the cpack builds
+
+- 5* Make python arrays better
+- Fix imgui-amalgmate visual-studio includes. (Shows full path whoops).

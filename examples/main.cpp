@@ -48,6 +48,7 @@ public:
         // HACK(SMA) : Create entity right in this bloated constructor.
         thor::ResourceHolder<Json::Value, std::string> holder;
         for ( auto items : v["entities"] ) {
+            std::cout << "Loading file: " << items.asString() << std::endl;
             auto json = holder.acquire(items.asString(),
                                        Resources::loadJSON(items.asString()));
             EntitySerializer es(json);
