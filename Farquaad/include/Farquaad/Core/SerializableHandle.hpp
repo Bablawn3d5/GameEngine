@@ -3,6 +3,7 @@
 #pragma once
 
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <json/json.h>
 #include <string>
 
@@ -16,6 +17,7 @@ public:
     static_assert(std::is_fundamental<T>::value, "Class only to be used in primitives.");
     return Json::Value(primitive);
   }
+
 };
 
 template<typename T>
@@ -60,7 +62,7 @@ public:
   }
 
   void initPy(py::class_<std::vector<T>>& py) const {
-    py.def(vector_indexing_suite<std::vector<T>>());
+    py.def(py::vector_indexing_suite<std::vector<T>>());
   }
 };
 
@@ -117,6 +119,29 @@ public:
 
   inline std::string fromJSON(const Json::Value& v) const {
       return v.asString();
+  }
+};
+
+
+template<>
+class SerializableHandle<PythonScript> {
+public:
+  inline Json::Value toJSON(const PythonScript& s) const {
+    Json::Value o;
+    // Don't seralize null objects.
+    if ( s.object != py::object() ) {
+     o["class"] = (std::string)py::extract<std::string>(s.object.attr("__class__").attr("__name__"));
+     o["modulename"] = (std::string)
+        py::extract<std::string>(s.object.attr("__class__").attr("__module__"));
+    } else {
+      o["class"] = s.cls;
+      o["modulename"] = s.module;
+    }
+    return o;
+  }
+
+  inline PythonScript fromJSON(const Json::Value& v) const {
+    return PythonScript(v["modulename"].asCString(), v["class"].asCString());
   }
 };
 

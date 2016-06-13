@@ -1,25 +1,36 @@
 import entityx
-from _entityx_components import Body
+from _entityx_components import Body, InputResponder, Physics, Stats
 
 class AnEntity(Entity):
     updated = False
-    frameCount = 10
-    curCount = frameCount
-    body = entityx.Component(Body)
+    fireRate = 0.2
+    curCount = fireRate
+    is_firing = False
 
-    def emit_collision_from_python():
-        # a = AnEntity()
-        # b = AnEntity()
-        # collision = Collision(a, b)
-        emit(collision)
+    body = entityx.Component(Body)
+    inresponder = entityx.Component(InputResponder)
 
     def update(self, dt):
         self.updated = True
-        self.curCount -= 1;
-        if(self.curCount == 0):
-            e = entityx.Entity()
-            bod = e.Component(Body)
-            bod.position = self.body.position
-            bod.direction = self.body.direction
-            self.curCount = self.frameCount
+
+        if "+Use" in self.inresponder.responds:
+            self.is_firing = True
+        if "-Use" in self.inresponder.responds:
+            self.is_firing = False
+
+        if(self.curCount <= 0):
+            if(self.is_firing):
+                # TODO(SMA) : Load from JSON file.
+                e = entityx.Entity()
+                bod = e.Component(Body)
+                bod.position = self.body.position
+                bod.direction = self.body.direction
+                phys = e.Component(Physics)
+                phys.size.x = 5
+                phys.size.y = 5
+                stats = e.Component(Stats)
+                # Reset cooldown
+                self.curCount = self.fireRate
+        else:
+            self.curCount -= dt;
 

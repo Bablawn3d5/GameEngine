@@ -23,8 +23,20 @@ BOOST_PYTHON_MODULE(_entityx_components) {
   Serializable::initPy<Body>(py::class_<Body>("Body", py::init<>()));
   Serializable::initPy<Physics>(py::class_<Physics>("Physics", py::init<>()));
   Serializable::initPy<Stats>(py::class_<Stats>("Stats", py::init<>()));
+  Serializable::initPy<InputResponder>(
+    py::class_<InputResponder>("InputResponder", py::init<>()));
+  Serializable::initPy<std::vector<std::string>>(
+    py::class_<std::vector<std::string>>("std_vector_string", py::init<>()));
+
+  // This doesn't work
+  //Serializable::initPy<sf::Vector2i>(
+  //  py::class_<sf::Vector2i>("sf_vector_int", py::init<>()));
 
   // TODO(SMA) : Seralize me 
+  py::class_< sf::Vector2<int> >("Vec2i", py::init<>())
+    .def_readwrite("x", &sf::Vector2<int>::x)
+    .def_readwrite("y", &sf::Vector2<int>::y);
+
   py::class_< sf::Vector2<float> >("Vec2f", py::init<>())
     .def_readwrite("x", &sf::Vector2<float>::x)
     .def_readwrite("y", &sf::Vector2<float>::y);
