@@ -2,17 +2,10 @@ branches:
   only:
     - master
 
-sudo: false
-language: cpp
-compiler:
-  - clang
-  - gcc
+
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.8
-    packages:
+    packages: &sfml_dependices
       # Needed by SFML
       - libpthread-stubs0-dev
       - libgl1-mesa-dev
@@ -30,13 +23,47 @@ addons:
       - libopenal-dev
       - libjpeg62
       - libstdc++-5-dev
-      # Compilers
-      - g++-5
-      - clang
-      - clang-3.8
       # Debugging
       - valgrind
       - gdb
+      - g++-5
+
+sudo: false
+language: cpp
+matrix:
+  include:
+  - os: linux
+    compiler: gcc
+    env:
+    - CMAKE_BUILD_TYPE=debug
+    - JOBS_LIMIT=4
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - *sfml_dependices
+  - os: linux
+    compiler: clang
+    d: ldc
+    env:
+    - CMAKE_BUILD_TYPE=debug
+    - TARGET=desktop
+    - JOBS_LIMIT=4
+    - LLVM_VERSION=3.8.0
+    addons:
+      apt:
+        sources:
+          - llvm-toolchain-precise-3.8
+          - ubuntu-toolchain-r-test
+        packages:
+          - *sfml_dependices
+          - clang
+          - clang-3.8
+  # TODO(SMA) : Fix.
+  # - os: osx
+  #   compiler: clang
+  #   env: TARGET=desktop
 
 cache:
   apt: true
@@ -44,6 +71,7 @@ cache:
   - $HOME/.ccache
   - "deps/boost-install"
   - "deps/cmake"
+  - llvm-3.8.0
 
 # This so travis stops complaining about 'private' repos when you've checked out
 # the repository using ssh keys for convenience.
@@ -57,6 +85,16 @@ before_install:
   - git submodule update --init --recursive
   # Install g++ and gcc 4.8 for better C++11 support
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5";  g++ --version; fi
+  - |
+    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      if [ -z "$(ls -A llvm-$LLVM_VERSION)" ]; then
+        wget -O llvm-$LLVM_VERSION.tar.xz http://llvm.org/releases/$LLVM_VERSION/clang+llvm-$LLVM_VERSION-x86_64-linux-gnu-ubuntu-14.04.tar.xz;
+        mkdir llvm-$LLVM_VERSION;
+        xzcat llvm-$LLVM_VERSION.tar.xz | tar -xvf - --strip 1 -C llvm-$LLVM_VERSION;
+      fi;
+      llvm-$LLVM_VERSION/bin/llvm-config --version;
+      export LLVM_CONFIG="llvm-$LLVM_VERSION/bin/llvm-config";
+    fi
   # Clang 3.8 due to C++11 and gcc-4.9 conflicts.
   - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.8" CC="clang-3.8"; clang --version; fi
   - echo $CC
@@ -109,7 +147,7 @@ before_script:
 
 script:
   - mkdir build && cd build
-  - cmake .. -DCMAKE_INSTALL_PREFIX="$(pwd)/install" -DCMAKE_BUILD_TYPE=Debug -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=$BOOST_ROOT
+  - cmake .. -DCMAKE_INSTALL_PREFIX="$(pwd)/install" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=$BOOST_ROOT
   - make VERBOSE=1
   - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so valgrind --leak-check=full --error-exitcode=1 make test || (cat Testing/Temporary/LastTest.log && exit 1)
   - cpack -V
