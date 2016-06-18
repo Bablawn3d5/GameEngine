@@ -94,7 +94,7 @@ add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Thor)
-add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo)
+#add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo)
 #HACK(SMA) : Set metatstuff include dir
 set(METASTUFF_INCLUDE_DIRS ${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo/include)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/catch-amalgamate)
