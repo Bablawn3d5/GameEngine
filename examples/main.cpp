@@ -74,10 +74,15 @@ public:
         auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
         pythonSystem->add_path(path_scripts.c_str());
         systems.configure();
+        std::cout << "Script path: [" << path_exec;
+        for ( auto& path_str : pythonSystem->python_paths() ) {
+          std::cout << "," << path_str;
+        }
+        std::cout << "]" << std::endl;
 
         // HACK(SMA) : Create entity right in this bloated constructor.
         thor::ResourceHolder<Json::Value, std::string> holder;
-        for ( auto items : v["entities"] ) {
+        for ( auto& items : v["entities"] ) {
             std::cout << "Loading file: " << items.asString() << std::endl;
             auto json = holder.acquire(items.asString(),
                                        Resources::loadJSON(items.asString()));

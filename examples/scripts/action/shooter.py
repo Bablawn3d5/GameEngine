@@ -1,7 +1,7 @@
 import entityx
 from _entityx_components import Body, InputResponder, Physics, Stats
 
-class AnEntity(Entity):
+class Shooter(entityx.Entity):
     updated = False
     fireRate = 0.2
     curCount = fireRate

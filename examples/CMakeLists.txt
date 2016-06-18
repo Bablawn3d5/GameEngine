@@ -31,6 +31,7 @@ set(SCRIPTDIR ${PROJECT_SOURCE_DIR}/scripts)
 # Add target to copy files
 file(GLOB ScriptFiles
     ${SCRIPTDIR}/action/*.py
+    ${SCRIPTDIR}/entityx/*.py
     ${PYTHON27_STD_ZIP})
 
 add_custom_target(CopyActionScriptFiles SOURCES ${ScriptFiles})
