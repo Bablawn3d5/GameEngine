@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <boost/python.hpp>
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
 #include <Farquaad/Core/ComponentSerializer.h>

@@ -13,6 +13,11 @@ namespace py = boost::python;
 template <class T>
 class SerializableHandlePrimitive {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandlePrimitive() {}
+  ~SerializableHandlePrimitive() {}
+
   inline Json::Value toJSON(const T& primitive) const {
     static_assert(std::is_fundamental<T>::value, "Class only to be used in primitives.");
     return Json::Value(primitive);
@@ -23,6 +28,11 @@ public:
 template<typename T>
 class SerializableHandle<sf::Vector2<T>> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline sf::Vector2<T> fromJSON(const Json::Value &v) const {
     return sf::Vector2<T>(Serializable::fromJSON<T>(v[0]),
                           Serializable::fromJSON<T>(v[1]));
@@ -35,7 +45,7 @@ public:
     return v;
   }
 
-  inline void initPy(py::class_<sf::Vector2<T>>& py) {
+  inline void initPy(py::class_<sf::Vector2<T>>&& py) {
     py.def_readwrite("x", &sf::Vector2<T>::x)
       .def_readwrite("y", &sf::Vector2<T>::y);
   }
@@ -44,6 +54,11 @@ public:
 template<class T>
 class SerializableHandle<std::vector<T>> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   std::vector<T> fromJSON(const Json::Value& v) const {
     std::vector<T> obj;
     if( !v.isArray() ) { return obj; }
@@ -61,7 +76,7 @@ public:
     return v;
   }
 
-  void initPy(py::class_<std::vector<T>>& py) const {
+  void initPy(py::class_<std::vector<T>>&& py) const {
     py.def(py::vector_indexing_suite<std::vector<T>>());
   }
 };
@@ -69,6 +84,11 @@ public:
 template<>
 class SerializableHandle<bool> : public SerializableHandlePrimitive<bool> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline bool fromJSON(const Json::Value& v) const {
     return v.asBool();
   }
@@ -78,15 +98,25 @@ template<>
 class SerializableHandle<float>
   : public SerializableHandlePrimitive<float> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline float fromJSON(const Json::Value& v) const {
     return v.asFloat();
   }
 };
 
 template<>
-class SerializableHandle<double> 
+class SerializableHandle<double>
   : public SerializableHandlePrimitive<double> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline double fromJSON(const Json::Value& v) const {
     return v.asDouble();
   }
@@ -96,6 +126,11 @@ template<>
 class SerializableHandle<int>
   : public SerializableHandlePrimitive<int> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline int fromJSON(const Json::Value& v) const {
     return v.asInt();
   }
@@ -105,6 +140,11 @@ template<>
 class SerializableHandle<const char*>
   : public SerializableHandlePrimitive<const char*> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline const char* fromJSON(const Json::Value& v) const {
       return v.asCString();
   }
@@ -113,6 +153,11 @@ public:
 template<>
 class SerializableHandle<std::string> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline Json::Value toJSON(const std::string& s) const {
     return Json::Value(s);
   }
@@ -126,6 +171,11 @@ public:
 template<>
 class SerializableHandle<PythonScript> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline Json::Value toJSON(const PythonScript& s) const {
     Json::Value o;
     // Don't seralize null objects.
@@ -153,6 +203,11 @@ public:
 template<>
 class SerializableHandle<KeyInput> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline KeyInput fromJSON(const Json::Value& v) const {
     KeyInput bind;
     auto keyString = v.asString();
@@ -189,6 +244,11 @@ public:
 template<>
 class SerializableHandle<InputSystem::KeyBindMap> {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   inline InputSystem::KeyBindMap fromJSON(const Json::Value& v) const {
     InputSystem::KeyBindMap map;
     for ( auto& val : v.getMemberNames() ) {
@@ -222,7 +282,7 @@ public:
       std::regex rek("^[+-](.*)");
       std::smatch match;
       if ( std::regex_search(pair.first, match, rek) && match.size() > 1 ) {
-        v[match[1].str()] = Serializable::toJSON(pair.second);
+        v[match[1].str()] = Serializable::toJSON<KeyInput>(pair.second);
       } else {
         // Never should happen.
         assert(!"Something has gone horribly wrong");

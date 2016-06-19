@@ -11,6 +11,7 @@
 #include <map>
 #include <string>
 #include <cassert>
+#include <utility>
 
 namespace py = boost::python;
 
@@ -19,7 +20,7 @@ template<typename> class SerializableHandle;
 namespace Serializable {
 template<typename T> T fromJSON(const Json::Value&);
 template<typename T> Json::Value toJSON(const T&);
-template<typename T> void initPy(py::class_<T>&);
+template<typename T> void initPy(py::class_<T>&&);
 template<typename T> const SerializableHandle<T>& handle();
 }
 
@@ -28,6 +29,11 @@ template<typename T> const SerializableHandle<T>& handle();
 template<class T>
 class SerializableHandle {
 public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
   T fromJSON(const Json::Value& v) const {
     T obj;
     if ( v.isNull() ) { return obj; }
@@ -56,7 +62,7 @@ public:
     return v;
   }
 
-  void initPy(py::class_<T>& py) const {
+  void initPy(py::class_<T>&& py) const {
     meta::doForAllMembers<T>(
       [&py](const auto& member) {
       using memeber_type = meta::get_member_type<decltype(member)>;
@@ -74,7 +80,7 @@ public:
 namespace Serializable {
 template<typename T>
 inline T fromJSON(const Json::Value& json) {
-    return handle<T>().fromJSON(json);
+  return handle<T>().fromJSON(json);
 }
 
 template<typename T>
@@ -83,8 +89,8 @@ inline Json::Value toJSON(const T& component) {
 }
 
 template<typename T>
-inline void initPy(py::class_<T>& py) {
-    handle<T>().initPy(py);
+inline void initPy(py::class_<T>&& py) {
+    handle<T>().initPy(std::forward<py::class_<T>>(py));
 }
 
 // If you get an error here saying your instantiating a abstract
