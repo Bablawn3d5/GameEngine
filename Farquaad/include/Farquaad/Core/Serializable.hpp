@@ -1,10 +1,11 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2016 Bablawn3d5
 
 #pragma once
 
 #include <boost/python.hpp>
-#include <Meta.h>
+#include <Farquaad/Systems/PythonSystem.h>
 #include <Farquaad/Core/MetaRegister.hpp>
+#include <Meta.h>
 #include <json/json.h>
 #include <memory>
 #include <map>
@@ -20,8 +21,7 @@ template<typename T> T fromJSON(const Json::Value&);
 template<typename T> Json::Value toJSON(const T&);
 template<typename T> void initPy(py::class_<T>&);
 template<typename T> const SerializableHandle<T>& handle();
-};
-
+}
 
 // Class definition for SerializableHandle that should be specialized by each
 // component.
@@ -99,6 +99,6 @@ const SerializableHandle<T>& handle() {
     static const SerializableHandle<T> handle;
     return handle;
 }
-};
+}
 
 #include <Farquaad/Core/SerializableHandle.hpp>
