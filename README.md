@@ -15,21 +15,26 @@ Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is
 
 [Thor](https://github.com/Bromeon/Thor)
 
+[MetaStuff](https://github.com/EliasD/MetaStuff)
+
+[ImGui](https://github.com/ocornut/imgui)
+
+[ImGui-SFML](https://github.com/EliasD/imgui-sfml)
+
 ## Building
 
-The engine builds on Win64 **Visual Studio 2015**, **gcc-4.9**, and **clang-3.5**. Anything earlier may encounter compiler issues with the C++11 language.
+The engine builds on Win64 **Visual Studio 2015**, **gcc-4.9**, and **clang-3.8**. Anything earlier may encounter compiler issues.
 
 You will need to install **Python 2.7** and **Boost.Python 1.59** on your system to build from source.
 
 Build scripts are built using **CMake 3.1.0** or Higher.
 
-There's a number of prerequisite libraries needed on Linux64 and MacOSX, see `.travis.yml` for the list of packages.
+There's a number of prerequisite libraries needed on Linux64 and MacOSX, see [.travis.yml](.travis.yml) for the list of packages.
 
 ```
 git clone https://github.com/Bablawn3d5/GameEngine.git
 git submodule update --init --recursive
-mkdir Build
-cd Build
+mkdir Build && cd Build
 cmake ..
 make
 ```
@@ -60,7 +65,7 @@ The serializer comes bundled with the engine, intergartes bindings for jsoncpp a
   std::cout << v;
 ```
 
-Going from JSON to Objects is simple too:
+Going from JSON to Objects:
 
 ```
   Json::Value v;
@@ -72,7 +77,7 @@ Going from JSON to Objects is simple too:
   Body b =  Serializable::fromJSON<Body>(v);
 ```
 
-Extending the serializer to new types is as easy as defining a SerializableHandle, and mapping members to a MemberMap:
+Extending the serializer to new types is as easy as defining a SerializableHandle, and mapping members to a Meta header:
 
 ```
 // Some new component
@@ -82,19 +87,23 @@ struct Position {
     bool someBool;
 };
 
-// Defined in some header file:
-template<>
-class SerializableHandle<Position> : public SerializeFromRegistry<Position> {
-public:
-    SerializableHandle() : SerializeFromRegistry<Position>(this->GenerateMap()) {
-    }
+// This meta definition will auto-generate Serializable::fromJSON<Position>(&p) and 
+// Serializable::toJSON<Position>(&p) 
+namespace meta
+{
+template <>
+constexpr auto registerName<Position>() {
+  return "body";
+}
 
-    inline const SerializeFromRegistry<Position>::MemberMap SerializableHandle<Position>::GenerateMap() {
-        SerializeFromRegistry<Position>::MemberMap map;
-        AddMember(map, "position", &Position::position);
-        AddMember(map, "someInt", &Position::someInt);
-        AddMember(map, "someBool", &Position::someBool);
-        return map;
+template <>
+inline auto registerMembers<Position>() {
+    return members(
+        member("position", &Position::position),
+        member(map, "position", &Position::position),
+        member(map, "someInt", &Position::someInt),
+        member(map, "someBool", &Position::someBool)
+        );
     }
 }
 
