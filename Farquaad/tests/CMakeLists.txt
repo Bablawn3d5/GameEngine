@@ -64,6 +64,7 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIR})
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
+include_directories(${METASTUFF_INCLUDE_DIRS})
 
 # Build Executable
 enable_testing()

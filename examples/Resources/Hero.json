@@ -9,5 +9,9 @@
         "bodyType" : "DYNAMIC",
         "size" : [100, 100]
     },
-    "inputresponder" : {}
+    "inputresponder" : {},
+    "pythons" : {
+        "modulename" : "action.shooter",
+        "class" : "Shooter"
+    }
 }

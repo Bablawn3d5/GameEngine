@@ -2,8 +2,9 @@
 
 #pragma once
 
+#include <boost/python.hpp>
+#include <Meta.h>
+#include <Farquaad/Core/MetaRegister.hpp>
 #include <Farquaad/Core/Serializable.hpp>
-#include <Farquaad/Core/JSONSerializedPrimitiveTypes.hpp>
-#include <Farquaad/Core/JSONSerializedBox2D.hpp>
-#include <Farquaad/Core/JSONSerializedComponents.hpp>
-#include <Farquaad/Core/JSONSerializedSystemObjects.hpp>
+#include <Farquaad/Core/ComponentSerializer.h>
+#include <Farquaad/Core/EntitySerializer.h>

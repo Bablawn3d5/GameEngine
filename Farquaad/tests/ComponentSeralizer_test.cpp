@@ -1,6 +1,5 @@
 // Copyright 2015-2016 Bablawn3d5
 #include <Farquaad/Serialization.hpp>
-#include <Farquaad/Core/SeralizeableComponentMap.h>
 #include <Farquaad/Core/ComponentSerializer.h>
 #include <Farquaad/Core.hpp>
 #include <Common.h>
@@ -84,7 +83,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
 
     // Load works from empty
     Position p(1.0f, 2.0f);
-    cs0.Load<Position>(p);
+    p = cs0.Load<Position>();
     Position expected(0.0f, 0.0f);
     REQUIRE(p == expected);
 
@@ -94,7 +93,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadComponent") {
     Json::Value v;
     v["pos"] = Serializable::toJSON(expected1);
     ComponentSerializer cs1(v);
-    cs1.Load(p1);
+    p1 = cs1.Load<Position>();
     REQUIRE(p1 == expected1);
 }
 
@@ -121,7 +120,7 @@ TEST_CASE_METHOD(ComponentSeralizerTestFixture, "TestLoadFromStream") {
     REQUIRE(cs0.toString() != "null\n");
 
     Position loaded;
-    cs0.Load(loaded);
+    loaded = cs0.Load<Position>();
     REQUIRE(loaded == p2);
     // Test Percision hasn't been lost.
     REQUIRE(loaded.x == p2.x);

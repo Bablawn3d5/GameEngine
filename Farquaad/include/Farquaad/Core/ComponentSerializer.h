@@ -2,14 +2,13 @@
 #pragma once
 
 #include <Farquaad/Core/Serializable.hpp>
+#include <Meta.h>
 #include <json/json.h>
 #include <entityx/entityx.h>
 #include <string>
 #include <sstream>
 
 namespace ex = entityx;
-
-template<typename T> class MappedComponent;
 
 class ComponentSerializer {
 public:
@@ -20,7 +19,7 @@ public:
     bool HasComponent() const;
 
     template<typename T>
-    void Load(T& component) const; // NOLINT
+    T Load() const; // NOLINT
 
     template<typename T>
     Json::Value Save(ex::ComponentHandle<T>& component) const; // NOLINT
@@ -46,14 +45,12 @@ private:
 
 template<typename T>
 inline bool ComponentSerializer::HasComponent() const {
-    const MappedComponent<T>& handle = Serializable::handle<T>();
-    return value[handle.rootName].isObject();
+    return value[meta::getName<T>()].isObject();
 }
 
 template<typename T>
-inline void ComponentSerializer::Load(T& component) const {
-    const MappedComponent<T>& handle = Serializable::handle<T>();
-    component = Serializable::fromJSON<T>(value[handle.rootName]);
+inline T ComponentSerializer::Load() const {
+    return Serializable::fromJSON<T>(value[meta::getName<T>()]);
 }
 
 template<typename T> inline
@@ -63,9 +60,8 @@ Json::Value ComponentSerializer::Save(ex::ComponentHandle<T>& handle) const {
 
 template<typename T> inline
 Json::Value ComponentSerializer::Save(const T& component) const {
-    const MappedComponent<T>& handle = Serializable::handle<T>();
     Json::Value v;
-    v[handle.rootName] = Serializable::toJSON<T>(component);
+    v[meta::getName<T>()] = Serializable::toJSON<T>(component);
     return v;
 }
 
@@ -74,8 +70,7 @@ void ComponentSerializer::LoadComponentToEntity(const ComponentSerializer & cs, 
     if ( !cs.HasComponent<T>() ) {
         return;
     }
-    T component;
-    cs.Load<T>(component);
+    T component(cs.Load<T>());
     e.replace<T>(component);
 }
 
@@ -84,10 +79,9 @@ Json::Value ComponentSerializer::SaveEntityComponent(const ComponentSerializer &
     Json::Value v;
 
     if ( e.has_component<T>() ) {
-        const MappedComponent<T>& mappedhandle = Serializable::handle<T>();
         ex::ComponentHandle<T> handle = e.component<T>();
         auto json = cs.Save<T>(handle);
-        v[mappedhandle.rootName] = json[mappedhandle.rootName];
+        v[meta::getName<T>()] = json[meta::getName<T>()];
     }
 
     return v;

@@ -79,6 +79,7 @@ ex::Entity::Id EntityManager_configure(ex::EntityManager& em, py::object self) {
     return entity.id();
 }
 
+
 BOOST_PYTHON_MODULE(_entityx) {
     py::to_python_converter<ex::Entity, EntityToPythonEntity>();
     py::implicitly_convertible<PythonEntity, ex::Entity>();
@@ -113,7 +114,11 @@ BOOST_PYTHON_MODULE(_entityx) {
 }
 
 void PythonSystem::initialize_python_module() {
-    assert(PyImport_AppendInittab("_entityx", init_entityx) != -1 && "Failed to initialize _entityx Python module");
+    assert(PyImport_AppendInittab("_entityx", init_entityx) != -1 && 
+           "Failed to initialize _entityx Python module");
+#ifdef NDEBUG
+    PyImport_AppendInittab("_entityx", init_entityx);
+#endif
 }
 
 bool PythonSystem::intialized = false;
@@ -135,7 +140,7 @@ PythonSystem::PythonSystem(ex::EntityManager* em, const fs::path& p) : em(em) {
 
     // Assuming python27.zip is our python lib zip.
     PyRun_SimpleString("import sys");
-    PyRun_SimpleString("sys.path = ['.','python27.zip']");
+    PyRun_SimpleString("sys.path.append('python27.zip')");
 
     if ( !intialized ) {
         init_entityx();
@@ -169,7 +174,7 @@ void PythonSystem::configure(ex::EventManager& ev) {
         py::object sys = py::import("sys");
 
         // Add paths to interpreter sys.path
-        for ( auto path : py_paths ) {
+        for ( auto& path : py_paths ) {
             py::str dir = path.c_str();
             sys.attr("path").attr("insert")(0, dir);
         }
@@ -189,6 +194,7 @@ void PythonSystem::receive(const ex::ComponentAddedEvent<PythonScript> &event) {
     // If the component was created in C++ it won't have a Python object
     // associated with it. Create one.
     if ( !event.component->object ) {
+      try {
         py::object module = py::import(event.component->module.c_str());
         py::object cls = module.attr(event.component->cls.c_str());
         py::object from_raw_entity = cls.attr("_from_raw_entity");
@@ -202,5 +208,10 @@ void PythonSystem::receive(const ex::ComponentAddedEvent<PythonScript> &event) {
             ex::ComponentHandle<PythonScript> p = event.component;
             p->object = from_raw_entity(*py::tuple(args));
         }
+      } catch ( ... ) {
+        PyErr_Print();
+        PyErr_Clear();
+        throw;
+      }
     }
 }

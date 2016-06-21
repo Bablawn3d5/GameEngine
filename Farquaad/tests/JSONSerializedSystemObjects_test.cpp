@@ -1,6 +1,5 @@
 // Copyright 2015-2016 Bablawn3d5
 #include <Farquaad/Serialization.hpp>
-#include <Farquaad/Core/JSONSerializedSystemObjects.hpp>
 #include <Farquaad/Systems.hpp>
 #include <Common.h>
 #include <json/json.h>

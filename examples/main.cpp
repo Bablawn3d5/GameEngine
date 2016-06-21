@@ -14,9 +14,33 @@
 #include <Thor/Resources.hpp>
 
 #include <Farquaad/Systems/PythonSystem.h>
+#include <vector>
 #include <string>
 
 namespace fs = boost::filesystem;
+
+// HACK(SMA) : Just shove this here for now.
+BOOST_PYTHON_MODULE(_entityx_components) {
+  Serializable::initPy(py::class_<Body>("Body", py::init<>()));
+  Serializable::initPy(py::class_<Physics>("Physics", py::init<>()));
+  Serializable::initPy(py::class_<Stats>("Stats", py::init<>()));
+  Serializable::initPy(py::class_<InputResponder>("InputResponder", py::init<>()));
+  typedef std::vector<std::string> vec_string;
+  Serializable::initPy(py::class_<vec_string>("std_vector_string", py::init<>()));
+
+  // This doesn't work
+  //Serializable::initPy<sf::Vector2i>(
+  //  py::class_<sf::Vector2i>("sf_vector_int", py::init<>()));
+
+  // TODO(SMA) : Seralize me
+  py::class_< sf::Vector2<int> >("Vec2i", py::init<>())
+    .def_readwrite("x", &sf::Vector2<int>::x)
+    .def_readwrite("y", &sf::Vector2<int>::y);
+
+  py::class_< sf::Vector2<float> >("Vec2f", py::init<>())
+    .def_readwrite("x", &sf::Vector2<float>::x)
+    .def_readwrite("y", &sf::Vector2<float>::y);
+}
 
 // Quick test for EntityX
 class Application : public entityx::EntityX {
@@ -39,15 +63,26 @@ public:
         systems.add<MoveSystem>();
         systems.add<ImGuiSystem>(target);
 
-        std::string path = fs::current_path().string();
-        auto pythonSystem = systems.add<PythonSystem>(&entities, path.c_str());
-        pythonSystem->add_path("Foo");
-
+        std::string path_exec = fs::current_path().string();
+        std::string path_scripts = (fs::current_path() / "scripts").string();
+        assert(
+          PyImport_AppendInittab("_entityx_components", init_entityx_components) != -1
+          && "Failed to initialize _entityx_components Python module");
+#ifdef NDEBUG
+        PyImport_AppendInittab("_entityx_components", init_entityx_components);
+#endif
+        auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
+        pythonSystem->add_path(path_scripts.c_str());
         systems.configure();
+        std::cout << "Script path: [" << path_exec;
+        for ( auto& path_str : pythonSystem->python_paths() ) {
+          std::cout << "," << path_str;
+        }
+        std::cout << "]" << std::endl;
 
         // HACK(SMA) : Create entity right in this bloated constructor.
         thor::ResourceHolder<Json::Value, std::string> holder;
-        for ( auto items : v["entities"] ) {
+        for ( auto& items : v["entities"] ) {
             std::cout << "Loading file: " << items.asString() << std::endl;
             auto json = holder.acquire(items.asString(),
                                        Resources::loadJSON(items.asString()));
@@ -73,6 +108,7 @@ public:
     void update(ex::TimeDelta dt) {
         systems.update<InputSystem>(dt);
         systems.update<MoveSystem>(dt);
+        systems.update<PythonSystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
         systems.update<ImGuiSystem>(dt);
@@ -90,6 +126,7 @@ int main() {
         Serializable::handle<Body>();
         Serializable::handle<Stats>();
         Serializable::handle<Physics>();
+        Serializable::handle<PythonScript>();
         Serializable::handle<InputResponder>();
     }
 
