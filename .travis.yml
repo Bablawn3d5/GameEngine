@@ -127,6 +127,7 @@ install:
     else
       brew update
       brew unlink cmake
+      brew install xz
       brew install homebrew/versions/cmake31  --without-docs
       brew link homebrew/versions/cmake31
     fi
