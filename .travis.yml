@@ -48,7 +48,6 @@ matrix:
     d: ldc
     env:
     - CMAKE_BUILD_TYPE=debug
-    - TARGET=desktop
     - JOBS_LIMIT=4
     - LLVM_VERSION=3.8.0
     - LLVM_ARCHIVE_PATH=$HOME/clang+llvm.tar.xz
@@ -62,11 +61,16 @@ matrix:
           # llvm apt is down
           #- clang
           #- clang-3.8
-  # TODO(SMA) : Fix.
-  # - os: osx
-  #   compiler: clang
-  #   env: TARGET=desktop
-
+  - os: osx
+    osx_image: xcode7.3
+    env:
+    - CMAKE_BUILD_TYPE=debug
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - *sfml_dependices
 
 cache:
   apt: true
@@ -75,6 +79,7 @@ cache:
   - "deps/boost-install"
   - "deps/cmake"
   - $HOME/clang-$LLVM_VERSION
+  - /usr/local/Cellar/cmake31
 
 # This so travis stops complaining about 'private' repos when you've checked out
 # the repository using ssh keys for convenience.
@@ -83,12 +88,14 @@ git:
   submodules: false
 before_install:
   # use sed to replace the SSH URL with the public URL, then init and update submodules
-  - sed -i 's/git@github.com:/git:\/\/github.com\//' .gitmodules
+  - sed -i' ' 's/git@github.com:/git:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
   # Install g++ and gcc 4.8 for better C++11 support
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5";  g++ --version; fi
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ] && [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5";  g++ --version; fi
+
+  # Clang 3.8 due to C++11 and gcc-4.9 conflicts.
   - |
-    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    if [ "${TRAVIS_OS_NAME}" = "linux" ] && [ "$CXX" = "clang++" ]; then
       if [ -z "$(ls -A $HOME/clang-$LLVM_VERSION)" ]; then
         wget http://llvm.org/releases/$LLVM_VERSION/clang+llvm-$LLVM_VERSION-x86_64-linux-gnu-ubuntu-14.04.tar.xz -O $LLVM_ARCHIVE_PATH
         mkdir $HOME/clang-$LLVM_VERSION
@@ -97,18 +104,13 @@ before_install:
       llvm-$LLVM_VERSION/bin/llvm-config --version;
       $HOME/clang-$LLVM_VERSION/bin/clang++ --version;
       export LLVM_CONFIG="llvm-$LLVM_VERSION/bin/llvm-config";
-    fi
-  # Clang 3.8 due to C++11 and gcc-4.9 conflicts.
-  - |
-    if [ "$CXX" = "clang++" ]; then
       export LD_LIBRARY_PATH=$HOME/clang-$LLVM_VERSION/lib:$LD_LIBRARY_PATH
       export CXX=$HOME/clang-$LLVM_VERSION/bin/clang++
       export CC=$HOME/clang-$LLVM_VERSION/bin/clang
     fi
-  - echo $CC
 
 install:
-  - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+  - export DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
   - pushd .
   - cd ${DEPS_DIR}
   - pushd .
@@ -123,7 +125,9 @@ install:
       fi
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     else
-      brew install cmake
+      brew update
+      brew unlink cmake
+      brew install homebrew/versions/cmake31  --without-docs
     fi
   - which cmake
   - cmake --version
@@ -139,8 +143,13 @@ install:
       chmod +x bootstrap.sh
       ./bootstrap.sh --prefix="$(pwd)/../boost-install"
       ./b2 headers
-      # Use gcc as clang has problems building boost :(((
-      ./b2 toolset=gcc-5 cxxflags="-std=c++11" link=static --with-filesystem --with-python install -d0
+      if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+        # Use gcc as clang has problems building boost :(((
+        ./b2 toolset=gcc-5 cxxflags="-std=c++11" link=static --with-filesystem --with-python install -d0
+      else
+        # Assume osx
+        ./b2 cxxflags="-std=c++11" link=static --with-filesystem --with-python install -d0
+      fi
     fi
   - if [ "$REBUILD_BOOST" == "no"  ]; then mkdir boost && cd boost; fi
   - cd ../boost-install && export BOOST_ROOT="$(pwd)"
@@ -157,8 +166,9 @@ script:
   - mkdir build && cd build
   - cmake .. -DCMAKE_INSTALL_PREFIX="$(pwd)/install" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=$BOOST_ROOT
   - make VERBOSE=1
-  - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so valgrind --leak-check=full --error-exitcode=1 make test || (cat Testing/Temporary/LastTest.log && exit 1)
-  - cpack -V
+  #- LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so valgrind --leak-check=full --error-exitcode=1 make test || (cat Testing/Temporary/LastTest.log && exit 1)
+  # HACK(SMA): Only do this on linux, cpack isn't working on osx due to linking issues :(
+  -  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then cpack -V; fi
 
 after_failure:
   - COREFILE=$(find . -maxdepth 1 -name "core*" | head -n 1) # find core file
