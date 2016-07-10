@@ -80,6 +80,7 @@ cache:
   - "deps/cmake"
   - $HOME/clang-$LLVM_VERSION
   - /usr/local/Cellar/cmake31
+  - /usr/local/Cellar/xz/
 
 # This so travis stops complaining about 'private' repos when you've checked out
 # the repository using ssh keys for convenience.
