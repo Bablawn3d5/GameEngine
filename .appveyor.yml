@@ -12,11 +12,11 @@ build_script:
 
     git submodule update --init --recursive
 
-    if (! ( (Test-Path C:\deps\boost-install\lib\libboost_python-vc140-mt-1_59.lib) -And
-            (Test-Path C:\deps\boost-install\lib\libboost_filesystem-vc140-mt-1_59.lib) )) {
+    if (! ( (Test-Path C:\deps\boost-install\lib\libboost_python-vc140-mt-1_60.lib) -And
+            (Test-Path C:\deps\boost-install\lib\libboost_filesystem-vc140-mt-1_60.lib) )) {
         pushd .
 
-        cd C:\Libraries\boost_1_59_0
+        cd C:\Libraries\boost_1_60_0
 
         rm -r C:/deps/boost-install
 

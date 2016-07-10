@@ -10,6 +10,19 @@
 namespace ex = entityx;
 namespace py = boost::python;
 
+// Workaround Visual Studio 2015 Update 3 Known Issue - June 27th 2016 :|
+namespace boost {
+template <>
+inline ex::EventManager const volatile * get_pointer(class ex::EventManager const volatile *em) {
+  return em;
+}
+
+template <>
+inline ex::EntityManager const volatile * get_pointer(class ex::EntityManager const volatile *em) {
+  return em;
+}
+}
+
 void PythonSystem::update(ex::EntityManager & em,
                           ex::EventManager & events, ex::TimeDelta dt) {
     em.each<PythonScript>(
