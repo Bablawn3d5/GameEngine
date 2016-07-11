@@ -73,6 +73,10 @@ void InputSystem::update(ex::EntityManager &em,
       [&](ex::Entity entity, InputResponder &responder) {
       responder.responds.clear();
       responders.push_back(responder);
+      responder.mousePos = sf::Mouse::getPosition(window);
+      // TODO(SMA) : Translate game window pos to in-game pos.
+      // Assming 1:1 here.
+      responder.mouseGamePos = sf::Mouse::getPosition(window);
     });
 
     // Poll window Events

@@ -62,7 +62,8 @@ template <>
 inline auto registerMembers<Physics>() {
     return members(
       member("bodyType", &Physics::bodyType),
-      member("size", &Physics::size)
+      member("size", &Physics::size),
+      member("dirty", &Physics::isDirty)
     );
 }
 
@@ -75,7 +76,9 @@ constexpr auto registerName<InputResponder>() {
 template <>
 inline auto registerMembers<InputResponder>() {
   return members(
-    member("responds", &InputResponder::responds)
+    member("responds", &InputResponder::responds),
+    member("mousePos", &InputResponder::mousePos),
+    member("mouseGamePos", &InputResponder::mouseGamePos)
     );
 }
 } // namespace meta

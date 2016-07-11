@@ -33,6 +33,7 @@ BOOST_PYTHON_MODULE(_entityx_components) {
   //  py::class_<sf::Vector2i>("sf_vector_int", py::init<>()));
 
   // TODO(SMA) : Seralize me
+  // TODO(SMA) : Add is_convertable between these two.
   py::class_< sf::Vector2<int> >("Vec2i", py::init<>())
     .def_readwrite("x", &sf::Vector2<int>::x)
     .def_readwrite("y", &sf::Vector2<int>::y);
@@ -89,16 +90,6 @@ public:
             EntitySerializer es(json);
             auto entity = entities.create();
             es.Load(entity);
-        }
-
-        // HACK(SMA) : Create 'background' right up in here.
-        {
-            std::unique_ptr<sf::CircleShape> shape(new sf::CircleShape(100.f));
-            shape->setFillColor(sf::Color::Green);
-
-            auto entity = entities.create();
-            entity.assign<Body>();
-            entity.assign<RenderableShape>(std::move(shape));
         }
     }
 

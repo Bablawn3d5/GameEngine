@@ -34,7 +34,7 @@ file(GLOB ScriptFiles
     ${SCRIPTDIR}/entityx/*.py
     ${PYTHON27_STD_ZIP})
 
-add_custom_target(CopyActionScriptFiles SOURCES ${ScriptFiles})
+add_custom_target(CopyActionScriptFiles DEPENDS ${ScriptFiles})
 
 # Set target copy and install.
 foreach(ScriptFile ${ScriptFiles})
@@ -53,7 +53,7 @@ foreach(ScriptFile ${ScriptFiles})
                      COMMAND ${CMAKE_COMMAND} -E
                          copy "${ScriptFile}"
                               "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
-                     DEPENDS ${ScriptFile}
+                     DEPENDS ${ScriptFiles}
                      COMMENT "Copying ${ScriptFile}")
     source_group("${GROUP}" FILES "${ScriptFile}")
     install(FILES ${ScriptFile} DESTINATION bin/${GROUP})
@@ -89,7 +89,7 @@ file(GLOB ConfigFiles
     ${FarquaadExamples_SOURCE_DIR}/*.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/*.json)
 
-add_custom_target(CopyConfigs)
+add_custom_target(CopyConfigs DEPENDS ${ConfigFiles})
 foreach(ConfigFile ${ConfigFiles})
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${ConfigFile}" DIRECTORY)
@@ -105,7 +105,7 @@ foreach(ConfigFile ${ConfigFiles})
                      COMMAND ${CMAKE_COMMAND} -E
                          copy "${ConfigFile}"
                               "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
-                     DEPENDS ${ConfigFile}
+                     DEPENDS ${ConfigFiles}
                      COMMENT "Copying ${ConfigFile}" )
     install(FILES ${ConfigFile} DESTINATION bin/${GROUP})
 endforeach()

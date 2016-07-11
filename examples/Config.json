@@ -5,10 +5,12 @@
     "MoveDown" : "KEY_S",
     "MoveRight" : "KEY_D",
     "MoveLeft" : "KEY_A",
-    "Use" : "KEY_E"
+    "Use" : "KEY_E",
+    "Spawn" : "MOUSE_Left"
   },
   "entities" : [
     "./Resources/Hero.json",
+    "./Resources/Mouse.json",
     "./Resources/Box.json"
   ]
 }

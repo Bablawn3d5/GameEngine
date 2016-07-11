@@ -21,8 +21,12 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
             return;
         }
 
-        // TODO(SMA) : Resync body changes
         if ( entity.has_component<Body>() ) {
+          auto body = entity.component<Body>().get();
+          sf::Vector2f physicsBodyPos = (body->position * METERS_PER_PIXEL) + physics.halfSize;
+          auto rotation = physics.body->GetAngle();
+          // TODO(SMA) : Sync Rotation.
+          physics.body->SetTransform( {physicsBodyPos.x, physicsBodyPos.y}, rotation);
         }
 
         // TODO(SMA) : Resync stat changes
@@ -43,6 +47,8 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
 
             // We don't process an entity unless it has all the required components
             // TODO(MRC): Look into Component dependencies
+
+            physics->halfSize = 0.5f * (sf::Vector2f)physics->size;
 
             b2BodyDef bodyDef;
             bodyDef.type = physics->bodyType;
