@@ -72,7 +72,7 @@ bool InputSystem::testEvent(const std::string eventName, sf::Event e) {
 void InputSystem::update(ex::EntityManager &em,
                          ex::EventManager &events, ex::TimeDelta dt) {
     sf::Event Event;
-    std::set<std::string> triggerResponders;
+    std::set<std::string> triggedEvents;
     // Poll window Events
     while ( window.pollEvent(Event) ) {
       // HACK(SMA) : Process the event right here.
@@ -89,7 +89,7 @@ void InputSystem::update(ex::EntityManager &em,
       // This looks cancerous but it works.
       for ( auto& pairs : keyBinds ) {
         if ( testEvent(pairs.first, Event) ) {
-          triggerResponders.insert(pairs.first);
+          triggedEvents.insert(pairs.first);
         }
       }
     }
@@ -101,7 +101,8 @@ void InputSystem::update(ex::EntityManager &em,
       responds.clear();
       // Copy events to trigger to all responders.
       // HACK(SMA) : Copy in reverse so "+" events get put at the end of the list.
-      std::copy(triggerResponders.rbegin(), triggerResponders.rend(), std::back_inserter(responds));
+      // This should really be a priority queue.
+      std::copy(triggedEvents.rbegin(), triggedEvents.rend(), std::back_inserter(responds));
       responder.mousePos = sf::Mouse::getPosition(window);
       // TODO(SMA) : Translate game window pos to in-game pos.
       // Assming 1:1 here.

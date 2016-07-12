@@ -41,6 +41,13 @@ BOOST_PYTHON_MODULE(_entityx_components) {
   py::class_< sf::Vector2<float> >("Vec2f", py::init<>())
     .def_readwrite("x", &sf::Vector2<float>::x)
     .def_readwrite("y", &sf::Vector2<float>::y);
+
+  // HACK(SMA) : Should really be under physics.. but I'm not sure how to do
+  // that.
+  py::enum_<b2BodyType>("b2BodyType")
+    .value("DYNAMIC", b2BodyType::b2_dynamicBody)
+    .value("STATIC", b2BodyType::b2_staticBody)
+    .value("KINEMATIC", b2BodyType::b2_kinematicBody);
 }
 
 // Quick test for EntityX

@@ -1,5 +1,5 @@
 import entityx
-from _entityx_components import Body, InputResponder, Physics, Stats
+from _entityx_components import Body, InputResponder, Physics, Stats, b2BodyType
 
 class Shooter(entityx.Entity):
     updated = False
@@ -18,12 +18,6 @@ class Shooter(entityx.Entity):
         if "-Use" in self.inresponder.responds:
             self.is_firing = False
 
-        if(len(self.inresponder.responds) > 0):
-            for a in self.inresponder.responds:
-                print a,
-            else:
-                print
-
         if(self.curCount <= 0):
             if(self.is_firing):
                 # TODO(SMA) : Load from JSON file.
@@ -34,6 +28,7 @@ class Shooter(entityx.Entity):
                 phys = e.Component(Physics)
                 phys.size.x = 5
                 phys.size.y = 5
+                phys.bodyType = b2BodyType.DYNAMIC
                 stats = e.Component(Stats)
                 # Reset cooldown
                 self.curCount = self.fireRate
