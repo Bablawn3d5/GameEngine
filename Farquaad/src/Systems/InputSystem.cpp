@@ -48,17 +48,21 @@ bool InputSystem::testEvent(const std::string eventName, sf::Event e) {
 
     KeyInput& k = keyBinds[eventName];
 
+    // Regardless of the current event on frame, send true if the button is being held.
+    if ( (k.eventType == sf::Event::MouseButtonPressed || k.eventType == sf::Event::KeyPressed ) &&
+         (sf::Mouse::isButtonPressed(k.mouseButton) || sf::Keyboard::isKeyPressed(k.keyCode)) ) {
+      return true;
+    }
+
     // Mouse event
     if ( k.eventType == e.type &&
-        (k.mouseButton == e.mouseButton.button ||
-         sf::Mouse::isButtonPressed(k.mouseButton)) ) {
+        k.mouseButton == e.mouseButton.button ) {
       return (true);
     }
 
     // Keyboard event
     if ( k.eventType == e.type &&
-        (k.keyCode == e.key.code ||
-         sf::Keyboard::isKeyPressed(k.keyCode)) ) {
+        k.keyCode == e.key.code ) {
       return (true);
     } 
 
@@ -68,20 +72,7 @@ bool InputSystem::testEvent(const std::string eventName, sf::Event e) {
 void InputSystem::update(ex::EntityManager &em,
                          ex::EventManager &events, ex::TimeDelta dt) {
     sf::Event Event;
-
-    // Store responders in a refrence vec, and clear old responses
-    // FIXME(SMA) : This lookup may be expensive when we have tons of entities.
-    std::vector<std::reference_wrapper<InputResponder>> responders;
-    em.each<InputResponder>(
-      [&](ex::Entity entity, InputResponder &responder) {
-      responder.responds.clear();
-      responders.push_back(responder);
-      responder.mousePos = sf::Mouse::getPosition(window);
-      // TODO(SMA) : Translate game window pos to in-game pos.
-      // Assming 1:1 here.
-      responder.mouseGamePos = sf::Mouse::getPosition(window);
-    });
-
+    std::set<std::string> triggerResponders;
     // Poll window Events
     while ( window.pollEvent(Event) ) {
       // HACK(SMA) : Process the event right here.
@@ -98,10 +89,23 @@ void InputSystem::update(ex::EntityManager &em,
       // This looks cancerous but it works.
       for ( auto& pairs : keyBinds ) {
         if ( testEvent(pairs.first, Event) ) {
-          for ( auto& responder : responders ) {
-            responder.get().responds.push_back(pairs.first);
-          }
+          triggerResponders.insert(pairs.first);
         }
       }
     }
+
+    // Store responders in a refrence vec, and clear old responses
+    em.each<InputResponder>(
+      [&](ex::Entity entity, InputResponder &responder) {
+      auto& responds = responder.responds;
+      responds.clear();
+      // Copy events to trigger to all responders.
+      // HACK(SMA) : Copy in reverse so "+" events get put at the end of the list.
+      std::copy(triggerResponders.rbegin(), triggerResponders.rend(), std::back_inserter(responds));
+      responder.mousePos = sf::Mouse::getPosition(window);
+      // TODO(SMA) : Translate game window pos to in-game pos.
+      // Assming 1:1 here.
+      responder.mouseGamePos = sf::Mouse::getPosition(window);
+    });
+
 }

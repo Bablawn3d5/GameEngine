@@ -18,7 +18,7 @@ class Shooter(entityx.Entity):
         if "-Use" in self.inresponder.responds:
             self.is_firing = False
 
-        if(len(self.inresponder.responds) > 1):
+        if(len(self.inresponder.responds) > 0):
             for a in self.inresponder.responds:
                 print a,
             else:
