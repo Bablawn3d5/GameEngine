@@ -131,6 +131,7 @@ install:
       brew install xz
       brew install homebrew/versions/cmake31  --without-docs
       brew link homebrew/versions/cmake31
+      brew link xz
     fi
   - which cmake
   - cmake --version
