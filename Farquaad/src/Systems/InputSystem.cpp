@@ -93,9 +93,9 @@ void InputSystem::update(ex::EntityManager &em,
 
       // HACK (SMA) : Push event name into all responders
       // This looks cancerous but it works.
-      for ( auto& responder : responders ) {
-        for ( auto& pairs : keyBinds ) {
-          if ( testEvent(pairs.first, Event) ) {
+      for ( auto& pairs : keyBinds ) {
+        if ( testEvent(pairs.first, Event) ) {
+          for ( auto& responder : responders ) {
             responder.get().responds.push_back(pairs.first);
           }
         }

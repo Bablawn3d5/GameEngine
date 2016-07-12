@@ -109,7 +109,7 @@ public:
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "");
-    window.setKeyRepeatEnabled(false);
+    window.setKeyRepeatEnabled(true);
 
     // HACK(SMA) : Initalize these component serializers so they become registered.
     // FIXME(SMA) : These cause JSON objects to be held in memory permanantly. FIXME.
