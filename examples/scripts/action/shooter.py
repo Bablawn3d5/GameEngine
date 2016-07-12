@@ -18,6 +18,12 @@ class Shooter(entityx.Entity):
         if "-Use" in self.inresponder.responds:
             self.is_firing = False
 
+        if(len(self.inresponder.responds) > 1):
+            for a in self.inresponder.responds:
+                print a,
+            else:
+                print
+
         if(self.curCount <= 0):
             if(self.is_firing):
                 # TODO(SMA) : Load from JSON file.

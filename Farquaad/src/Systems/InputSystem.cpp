@@ -50,15 +50,18 @@ bool InputSystem::testEvent(const std::string eventName, sf::Event e) {
 
     // Mouse event
     if ( k.eventType == e.type &&
-        k.mouseButton == e.mouseButton.button ) {
-        return (true);
+        (k.mouseButton == e.mouseButton.button ||
+         sf::Mouse::isButtonPressed(k.mouseButton)) ) {
+      return (true);
     }
 
     // Keyboard event
     if ( k.eventType == e.type &&
-        k.keyCode == e.key.code ) {
-        return (true);
-    }
+        (k.keyCode == e.key.code ||
+         sf::Keyboard::isKeyPressed(k.keyCode)) ) {
+      return (true);
+    } 
+
     return (false);
 }
 
