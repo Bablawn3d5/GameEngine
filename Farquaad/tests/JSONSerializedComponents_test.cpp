@@ -61,15 +61,17 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
     SECTION("Physics Size") {
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 2);
+        REQUIRE(size(v) == 3);
         REQUIRE(v["bodyType"].asString() == "STATIC");
         REQUIRE(v["size"][0].asFloat() == p.size.x);
         REQUIRE(v["size"][1].asFloat() == p.size.y);
+        REQUIRE(v["dirty"].asBool() == false);
 
         Physics actual = Serializable::fromJSON<Physics>(v);
         REQUIRE(actual.bodyType == p.bodyType);
         REQUIRE(actual.size.x == p.size.x);
         REQUIRE(actual.size.y == p.size.y);
+        REQUIRE(actual.isDirty == p.isDirty);
     }
     SECTION("Static Body") {
         Json::Value v = Serializable::toJSON(p);

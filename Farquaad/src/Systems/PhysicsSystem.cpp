@@ -17,6 +17,15 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
         physics.isDirty = false;
         physics.halfSize = 0.5f * (sf::Vector2f)physics.size;
 
+        // Sync Collision Masks
+        for ( b2Fixture* fixture = physics.body->GetFixtureList(); 
+             fixture; fixture = fixture->GetNext() ) {
+          b2Filter filter; 
+          filter.categoryBits = physics.collosionCategory;
+          filter.categoryBits = physics.collosionMask;
+          fixture->SetFilterData(filter);
+        }
+
         if ( physics.body == NULL ) {
             return;
         }
@@ -65,6 +74,8 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
             shapeDef.density = 10.0;
             shapeDef.restitution = 0.0f;
             shapeDef.friction = 0.0f;
+            shapeDef.filter.categoryBits = physics->collosionCategory;
+            shapeDef.filter.maskBits = physics->collosionMask;
             boxbody->CreateFixture(&shapeDef);
 
             physics->body = boxbody;
