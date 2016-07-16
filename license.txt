@@ -34,4 +34,5 @@ imgui under MIT
 glm under MIT
 Catch under Boost Software License - v1.0
 jsoncpp under Public Domain
+gameobjects under Public Domain
 Thor under the zlib license

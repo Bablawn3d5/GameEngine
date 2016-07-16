@@ -41,7 +41,6 @@ class Component(object):
         self._kwargs = kwargs
 
     def _build(self, entity_id):
-        print "Compoent ID:" + str(entity_id)
         component = self._cls.get_component(_entityx._entity_manager, entity_id)
         if not component:
             component = self._cls(*self._args, **self._kwargs)
