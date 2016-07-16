@@ -3,7 +3,7 @@
         "position" : [ 240, 240 ]
     },
     "stats" : {
-        "speed" : 100.0
+        "speed" : 10000.0
     },
     "physics" : {
         "bodyType" : "DYNAMIC",
@@ -11,7 +11,7 @@
     },
     "inputresponder" : {},
     "pythons" : {
-        "modulename" : "action.mouseactor",
-        "class" : "MouseActor"
+        "modulename" : "action.mouse",
+        "class" : "MouseFollower"
     }
 }

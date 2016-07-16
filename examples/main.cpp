@@ -60,8 +60,8 @@ public:
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
         physWorld = std::make_shared<b2World>(gravity);
         debugDraw = std::make_shared<SFMLB2DDebug>(target);
-        debugDraw->SetFlags(b2Draw::e_shapeBit | b2Draw::e_centerOfMassBit |
-                            b2Draw::e_aabbBit | b2Draw::e_pairBit);
+        debugDraw->SetFlags(b2Draw::e_shapeBit /*| b2Draw::e_aabbBit|
+                            b2Draw::e_centerOfMassBit | b2Draw::e_pairBit*/ );
 
         systems.add<PhysicsSystem>(physWorld, debugDraw.get());
         auto inputSystem = systems.add<InputSystem>(target);

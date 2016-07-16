@@ -32,6 +32,7 @@ set(SCRIPTDIR ${PROJECT_SOURCE_DIR}/scripts)
 file(GLOB ScriptFiles
     ${SCRIPTDIR}/action/*.py
     ${SCRIPTDIR}/entityx/*.py
+    ${SCRIPTDIR}/gamemath/*.py
     ${PYTHON27_STD_ZIP})
 
 add_custom_target(CopyActionScriptFiles DEPENDS ${ScriptFiles})
