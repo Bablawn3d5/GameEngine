@@ -14,8 +14,8 @@ const fs::path get_execute_dir() {
 }
 
 int main(int argc, char* const argv[]) {
-    // global setup...
-    execute_dir = fs::system_complete(argv[0]).parent_path();
+    // global setup..
+    execute_dir = fs::system_complete(argv[0]).remove_filename();
 
     int result = Catch::Session().run(argc, argv);
     return result;
