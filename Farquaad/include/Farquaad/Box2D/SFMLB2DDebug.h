@@ -8,7 +8,8 @@
 
 class SFMLB2DDebug : public b2Draw {
 public:
-    SFMLB2DDebug(sf::RenderTarget& target) : target(target) {}
+    SFMLB2DDebug(sf::RenderTarget& target, const float scale) : target(target)
+      , OUTLINE_THICKNESS(1.f/ scale) {}
 
     void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
     void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
@@ -19,4 +20,5 @@ public:
     void DrawTransform(const b2Transform& xf);
 private:
     sf::RenderTarget& target;
+    const float OUTLINE_THICKNESS;
 };

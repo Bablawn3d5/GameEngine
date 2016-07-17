@@ -5,7 +5,6 @@
 #include <entityx/entityx.h>
 #include <SFML/Window.hpp>
 #include <Farquaad/Components.hpp>
-#include <Farquaad/Box2D/SFMLB2DDebug.h>
 #include <Box2D/Box2D.h>
 #include <map>
 #include <string>
@@ -18,11 +17,16 @@ struct PhysicsSystem : public ex::System<PhysicsSystem>,
 public:
     std::shared_ptr<b2World> physicsWorld;
 
-    explicit PhysicsSystem(std::shared_ptr<b2World> physicsWorld,
-                           SFMLB2DDebug* drawer = NULL) :
-        physicsWorld(physicsWorld) {
-        if ( physicsWorld != NULL && drawer != NULL )
-            physicsWorld->SetDebugDraw(drawer);
+    // TODO(SMA): Make me not hard-coded.
+    const float FIXED_TIMESTEP = 1.f / 60.f;
+    const float PIXELS_PER_METER = 2.f;
+    const float METERS_PER_PIXEL = 1.f / PIXELS_PER_METER;
+
+    explicit PhysicsSystem(std::shared_ptr<b2World> physicsWorld) :
+        physicsWorld(physicsWorld), 
+      fixedTimestepAccumulator(0),
+      fixedTimestepAccumulatorRatio(0) {
+        physicsWorld->SetAutoClearForces(false);
     }
     ~PhysicsSystem() {}
 
@@ -34,12 +38,11 @@ public:
     }
 
     void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
-
 private:
     std::vector<ex::Entity> entitiesToCreatePhysicsFor;
+    float fixedTimestepAccumulator;
+    float fixedTimestepAccumulatorRatio;
 
-    const float PIXELS_PER_METER = 1.0f;
-    const float METERS_PER_PIXEL = 1.0f;
     const int VELOCITY_ITERATIONS = 8;
     const int POSITION_ITERATIONS = 4;
 };

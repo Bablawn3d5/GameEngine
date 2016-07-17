@@ -7,7 +7,7 @@ class Shooter(entityx.Entity):
     fireCooldown = 0.2
     curCount = 0
     is_firing = False
-    size = 5
+    size = 15
 
     body = entityx.Component(Body)
     inresponder = entityx.Component(InputResponder)
@@ -23,8 +23,7 @@ class Shooter(entityx.Entity):
 
         if (self.curCount <= 0):
             if(self.is_firing):
-                for i in range(1,4):
-                    self.spawnMouseFollower()
+                self.spawnMouseFollower()
                 # Reset cooldown
                 self.curCount = self.fireCooldown
         else:
@@ -42,5 +41,5 @@ class Shooter(entityx.Entity):
         self.size = self.size + 1
         phys.bodyType = b2BodyType.DYNAMIC
         stats = e.Component(Stats)
-        stats.speed = 500
+        stats.speed = 100
 

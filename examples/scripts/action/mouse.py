@@ -18,4 +18,3 @@ class MouseFollower(entityx.Entity):
 
         direction_vec.copy_to(self.body.direction)
         self.physics.dirty = True
-
