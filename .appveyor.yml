@@ -45,6 +45,10 @@ test_script:
 
     set PYTHONHOME=C:\Python27
 
-    set PYTHONPATH=c:\Python27\Lib
+    set PATH=%PYTHONHOME%\Scripts;%PYTHONHOME%;%PATH%
+
+    echo %PYTHONPATH%
+
+    echo %PATH%
 
     ctest -VV -C Release
