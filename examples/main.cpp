@@ -63,7 +63,7 @@ public:
         // Setup Box2d Physics
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
         physWorld = std::make_shared<b2World>(gravity);
-        auto& physsystem = systems.add<PhysicsSystem>(physWorld);
+        auto physsystem = systems.add<PhysicsSystem>(physWorld);
 
         // Setup Debug drawing stuff
         const float ppm = physsystem->PIXELS_PER_METER;
@@ -74,7 +74,7 @@ public:
                                                b2Draw::e_centerOfMassBit | b2Draw::e_pairBit*/);
 
         // Setup Input
-        auto& inputSystem = systems.add<InputSystem>(target);
+        auto inputSystem = systems.add<InputSystem>(target);
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         // Setup the rest
@@ -93,7 +93,7 @@ public:
 #ifdef NDEBUG
         PyImport_AppendInittab("_entityx_components", init_entityx_components);
 #endif
-        auto& pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
+        auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
         pythonSystem->add_path(path_scripts.c_str());
         systems.configure();
 
