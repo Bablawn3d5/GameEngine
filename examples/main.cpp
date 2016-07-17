@@ -55,22 +55,36 @@ class Application : public entityx::EntityX {
 public:
     std::shared_ptr<b2World> physWorld;
     std::shared_ptr<SFMLB2DDebug> debugDraw;
+    sf::RenderWindow& window;
+    sf::View debugViewPort;
 
-    explicit Application(sf::RenderWindow &target, Json::Value& v) { // NOLINT
+    explicit Application(sf::RenderWindow &target, Json::Value& v) : 
+      window(target), debugViewPort(target.getView()) { // NOLINT
+        // Setup Box2d Physics
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
         physWorld = std::make_shared<b2World>(gravity);
-        debugDraw = std::make_shared<SFMLB2DDebug>(target);
-        debugDraw->SetFlags(b2Draw::e_shapeBit /*| b2Draw::e_aabbBit|
-                            b2Draw::e_centerOfMassBit | b2Draw::e_pairBit*/ );
+        auto physsystem = systems.add<PhysicsSystem>(physWorld);
 
-        systems.add<PhysicsSystem>(physWorld, debugDraw.get());
+        // Setup Debug drawing stuff
+        const float ppm = physsystem->PIXELS_PER_METER;
+        debugViewPort.setViewport(sf::FloatRect(0.f, 0.f, ppm, ppm));
+        debugDraw = std::make_shared<SFMLB2DDebug>(target, ppm);
+        physWorld->SetDebugDraw(debugDraw.get());
+        debugDraw->SetFlags(b2Draw::e_shapeBit /*| b2Draw::e_aabbBit|
+                                               b2Draw::e_centerOfMassBit | b2Draw::e_pairBit*/);
+
+        // Setup Input
         auto inputSystem = systems.add<InputSystem>(target);
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
+        // Setup the rest
         systems.add<RenderSystem>(target);
         systems.add<MoveSystem>();
         systems.add<ImGuiSystem>(target);
 
+        // Setup python system
+
+        // Set python script path
         std::string path_exec = fs::current_path().string();
         std::string path_scripts = (fs::current_path() / "scripts").string();
         assert(
@@ -82,6 +96,8 @@ public:
         auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
         pythonSystem->add_path(path_scripts.c_str());
         systems.configure();
+
+        // Output script path
         std::cout << "Script path: [" << path_exec;
         for ( auto& path_str : pythonSystem->python_paths() ) {
           std::cout << "," << path_str;
@@ -110,7 +126,9 @@ public:
         systems.update<PhysicsSystem>(dt);
         systems.update<RenderSystem>(dt);
         systems.update<ImGuiSystem>(dt);
+        window.setView(debugViewPort);
         physWorld->DrawDebugData();
+        window.setView(window.getDefaultView());
     }
 };
 

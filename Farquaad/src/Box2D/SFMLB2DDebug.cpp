@@ -20,7 +20,7 @@ void SFMLB2DDebug::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
         sf::Vector2f transformedVec = cast(vertices[i]);
         polygon.setPoint(i, transformedVec);
     }
-    polygon.setOutlineThickness(-1.0f);
+    polygon.setOutlineThickness(-OUTLINE_THICKNESS);
     polygon.setFillColor(sf::Color::Transparent);
     polygon.setOutlineColor(cast(color));
 
@@ -32,7 +32,7 @@ void SFMLB2DDebug::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, c
         sf::Vector2f transformedVec = cast(vertices[i]);
         polygon.setPoint(i, transformedVec);
     }
-    polygon.setOutlineThickness(-1.0f);
+    polygon.setOutlineThickness(-OUTLINE_THICKNESS);
     sf::Color c = cast(color);
     polygon.setOutlineColor(c);
     c.a = 45;
@@ -45,7 +45,7 @@ void SFMLB2DDebug::DrawCircle(const b2Vec2& center, float32 radius, const b2Colo
     circle.setOrigin(radius, radius);
     circle.setPosition(cast(center));
     circle.setFillColor(sf::Color::Transparent);
-    circle.setOutlineThickness(-1.0f);
+    circle.setOutlineThickness(-OUTLINE_THICKNESS);
     circle.setOutlineColor(cast(color));
 
     target.draw(circle);
@@ -58,7 +58,7 @@ void SFMLB2DDebug::DrawSolidCircle(const b2Vec2& center, float32 radius,
     sf::Color c = cast(color);
     c.a = 45;
     circle.setFillColor(c);
-    circle.setOutlineThickness(1.0f);
+    circle.setOutlineThickness(OUTLINE_THICKNESS);
     circle.setOutlineColor(cast(color));
 
     target.draw(circle);
