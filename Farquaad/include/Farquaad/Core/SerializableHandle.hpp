@@ -295,42 +295,69 @@ public:
 #include <Box2D/Box2D.h>
 
 template<>
-class SerializableHandle<b2BodyType> {
+class SerializableHandle<b2BodyType> : public SerializableHandleEnum<b2BodyType> {
 public:
   // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
   // Define these so class becomes non POD for const initalizaiton
-  SerializableHandle() {}
+  SerializableHandle() : SerializableHandleEnum<b2BodyType>({
+    {"DYNAMIC", b2BodyType::b2_dynamicBody},
+    {"STATIC", b2BodyType::b2_staticBody},
+    {"KINEMATIC", b2BodyType::b2_kinematicBody}
+  }) {
+  }
   ~SerializableHandle() {}
+};
 
-  inline b2BodyType fromJSON(const Json::Value &v) const {
-    if ( v.asString().compare("STATIC") == 0 ) {
-      return b2_staticBody;
-    } else if ( v.asString().compare("DYNAMIC") == 0 ) {
-      return b2_dynamicBody;
-    } else if ( v.asString().compare("KINEMATIC") == 0 ) {
-      return b2_kinematicBody;
-    }
-
-    // HACK(SMA) : Just return static???
-    return b2_staticBody;
+template<>
+class SerializableHandle<CollisionGroup> : public SerializableHandleEnum<CollisionGroup> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() : SerializableHandleEnum<CollisionGroup>({
+    { "GROUP_1", CollisionGroup::GROUP_1 },
+    { "GROUP_2", CollisionGroup::GROUP_2 },
+    { "GROUP_3", CollisionGroup::GROUP_3 },
+    { "GROUP_4", CollisionGroup::GROUP_4 },
+    { "GROUP_5", CollisionGroup::GROUP_5 },
+    { "GROUP_6", CollisionGroup::GROUP_6 },
+    { "GROUP_7", CollisionGroup::GROUP_7 },
+    { "GROUP_8", CollisionGroup::GROUP_8 },
+    { "GROUP_9", CollisionGroup::GROUP_9 },
+    { "GROUP_10", CollisionGroup::GROUP_10 },
+    { "GROUP_11", CollisionGroup::GROUP_11 },
+    { "GROUP_12", CollisionGroup::GROUP_12 },
+    { "GROUP_13", CollisionGroup::GROUP_13 },
+    { "GROUP_14", CollisionGroup::GROUP_14 },
+    { "GROUP_15", CollisionGroup::GROUP_15 },
+    { "GROUP_NONE", CollisionGroup::GROUP_NONE }
+  }) {
   }
+  ~SerializableHandle() {}
+};
 
-  inline Json::Value toJSON(const b2BodyType& type) const {
-    Json::Value v;
-    switch ( type ) {
-    case b2_staticBody:
-      v = "STATIC";
-      break;
-    case b2_dynamicBody:
-      v = "DYNAMIC";
-      break;
-    case b2_kinematicBody:
-      v = "KINEMATIC";
-      break;
-    default:
-      // HACK(SMA) : Assume is static???
-      v = "STATIC";
-    }
-    return v;
+template<>
+class SerializableHandle<CollisionCategory> : public SerializableHandleEnum<CollisionCategory> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() : SerializableHandleEnum<CollisionCategory>({
+    { "CATEGORY_1", CollisionCategory::CATEGORY_1 },
+    { "CATEGORY_2", CollisionCategory::CATEGORY_2 },
+    { "CATEGORY_3", CollisionCategory::CATEGORY_3 },
+    { "CATEGORY_4", CollisionCategory::CATEGORY_4 },
+    { "CATEGORY_5", CollisionCategory::CATEGORY_5 },
+    { "CATEGORY_6", CollisionCategory::CATEGORY_6 },
+    { "CATEGORY_7", CollisionCategory::CATEGORY_7 },
+    { "CATEGORY_8", CollisionCategory::CATEGORY_8 },
+    { "CATEGORY_9", CollisionCategory::CATEGORY_9 },
+    { "CATEGORY_10", CollisionCategory::CATEGORY_10 },
+    { "CATEGORY_11", CollisionCategory::CATEGORY_11 },
+    { "CATEGORY_12", CollisionCategory::CATEGORY_12 },
+    { "CATEGORY_13", CollisionCategory::CATEGORY_13 },
+    { "CATEGORY_14", CollisionCategory::CATEGORY_14 },
+    { "CATEGORY_15", CollisionCategory::CATEGORY_15 },
+    { "CATEGORY_16", CollisionCategory::CATEGORY_16 }
+  }) {
   }
+  ~SerializableHandle() {}
 };
