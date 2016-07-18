@@ -8,10 +8,11 @@
 #include <Meta.h>
 #include <json/json.h>
 #include <memory>
-#include <map>
 #include <string>
 #include <cassert>
 #include <utility>
+#include <functional>
+#include <unordered_map>
 
 namespace py = boost::python;
 
@@ -41,7 +42,10 @@ public:
       [&v, &obj](const auto& member) {
       using memeber_type = meta::get_member_type<decltype(member)>;
       const auto& name = member.getName();
-      member.set(obj, Serializable::fromJSON<memeber_type>(v[name]));
+      auto& json_val = v[name];
+      if( json_val == Json::nullValue )
+        return;
+      member.set(obj, Serializable::fromJSON<memeber_type>(json_val));
     });
     return obj;
   }
@@ -93,6 +97,12 @@ inline void initPy(py::class_<T>&& py) {
     handle<T>().initPy(std::forward<py::class_<T>>(py));
 }
 
+template<typename T>
+inline void initPy(py::enum_<T>&& py) {
+  handle<T>().initPy(std::forward<py::enum_<T>>(py));
+}
+
+
 // If you get an error here saying your instantiating a abstract
 // class foo. It means you should specailize SerializableHandle<foo>
 // somewhere.
@@ -106,5 +116,59 @@ const SerializableHandle<T>& handle() {
     return handle;
 }
 }
+
+template<typename T>
+struct EnumClassHash {
+  static_assert(std::is_enum<T>::value, "T must be an enum!");
+  using underlying_type = typename std::underlying_type<T>::type;
+
+  std::size_t operator()(T const& val) const {
+    const underlying_type u_val = static_cast<underlying_type>(val);
+    std::hash<underlying_type> hfn;
+    return hfn(u_val);
+  }
+};
+
+template<class T>
+class SerializableHandleEnum {
+public:
+  SerializableHandleEnum(std::unordered_map<std::string, T> mapping) : str_to_enum(mapping){
+    for ( auto& pair : mapping ) {
+      enum_to_str[pair.second] = pair.first;
+    }
+  }
+
+  inline T fromJSON(const Json::Value &v) const {
+    // Slightly undefined if you don't type it correctly.
+    try {
+      return str_to_enum.at(v.asString());
+    }
+    catch ( std::out_of_range ) {};
+    
+    // Slightly undefined if mapping doesn't exist
+    // Item doesn't exist
+    return static_cast<T>(0);
+  }
+
+  inline Json::Value toJSON(const T& val) const {
+    Json::Value v;
+    try {
+      v = enum_to_str.at(val);
+      return v;
+    } catch ( std::out_of_range ) {};
+
+    return Json::nullValue;
+  }
+
+  inline void initPy(py::class_<T>&& py) const = delete;
+  inline void initPy(py::enum_<T>&& pynum) const {
+    for ( auto& pair : enum_to_str ) {
+      pynum.value(pair.second.c_str(), pair.first);
+    }
+  }
+private:
+  std::unordered_map<T, std::string, EnumClassHash<T>> enum_to_str;
+  std::unordered_map<std::string, T> str_to_enum;
+};
 
 #include <Farquaad/Core/SerializableHandle.hpp>

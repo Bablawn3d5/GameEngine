@@ -63,7 +63,10 @@ inline auto registerMembers<Physics>() {
     return members(
       member("bodyType", &Physics::bodyType),
       member("size", &Physics::size),
-      member("dirty", &Physics::isDirty)
+      member("dirty", &Physics::isDirty),
+      member("category", &Physics::collisionCategory),
+      member("mask", &Physics::collisionMask),
+      member("group", &Physics::collisionGroup)
     );
 }
 

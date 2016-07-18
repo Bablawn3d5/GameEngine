@@ -61,22 +61,29 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
     SECTION("Physics Size") {
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 3);
+        REQUIRE(size(v) == 6);
         REQUIRE(v["bodyType"].asString() == "STATIC");
         REQUIRE(v["size"][0].asFloat() == p.size.x);
         REQUIRE(v["size"][1].asFloat() == p.size.y);
         REQUIRE(v["dirty"].asBool() == true);
+        REQUIRE(v["category"].asString() == "CATEGORY_1");
+        REQUIRE(v["mask"].asString() == "CATEGORY_1");
+        REQUIRE(v["group"].asString() == "GROUP_1");
+
 
         Physics actual = Serializable::fromJSON<Physics>(v);
         REQUIRE(actual.bodyType == p.bodyType);
         REQUIRE(actual.size.x == p.size.x);
         REQUIRE(actual.size.y == p.size.y);
         REQUIRE(actual.isDirty == p.isDirty);
+        REQUIRE(actual.collisionCategory == p.collisionCategory);
+        REQUIRE(actual.collisionMask == p.collisionMask);
+        REQUIRE(actual.collisionGroup == p.collisionGroup);
     }
     SECTION("Static Body") {
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 3);
+        REQUIRE(size(v) == 6);
         REQUIRE(v["bodyType"].asString() == "STATIC");
 
         Physics actual = Serializable::fromJSON<Physics>(v);
@@ -87,7 +94,7 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
         p.bodyType = b2_dynamicBody;
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 3);
+        REQUIRE(size(v) == 6);
         REQUIRE(v["bodyType"].asString() == "DYNAMIC");
 
         Physics actual = Serializable::fromJSON<Physics>(v);
@@ -98,7 +105,7 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
         p.bodyType = b2_kinematicBody;
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 3);
+        REQUIRE(size(v) == 6);
         REQUIRE(v["bodyType"].asString() == "KINEMATIC");
 
         Physics actual = Serializable::fromJSON<Physics>(v);
