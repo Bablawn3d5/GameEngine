@@ -27,10 +27,11 @@ enum CollisionCategory {
 };
 
 // TODO(SMA) : Move me somewhere else.
-template <typename ToCheck, std::size_t ExpectedSize, std::size_t RealSize = sizeof(ToCheck)>
+template <typename ToCheck, std::size_t ExpectedSize, 
+  std::size_t RealSize = sizeof(ToCheck)>
 void check_size() {
   static_assert(ExpectedSize == RealSize, "Size is off!");
-};
+}
 
 // HACK(SMA) : I can't define enum CollisionCategory : uint16, as this breaks
 // serlization for whatever reason. So for now just assume uint16 and work 
