@@ -1,7 +1,7 @@
 # GameEngine [![Build Status](https://travis-ci.org/Bablawn3d5/GameEngine.svg?branch=master)](https://travis-ci.org/Bablawn3d5/GameEngine) [![Build status](https://ci.appveyor.com/api/projects/status/4kyg48lhpudisk6f/branch/master?svg=true)](https://ci.appveyor.com/project/PHEN-/gameengine/branch/master)
 Bablawn3d5 Game Engine
 
-Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is quite bulky, as we intend to keep all major package requirements part of the repo.
+Boostraps serveral C++ libraries the Bablawn uses into a covinent "engine". Build is quite bulky, as we intend to keep all major package requirements part of the repo for easy setup.
 
 [EntityX](https://github.com/alecthomas/entityx)
 
@@ -23,7 +23,7 @@ Binds serveral C++ libraries the Bablawn uses into a covinent "engine". Build is
 
 ## Building
 
-The engine builds on Win64 **Visual Studio 2015**, **gcc-4.9**, and **clang-3.8**. Anything earlier may encounter compiler issues.
+The engine builds on Windows, Linux and MacOSX. Built with:  **Visual Studio 2015 - Update 3**, **gcc-4.9**, and **clang-3.8**. 
 
 You will need to install **Python 2.7** and **Boost.Python 1.59** on your system to build from source.
 
@@ -80,9 +80,11 @@ Going from JSON to Objects:
 
 Going from Python to Objects:
 
+```
 BOOST_PYTHON_MODULE(_entityx_components) {
   Serializable::initPy(py::class_<Body>("Body", py::init<>()));
 }
+```
 
 Extending the serializer to new types is as easy as defining a SerializableHandle, and mapping members to a Meta header:
 
