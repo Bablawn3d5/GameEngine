@@ -11,6 +11,7 @@
 #include <string>
 #include <cassert>
 #include <utility>
+#include <functional>
 #include <unordered_map>
 
 namespace py = boost::python;
@@ -116,6 +117,18 @@ const SerializableHandle<T>& handle() {
 }
 }
 
+template<typename T>
+struct EnumClassHash {
+  static_assert(std::is_enum<T>::value, "T must be an enum!");
+  using underlying_type = typename std::underlying_type<T>::type;
+
+  std::size_t operator()(T const& val) const {
+    const underlying_type u_val = static_cast<underlying_type>(val);
+    std::hash<underlying_type> hfn;
+    return hfn(u_val);
+  }
+};
+
 template<class T>
 class SerializableHandleEnum {
 public:
@@ -154,7 +167,7 @@ public:
     }
   }
 private:
-  std::unordered_map<T, std::string> enum_to_str;
+  std::unordered_map<T, std::string, EnumClassHash<T>> enum_to_str;
   std::unordered_map<std::string, T> str_to_enum;
 };
 
