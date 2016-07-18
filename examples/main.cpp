@@ -29,7 +29,7 @@ BOOST_PYTHON_MODULE(_entityx_components) {
   Serializable::initPy(py::class_<vec_string>("std_vector_string", py::init<>()));
   Serializable::initPy(py::enum_<b2BodyType>("b2BodyType"));
   Serializable::initPy(py::enum_<CollisionCategory>("CollisionCategory"));
-  Serializable::initPy(py::enum_<CollisionGroup>("CollisionGroup"));
+  Serializable::initPy(py::class_<CollisionCategoryBitset>("CollisionCategoryBitset", py::init<>()));
   // This doesn't work
   //Serializable::initPy<sf::Vector2i>(
   //  py::class_<sf::Vector2i>("sf_vector_int", py::init<>()));

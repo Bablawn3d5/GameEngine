@@ -78,6 +78,8 @@ public:
            py::return_value_policy<py::reference_existing_object>())
       .staticmethod("get_component");
   }
+
+  inline void initPy(py::enum_<T>&& py) const = delete;
 };
 
 // Static handle to SerializableHandle
@@ -127,6 +129,7 @@ struct EnumClassHash {
     std::hash<underlying_type> hfn;
     return hfn(u_val);
   }
+  inline void initPy(py::class_<T>&& py) const = delete;
 };
 
 template<class T>
