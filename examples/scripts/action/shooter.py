@@ -1,5 +1,5 @@
 import entityx
-from _entityx_components import Body, InputResponder, Physics, Stats, b2BodyType
+from _entityx_components import CollisionCategory, Body, InputResponder, Physics, Stats, b2BodyType
 from mouse import MouseFollower
 
 class Shooter(entityx.Entity):
@@ -38,6 +38,9 @@ class Shooter(entityx.Entity):
         phys = e.Component(Physics)
         phys.size.x = self.size
         phys.size.y = self.size
+        phys.category = CollisionCategory.CATEGORY_3;
+        phys.mask.bits = CollisionCategory.CATEGORY_2 | CollisionCategory.CATEGORY_3;
+        phys.dirty = True
         self.size = self.size + 1
         phys.bodyType = b2BodyType.DYNAMIC
         stats = e.Component(Stats)

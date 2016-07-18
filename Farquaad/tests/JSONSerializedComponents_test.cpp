@@ -67,7 +67,7 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
         REQUIRE(v["size"][1].asFloat() == p.size.y);
         REQUIRE(v["dirty"].asBool() == true);
         REQUIRE(v["category"].asString() == "CATEGORY_1");
-        REQUIRE(v["mask"].asString() == "CATEGORY_1");
+        REQUIRE(v["mask"].asString() == "0000000000000001");
         REQUIRE(v["group"].asString() == "GROUP_1");
 
 

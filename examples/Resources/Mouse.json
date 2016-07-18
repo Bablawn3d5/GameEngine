@@ -7,7 +7,9 @@
     },
     "physics" : {
         "bodyType" : "DYNAMIC",
-        "size" : [ 10, 10 ]
+        "size" : [ 10, 10 ],
+        "category" : "CATEGORY_16",
+        "mask" : "0000000000000000"
     },
     "inputresponder" : {},
     "pythons" : {

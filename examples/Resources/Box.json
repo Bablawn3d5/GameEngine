@@ -7,6 +7,8 @@
     },
     "physics" : {
         "bodyType" : "STATIC",
-        "size" : [ 50, 50 ]
+        "size" : [ 50, 50 ],
+        "category" : "CATEGORY_1",
+        "mask" : "0000000000000111"
     }
 }

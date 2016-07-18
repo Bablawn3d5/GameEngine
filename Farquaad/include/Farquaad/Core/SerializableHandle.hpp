@@ -309,33 +309,6 @@ public:
 };
 
 template<>
-class SerializableHandle<CollisionGroup> : public SerializableHandleEnum<CollisionGroup> {
-public:
-  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
-  // Define these so class becomes non POD for const initalizaiton
-  SerializableHandle() : SerializableHandleEnum<CollisionGroup>({
-    { "GROUP_1", CollisionGroup::GROUP_1 },
-    { "GROUP_2", CollisionGroup::GROUP_2 },
-    { "GROUP_3", CollisionGroup::GROUP_3 },
-    { "GROUP_4", CollisionGroup::GROUP_4 },
-    { "GROUP_5", CollisionGroup::GROUP_5 },
-    { "GROUP_6", CollisionGroup::GROUP_6 },
-    { "GROUP_7", CollisionGroup::GROUP_7 },
-    { "GROUP_8", CollisionGroup::GROUP_8 },
-    { "GROUP_9", CollisionGroup::GROUP_9 },
-    { "GROUP_10", CollisionGroup::GROUP_10 },
-    { "GROUP_11", CollisionGroup::GROUP_11 },
-    { "GROUP_12", CollisionGroup::GROUP_12 },
-    { "GROUP_13", CollisionGroup::GROUP_13 },
-    { "GROUP_14", CollisionGroup::GROUP_14 },
-    { "GROUP_15", CollisionGroup::GROUP_15 },
-    { "GROUP_NONE", CollisionGroup::GROUP_NONE }
-  }) {
-  }
-  ~SerializableHandle() {}
-};
-
-template<>
 class SerializableHandle<CollisionCategory> : public SerializableHandleEnum<CollisionCategory> {
 public:
   // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
@@ -360,4 +333,30 @@ public:
   }) {
   }
   ~SerializableHandle() {}
+};
+
+
+template<>
+class SerializableHandle<CollisionCategoryBitset> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
+  inline Json::Value toJSON(const CollisionCategoryBitset& s) const {
+    Json::Value o;
+    o = s.to_string();
+    return o;
+  }
+
+  inline CollisionCategoryBitset fromJSON(const Json::Value& v) const {
+    return CollisionCategoryBitset(std::string(v.asString()));
+  }
+
+  void initPy(py::class_<CollisionCategoryBitset>&& py) const {
+    py.add_property("bits",
+                    &CollisionCategoryBitset::get_bits,
+                    &CollisionCategoryBitset::set_bits);
+  }
 };
