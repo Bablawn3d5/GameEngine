@@ -77,6 +77,13 @@ Going from JSON to Objects:
   Body b =  Serializable::fromJSON<Body>(v);
 ```
 
+
+Going from Python to Objects:
+
+BOOST_PYTHON_MODULE(_entityx_components) {
+  Serializable::initPy(py::class_<Body>("Body", py::init<>()));
+}
+
 Extending the serializer to new types is as easy as defining a SerializableHandle, and mapping members to a Meta header:
 
 ```
@@ -100,9 +107,8 @@ template <>
 inline auto registerMembers<Position>() {
     return members(
         member("position", &Position::position),
-        member(map, "position", &Position::position),
-        member(map, "someInt", &Position::someInt),
-        member(map, "someBool", &Position::someBool)
+        member("someInt", &Position::someInt),
+        member("someBool", &Position::someBool)
         );
     }
 }
