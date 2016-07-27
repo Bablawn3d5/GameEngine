@@ -73,7 +73,7 @@ public:
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         // Setup the rest
-        systems.add<RenderSystem>(target);
+        systems.add<SpriteRenderSystem>(target);
         systems.add<MoveSystem>();
         systems.add<ImGuiSystem>(target);
 
@@ -119,8 +119,10 @@ public:
         systems.update<MoveSystem>(dt);
         systems.update<PythonSystem>(dt);
         systems.update<PhysicsSystem>(dt);
-        systems.update<RenderSystem>(dt);
+        systems.update<SpriteRenderSystem>(dt);
         systems.update<ImGuiSystem>(dt);
+
+        // Draw box2d debug data literally ontop of every thing.
         window.setView(debugViewPort);
         physWorld->DrawDebugData();
         window.setView(window.getDefaultView());
@@ -139,6 +141,7 @@ int main() {
         Serializable::handle<Physics>();
         Serializable::handle<PythonScript>();
         Serializable::handle<InputResponder>();
+        Serializable::handle<Renderable>();
     }
 
     thor::ResourceHolder<Json::Value, std::string> holder;

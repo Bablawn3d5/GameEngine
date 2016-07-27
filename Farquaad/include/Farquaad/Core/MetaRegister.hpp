@@ -84,4 +84,17 @@ inline auto registerMembers<InputResponder>() {
     member("mouseGamePos", &InputResponder::mouseGamePos)
     );
 }
+
+template <>
+constexpr auto registerName<Renderable>() {
+  return "renderable";
+}
+
+template <>
+inline auto registerMembers<Renderable>() {
+  return members(
+    member("texture", &Renderable::texture_name),
+    member("sprite", &Renderable::sprite_name)
+  );
+}
 } // namespace meta

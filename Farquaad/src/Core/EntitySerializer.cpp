@@ -22,6 +22,7 @@ void EntitySerializer::Load(ex::Entity entity) const {
   ComponentSerializer::LoadComponentToEntity<Stats>(this->cs, entity);
   ComponentSerializer::LoadComponentToEntity<InputResponder>(this->cs, entity);
   ComponentSerializer::LoadComponentToEntity<PythonScript>(this->cs, entity);
+  ComponentSerializer::LoadComponentToEntity<Renderable>(this->cs, entity);
 }
 
 // HACK(SMA) : Ugly assigment hack for the Save function below. Really needs to be fixed.
@@ -49,6 +50,8 @@ Json::Value EntitySerializer::Save(ex::Entity entity) const {
       ComponentSerializer::SaveEntityComponent<Stats>(this->cs, entity)[meta::getName<Stats>()]);
     AssignIfNotNull(std::move(v), meta::getName<InputResponder>(),
       ComponentSerializer::SaveEntityComponent<InputResponder>(this->cs, entity)[meta::getName<InputResponder>()]);
+    AssignIfNotNull(std::move(v), meta::getName<Renderable>(),
+                    ComponentSerializer::SaveEntityComponent<Renderable>(this->cs, entity)[meta::getName<Renderable>()]);
     AssignIfNotNull(std::move(v), meta::getName<PythonScript>(),
       ComponentSerializer::SaveEntityComponent<PythonScript>(this->cs, entity)[meta::getName<PythonScript>()]);
     return v;

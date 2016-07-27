@@ -6,18 +6,18 @@ set(SRC
     ${SRCROOT}/InputSystem.cpp
     ${SRCROOT}/PhysicsSystem.cpp
     ${SRCROOT}/MoveSystem.cpp
-    ${SRCROOT}/RenderSystem.cpp
     ${SRCROOT}/PythonSystem.cpp
     ${SRCROOT}/ImGuiSystem.cpp
+    ${SRCROOT}/SpriteRenderSystem.cpp
 )
 
 set(INC
-    ${INCROOT}/RenderSystem.h
     ${INCROOT}/PhysicsSystem.h
     ${INCROOT}/MoveSystem.h
     ${INCROOT}/InputSystem.h
     ${INCROOT}/PythonSystem.h
     ${INCROOT}/ImGuiSystem.h
+    ${INCROOT}/SpriteRenderSystem.h
     ${INCROOT}/../Systems.hpp
 )
 
