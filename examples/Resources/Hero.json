@@ -15,5 +15,8 @@
     "pythons" : {
         "modulename" : "action.shooter",
         "class" : "Shooter"
+    },
+    "renderable" : {
+        "texture" : "./images/perfectface.png"
     }
 }

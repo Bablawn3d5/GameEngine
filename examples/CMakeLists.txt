@@ -29,16 +29,25 @@ endif()
 set(SCRIPTDIR ${PROJECT_SOURCE_DIR}/scripts)
 
 # Add target to copy files
-file(GLOB ScriptFiles
-    ${SCRIPTDIR}/action/*.py
-    ${SCRIPTDIR}/entityx/*.py
-    ${SCRIPTDIR}/gamemath/*.py
+file(GLOB ExampleResources
+    ${SCRIPTDIR}/action/__init__.py
+    ${SCRIPTDIR}/action/mouse.py
+    ${SCRIPTDIR}/action/shooter.py
+    ${SCRIPTDIR}/entityx/__init__.py
+    ${SCRIPTDIR}/gamemath/__init__.py
+    ${SCRIPTDIR}/gamemath/vector2.py
+    ${SCRIPTDIR}/gamemath/util.py
+    ${FarquaadExamples_SOURCE_DIR}/Config.json
+    ${FarquaadExamples_SOURCE_DIR}/Resources/Box.json
+    ${FarquaadExamples_SOURCE_DIR}/Resources/Hero.json
+    ${FarquaadExamples_SOURCE_DIR}/Resources/Mouse.json
+    ${FarquaadExamples_SOURCE_DIR}/images/perfectface.png
     ${PYTHON27_STD_ZIP})
 
-add_custom_target(CopyActionScriptFiles DEPENDS ${ScriptFiles})
+add_custom_target(CopyExampleResources DEPENDS ${ExampleResources})
 
 # Set target copy and install.
-foreach(ScriptFile ${ScriptFiles})
+foreach(ScriptFile ${ExampleResources})
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${ScriptFile}" DIRECTORY)
     get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
@@ -47,14 +56,14 @@ foreach(ScriptFile ${ScriptFiles})
     string(REPLACE "${PROJECT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
     string(REPLACE "${PYTHON27_STD_ZIP_DIR}" "" GROUP "${GROUP}")
 
-    add_custom_command(TARGET CopyActionScriptFiles PRE_BUILD
+    add_custom_command(TARGET CopyExampleResources PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E
                          make_directory "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/" )
-    add_custom_command(TARGET CopyActionScriptFiles PRE_BUILD
+    add_custom_command(TARGET CopyExampleResources PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E
                          copy "${ScriptFile}"
                               "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
-                     DEPENDS ${ScriptFiles}
+                     DEPENDS ${ExampleResources}
                      COMMENT "Copying ${ScriptFile}")
     source_group("${GROUP}" FILES "${ScriptFile}")
     install(FILES ${ScriptFile} DESTINATION bin/${GROUP})
@@ -85,33 +94,7 @@ include_directories(${METASTUFF_INCLUDE_DIRS})
 
 link_directories(${Boost_LIBRARY_DIR})
 
-# Add target to copy files
-file(GLOB ConfigFiles
-    ${FarquaadExamples_SOURCE_DIR}/*.json
-    ${FarquaadExamples_SOURCE_DIR}/Resources/*.json)
-
-add_custom_target(CopyConfigs DEPENDS ${ConfigFiles})
-foreach(ConfigFile ${ConfigFiles})
-    # Get the directory of the source file
-    get_filename_component(PARENT_DIR "${ConfigFile}" DIRECTORY)
-    get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
-
-    # Remove common directory prefix to make the group
-    string(REPLACE "${FarquaadExamples_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
-
-    add_custom_command(TARGET CopyConfigs PRE_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E
-                         make_directory "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/" )
-    add_custom_command(TARGET CopyConfigs PRE_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E
-                         copy "${ConfigFile}"
-                              "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${GROUP}/"
-                     DEPENDS ${ConfigFiles}
-                     COMMENT "Copying ${ConfigFile}" )
-    install(FILES ${ConfigFile} DESTINATION bin/${GROUP})
-endforeach()
-
-add_dependencies(FarquaadExamples CopyConfigs CopyActionScriptFiles)
+add_dependencies(FarquaadExamples CopyExampleResources)
 target_link_libraries(FarquaadExamples Farquaad)
 
 

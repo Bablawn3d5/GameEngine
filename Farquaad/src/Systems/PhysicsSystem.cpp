@@ -83,9 +83,13 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
 
             physics->body = boxbody;
 
-            // Assign it a rectangle if there's no renderable component.
-            if ( !e.has_component<RenderableShape>() ) {
-                e.assign<RenderableShape>(new sf::RectangleShape((sf::Vector2f)physics->size));
+            // HACK(SMA) : Assign it a rectangle if there's no drawable component.
+            // Really should remove me now that we've got the physics debugger.
+            if ( !e.has_component<Renderable>() ) {
+                auto renderable = e.assign<Renderable>();
+                auto rect_ptr = std::make_shared<sf::RectangleShape>((sf::Vector2f)physics->size);
+                renderable->drawable = rect_ptr;
+                renderable->transform = rect_ptr;
             }
         } else {
             continue;

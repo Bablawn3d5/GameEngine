@@ -24,7 +24,7 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.1.0-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_NAME}")
+set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.2.0-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_NAME}")
 
 # Disable examples by default
 option(BUILD_SHARED_LIBS "Link SFML as shared or not" OFF)

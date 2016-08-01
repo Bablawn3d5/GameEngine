@@ -53,7 +53,7 @@ public:
     sf::RenderWindow& window;
     sf::View debugViewPort;
 
-    explicit Application(sf::RenderWindow &target, Json::Value& v) : 
+    explicit Application(fs::path exec_dir, sf::RenderWindow &target, Json::Value& v) : 
       window(target), debugViewPort(target.getView()) { // NOLINT
         // Setup Box2d Physics
         b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
@@ -73,15 +73,15 @@ public:
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         // Setup the rest
-        systems.add<RenderSystem>(target);
+        systems.add<SpriteRenderSystem>(target);
         systems.add<MoveSystem>();
         systems.add<ImGuiSystem>(target);
 
         // Setup python system
 
         // Set python script path
-        std::string path_exec = fs::current_path().string();
-        std::string path_scripts = (fs::current_path() / "scripts").string();
+        std::string path_exec = exec_dir.string();
+        std::string path_scripts = (exec_dir / "scripts").string();
         assert(
           PyImport_AppendInittab("_entityx_components", init_entityx_components) != -1
           && "Failed to initialize _entityx_components Python module");
@@ -119,15 +119,19 @@ public:
         systems.update<MoveSystem>(dt);
         systems.update<PythonSystem>(dt);
         systems.update<PhysicsSystem>(dt);
-        systems.update<RenderSystem>(dt);
+        systems.update<SpriteRenderSystem>(dt);
         systems.update<ImGuiSystem>(dt);
+
+        // Draw box2d debug data literally ontop of every thing.
         window.setView(debugViewPort);
         physWorld->DrawDebugData();
         window.setView(window.getDefaultView());
     }
 };
 
-int main() {
+int main(int argc, char* const argv[]) {
+    // global setup..
+    auto execute_dir = fs::system_complete(argv[0]).remove_filename();
     sf::RenderWindow window(sf::VideoMode(800, 600), "");
     window.setKeyRepeatEnabled(true);
 
@@ -139,13 +143,14 @@ int main() {
         Serializable::handle<Physics>();
         Serializable::handle<PythonScript>();
         Serializable::handle<InputResponder>();
+        Serializable::handle<Renderable>();
     }
 
     thor::ResourceHolder<Json::Value, std::string> holder;
     Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));
     const std::string title = configs["app_title"].asString();
 
-    Application app(window, configs);
+    Application app(execute_dir, window, configs);
 
     sf::Clock clock;
     while ( window.isOpen() ) {

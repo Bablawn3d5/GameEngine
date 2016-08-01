@@ -44,14 +44,25 @@ protected:
     PythonSystemTest() : em(ev) {
         assert(PyImport_AppendInittab("entityx_python_test", initentityx_python_test) != -1
                && "Failed to initialize entityx_python_test Python module");
+        fs::path exec_dir = get_execute_dir();
         try {
-            Py_Initialize();
+          std::string str = exec_dir.string();
+          // Write to tempoaray char[] for PySys_SetPath
+          std::vector<char> lib_paths(str.begin(), str.end());
+          lib_paths.push_back('\0');
+
+          Py_NoSiteFlag = 1;
+          Py_SetPythonHome(&lib_paths[0]);
+          Py_InitializeEx(0);
+
+          // Assuming python27.zip is our python lib zip.
+          PyRun_SimpleString("import sys");
+          PyRun_SimpleString("sys.path.append('python27.zip')");
         } catch ( ... ) {
             PyErr_Print();
             PyErr_Clear();
             throw;
         }
-        fs::path exec_dir = get_execute_dir();
         // HACK(SMA) : Assuming python27.zip contains our python std_lib and in in our exec dir.
         // normally this is passed in by the application.
         python = std::make_shared<PythonSystem>(&em, exec_dir);
