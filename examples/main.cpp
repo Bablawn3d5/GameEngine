@@ -144,17 +144,19 @@ int main(int argc, char* const argv[]) {
         Serializable::handle<PythonScript>();
         Serializable::handle<InputResponder>();
         Serializable::handle<Renderable>();
+        Serializable::handle<sf::Color>();
     }
 
     thor::ResourceHolder<Json::Value, std::string> holder;
     Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));
     const std::string title = configs["app_title"].asString();
-
+    window.setTitle(title);
     Application app(execute_dir, window, configs);
 
     sf::Clock clock;
+    const sf::Color clear_color = Serializable::fromJSON<sf::Color>(configs["clear_color"]);
     while ( window.isOpen() ) {
-      window.clear();
+      window.clear(clear_color);
       sf::Time elapsed = clock.restart();
       app.update(elapsed.asSeconds());
       window.display();

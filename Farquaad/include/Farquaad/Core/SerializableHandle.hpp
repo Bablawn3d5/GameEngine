@@ -360,3 +360,35 @@ public:
                     &CollisionCategoryBitset::set_bits);
   }
 };
+
+template<>
+class SerializableHandle<sf::Color> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
+  inline Json::Value toJSON(const sf::Color& c) const {
+    Json::Value o;
+    o[0] = c.r;
+    o[1] = c.g;
+    o[2] = c.b;
+    o[3] = c.a;
+    return o;
+  }
+
+  inline sf::Color fromJSON(const Json::Value& v) const {
+    auto r = v[0].asInt();
+    auto g = v[1].asInt();
+    auto b = v[2].asInt();
+    auto a = v[3].asInt();
+    // Default alpha
+    a = (a <= 0) ? 255 : a;
+    return sf::Color(r,g,b,a);
+  }
+
+  void initPy(py::class_<sf::Color>&& py) const {
+    //TODO(SMA): Add setter/getter
+  }
+};
