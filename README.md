@@ -1,5 +1,10 @@
-# GameEngine [![Build Status](https://travis-ci.org/Bablawn3d5/GameEngine.svg?branch=master)](https://travis-ci.org/Bablawn3d5/GameEngine) [![Build status](https://ci.appveyor.com/api/projects/status/4kyg48lhpudisk6f/branch/master?svg=true)](https://ci.appveyor.com/project/PHEN-/gameengine/branch/master)
-Bablawn3d5 Game Engine
+# Bablawn3d5 GameEngine - A bootstrap project for quick C++/Python Jams
+
+Bablawn3d5 - GameEngine
+
+Linux/Mac: [![Build Status](https://travis-ci.org/Bablawn3d5/GameEngine.svg?branch=master)](https://travis-ci.org/Bablawn3d5/GameEngine) 
+
+Windows: [![Build status](https://ci.appveyor.com/api/projects/status/4kyg48lhpudisk6f/branch/master?svg=true)](https://ci.appveyor.com/project/PHEN-/gameengine/branch/master)
 
 Boostraps serveral C++ libraries the Bablawn uses into a covinent "engine". Build is quite bulky, as we intend to keep all major package requirements part of the repo for easy setup.
 
