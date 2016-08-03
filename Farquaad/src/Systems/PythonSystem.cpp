@@ -7,9 +7,6 @@
 #include <sstream>
 #include <string>
 
-namespace ex = entityx;
-namespace py = boost::python;
-
 // Workaround Visual Studio 2015 Update 3 Known Issue - June 27th 2016 :|
 namespace boost {
 template <>
@@ -43,41 +40,11 @@ void PythonSystem::add_path(const std::string &path) {
     py_paths.push_back(path);
 }
 
-struct EntityToPythonEntity {
-    static PyObject *convert(ex::Entity entity) {
-        auto python = entity.component<PythonScript>();
-        assert(python && "Entity does not have a PythonComponent");
-        return py::incref(python->object.ptr());
-    }
-};
-
 static std::string Entity_Id_repr(ex::Entity::Id id) {
     std::stringstream repr;
     repr << "<Entity::Id " << id.index() << "." << id.version() << ">";
     return repr.str();
 }
-
-struct PythonEntity {
-    explicit PythonEntity(ex::EntityManager* em, ex::Entity::Id id) :
-        _entity(ex::Entity(em, id)) {
-        assert(_entity.valid());
-    }
-    virtual ~PythonEntity() {}
-
-    void destroy() {
-        _entity.destroy();
-    }
-
-    operator ex::Entity() const { return _entity; }
-
-    virtual void update(ex::TimeDelta dt) {}
-
-    ex::Entity::Id _entity_id() const {
-        return _entity.id();
-    }
-
-    ex::Entity _entity;
-};
 
 static std::string PythonEntity_repr(const PythonEntity &entity) {
     std::stringstream repr;
@@ -99,7 +66,8 @@ BOOST_PYTHON_MODULE(_entityx) {
 
     // py::class_<BaseEvent, ptr<BaseEvent>, boost::noncopyable>("BaseEvent", py::no_init);
 
-    py::class_<PythonEntity>("Entity", py::init<ex::EntityManager*, ex::Entity::Id>())
+    py::class_<PythonEntity>("Entity", py::init<ex::Entity>())
+        .def(py::init<ex::EntityManager*, ex::Entity::Id>())
         .def_readonly("_entity_id", &PythonEntity::_entity_id)
         .def("update", &PythonEntity::update)
         .def("destroy", &PythonEntity::destroy)

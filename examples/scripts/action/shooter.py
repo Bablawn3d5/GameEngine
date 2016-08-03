@@ -39,10 +39,10 @@ class Shooter(entityx.Entity):
         phys.size.x = self.size
         phys.size.y = self.size
         phys.category = CollisionCategory.CATEGORY_3;
-        phys.mask.bits = CollisionCategory.CATEGORY_2 | CollisionCategory.CATEGORY_3;
-        phys.dirty = True
-        self.size = self.size + 1
+        phys.mask.bits = CollisionCategory.CATEGORY_1 | CollisionCategory.CATEGORY_3 | CollisionCategory.CATEGORY_4;
         phys.bodyType = b2BodyType.DYNAMIC
+        self.size = self.size + 1
         stats = e.Component(Stats)
         stats.speed = 100
+        e.can_explode = True
 

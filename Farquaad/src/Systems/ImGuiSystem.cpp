@@ -44,6 +44,10 @@ void ImGuiSystem::update(ex::EntityManager & em,
     ImGui::SetNextWindowPos({0,0}, ImGuiSetCond_FirstUseEver);
     ImGui::Begin("Debug");
     ImGui::Text("FPS: %d", (int) (1.f/dt) );
+
+    auto all_entities = em.entities_for_debugging();
+    size_t t = static_cast<size_t>(std::distance(all_entities.begin(), all_entities.end()));
+    ImGui::Text("Entity Count: %zu", t );
     ImGui::NewLine();
 
     ImGui::SetNextWindowCollapsed(true, ImGuiSetCond_FirstUseEver);
@@ -56,7 +60,7 @@ void ImGuiSystem::update(ex::EntityManager & em,
       std::unique_ptr<Json::StreamWriter> writer(
         builder.newStreamWriter());
       std::stringstream stream;
-      for ( auto entity : em.entities_for_debugging() ) {
+      for ( auto entity : all_entities ) {
         stream << entity.id();
         if ( ImGui::TreeNode(stream.str().c_str()) ) {
           Json::Value object = es.Save(entity);

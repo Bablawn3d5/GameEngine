@@ -4,6 +4,7 @@
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <json/json.h>
 #include <string>
 
@@ -48,6 +49,33 @@ public:
   inline void initPy(py::class_<sf::Vector2<T>>&& py) {
     py.def_readwrite("x", &sf::Vector2<T>::x)
       .def_readwrite("y", &sf::Vector2<T>::y);
+  }
+};
+
+template<>
+class SerializableHandle<Physics::CoollidingSet> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
+  // TODO(SMA): This doesn't actually do any conversion. Should fixme sometime.
+  Physics::CoollidingSet fromJSON(const Json::Value& v) const {
+    Physics::CoollidingSet obj;
+    return obj;
+  }
+
+  Json::Value toJSON(const Physics::CoollidingSet& arr) const {
+    Json::Value v = Json::arrayValue;
+    for ( auto& a : arr ) {
+      v.append(a.id().index());
+    }
+    return v;
+  }
+
+  void initPy(py::class_<Physics::CoollidingSet>&& py) const {
+    py.def(py::vector_indexing_suite<Physics::CoollidingSet, true>());
   }
 };
 
@@ -122,6 +150,7 @@ public:
   }
 };
 
+// TODO(SMA): Combine these to use is_intergral instead.
 template<>
 class SerializableHandle<int>
   : public SerializableHandlePrimitive<int> {
@@ -133,6 +162,23 @@ public:
 
   inline int fromJSON(const Json::Value& v) const {
     return v.asInt();
+  }
+};
+
+template<>
+class SerializableHandle<size_t> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
+  inline size_t fromJSON(const Json::Value& v) const {
+    return (size_t)v.asUInt();
+  }
+
+  inline Json::Value toJSON(size_t v) const {
+    return Json::Value(static_cast<Json::UInt>(v));
   }
 };
 

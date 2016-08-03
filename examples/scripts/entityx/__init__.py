@@ -112,6 +112,12 @@ class Entity(_entityx.Entity):
             return self.Component(cls, *args, **kwargs)
         return component
 
+    def HasComponent(self, cls):
+        entity_id = self._entity_id
+        component = cls.get_component(_entityx._entity_manager, entity_id)
+        if component:
+            return True
+        return False
 
 def emit(event):
     """Emit an event.

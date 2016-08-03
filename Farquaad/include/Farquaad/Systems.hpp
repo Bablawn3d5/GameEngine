@@ -4,6 +4,7 @@
 
 #include <Farquaad/Systems/InputSystem.h>
 #include <Farquaad/Systems/PhysicsSystem.h>
+#include <Farquaad/Systems/DestroyerSystem.h>
 #include <Farquaad/Systems/MoveSystem.h>
 #include <Farquaad/Systems/ImGuiSystem.h>
 #include <Farquaad/Systems/SpriteRenderSystem.h>

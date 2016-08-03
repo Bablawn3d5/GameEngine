@@ -34,6 +34,9 @@ public:
   // Define these so class becomes non POD for const initalizaiton
   SerializableHandle() {}
   ~SerializableHandle() {}
+  static_assert(meta::isRegistered<T>(), "Default handler called on class that is not registered"
+                " in meta::registerMembers! Please define a SerializableHandle specailization"
+                " or register the somewhere in meta::registerMembers");
 
   T fromJSON(const Json::Value& v) const {
     T obj;

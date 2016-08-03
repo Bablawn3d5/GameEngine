@@ -5,6 +5,7 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Systems)
 set(SRC
     ${SRCROOT}/InputSystem.cpp
     ${SRCROOT}/PhysicsSystem.cpp
+    ${SRCROOT}/DestroyerSystem.cpp
     ${SRCROOT}/MoveSystem.cpp
     ${SRCROOT}/PythonSystem.cpp
     ${SRCROOT}/ImGuiSystem.cpp
@@ -13,6 +14,7 @@ set(SRC
 
 set(INC
     ${INCROOT}/PhysicsSystem.h
+    ${INCROOT}/DestroyerSystem.h
     ${INCROOT}/MoveSystem.h
     ${INCROOT}/InputSystem.h
     ${INCROOT}/PythonSystem.h

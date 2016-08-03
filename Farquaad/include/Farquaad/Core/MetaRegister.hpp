@@ -37,6 +37,18 @@ inline auto registerMembers<PythonScript>() {
     );
 }
 
+template <>
+constexpr auto registerName<Destroyed>() {
+  return "destroyed";
+}
+
+template <>
+inline auto registerMembers<Destroyed>() {
+  return members(
+    member("timer", &Destroyed::deathTimer)
+  );
+}
+
 
 template <>
 constexpr auto registerName<Stats>() {
@@ -66,7 +78,12 @@ inline auto registerMembers<Physics>() {
       member("dirty", &Physics::isDirty),
       member("category", &Physics::collisionCategory),
       member("mask", &Physics::collisionMask),
-      member("group", &Physics::collisionGroup)
+      member("group", &Physics::collisionGroup),
+      member("currentCollisions", &Physics::collidingWithSet),
+      member("collisionCount", &Physics::collisionCount),
+      member("isColliding", &Physics::isColliding),
+      member("isSensor", &Physics::isSensor),
+      member("isBullet", &Physics::isBullet)
     );
 }
 
