@@ -3,6 +3,7 @@
 #pragma once
 
 #include <Farquaad/Components/Body.hpp>
+#include <Farquaad/Components/Destroyed.hpp>
 #include <Farquaad/Components/InputResponder.hpp>
 #include <Farquaad/Components/Physics.hpp>
 #include <Farquaad/Components/Stats.hpp>

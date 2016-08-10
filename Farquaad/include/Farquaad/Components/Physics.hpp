@@ -1,11 +1,13 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2015-2016 Bablawn3d5
 
 #pragma once
 
 #include <entityx/entityx.h>
+#include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 #include <bitset>
 #include <string>
+#include <unordered_set>
 
 enum CollisionCategory {
   CATEGORY_1 = 1 << 0,
@@ -27,14 +29,14 @@ enum CollisionCategory {
 };
 
 // TODO(SMA) : Move me somewhere else.
-template <typename ToCheck, std::size_t ExpectedSize, 
+template <typename ToCheck, std::size_t ExpectedSize,
   std::size_t RealSize = sizeof(ToCheck)>
 void check_size() {
   static_assert(ExpectedSize == RealSize, "Size is off!");
 }
 
 // HACK(SMA) : I can't define enum CollisionCategory : uint16, as this breaks
-// serlization for whatever reason. So for now just assume uint16 and work 
+// serlization for whatever reason. So for now just assume uint16 and work
 // from there.
 // using bit_type = std::underlying_type<CollisionCategory>::type;
 using bit_type = uint16;
@@ -62,26 +64,26 @@ struct CollisionCategoryBitset : public bitset_type {
 
 struct Physics {
 public:
-    // Pass in the height/width as pixels
-    explicit Physics(
-        b2BodyType bodyType = b2_staticBody,
-        int widthPixels = 0,
-        int heightPixels = 0) :
-        bodyType(bodyType),
-        size({ widthPixels , heightPixels }) {
-        halfSize = 0.5f * (sf::Vector2f)size;
-        isDirty = true;
-    }
+    Physics() {}
     ~Physics() {}
-
-    bool isDirty;
+    bool isDirty = true;
 
     b2Body* body = NULL;
-    b2BodyType bodyType;
-    sf::Vector2f halfSize;
-    sf::Vector2i size;
+    b2BodyType bodyType = b2_staticBody;
+    sf::Vector2i size = { 1,1 };
+    sf::Vector2f halfSize = 0.5f * (sf::Vector2f)size;
 
     CollisionCategory collisionCategory = CollisionCategory::CATEGORY_1;
     CollisionCategoryBitset collisionMask = CollisionCategory::CATEGORY_1;
     int collisionGroup = 0;
+    bool isSensor = false;
+
+    // HACK(SMA) : Id holder, intialized when physics assigns the id to a fixutre
+    ex::Entity self;
+    // HACK(SMA) : Arbiratairly initalize set to have 50 buckets.
+    using CoollidingSet = std::vector<ex::Entity>;
+    CoollidingSet collidingWithSet;
+    bool isColliding = false;
+    bool isBullet = false;
+    size_t collisionCount = 0;
 };

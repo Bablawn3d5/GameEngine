@@ -57,11 +57,11 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestInputResponder") {
 }
 
 TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
-    Physics p{ b2_staticBody, -100, 100 };
+    Physics p;
     SECTION("Physics Size") {
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 6);
+        REQUIRE(size(v) == 11);
         REQUIRE(v["bodyType"].asString() == "STATIC");
         REQUIRE(v["size"][0].asFloat() == p.size.x);
         REQUIRE(v["size"][1].asFloat() == p.size.y);
@@ -83,7 +83,7 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
     SECTION("Static Body") {
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 6);
+        REQUIRE(size(v) == 11);
         REQUIRE(v["bodyType"].asString() == "STATIC");
 
         Physics actual = Serializable::fromJSON<Physics>(v);
@@ -94,7 +94,7 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
         p.bodyType = b2_dynamicBody;
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 6);
+        REQUIRE(size(v) == 11);
         REQUIRE(v["bodyType"].asString() == "DYNAMIC");
 
         Physics actual = Serializable::fromJSON<Physics>(v);
@@ -105,7 +105,7 @@ TEST_CASE_METHOD(JSONSerializedFixture, "TestPhysics") {
         p.bodyType = b2_kinematicBody;
         Json::Value v = Serializable::toJSON(p);
         REQUIRE(v.isObject());
-        REQUIRE(size(v) == 6);
+        REQUIRE(size(v) == 11);
         REQUIRE(v["bodyType"].asString() == "KINEMATIC");
 
         Physics actual = Serializable::fromJSON<Physics>(v);

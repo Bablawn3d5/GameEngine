@@ -6,6 +6,50 @@
 
 namespace ex = entityx;
 
+void EntityXPhysicsContactListener::BeginContact(b2Contact* contact) {
+  ex::Entity entityA = *(static_cast<ex::Entity*>(contact->GetFixtureA()->GetBody()->GetUserData()));
+  ex::Entity entityB = *(static_cast<ex::Entity*>(contact->GetFixtureB()->GetBody()->GetUserData()));
+#ifdef DEBUG
+  auto indexA = entityA.id().index();
+  auto indexB = entityB.id().index();
+#endif // DEBUG
+  // Assuming box2d will behave well and only emit one BeginContact per collision between
+  // two objects.
+  auto physicsA = entityA.component<Physics>().get();
+  physicsA->collidingWithSet.push_back(entityB);
+  physicsA->isColliding = true;
+  physicsA->collisionCount = physicsA->collidingWithSet.size();
+
+  auto physicsB = entityB.component<Physics>().get();
+  physicsB->collidingWithSet.push_back(entityA);
+  physicsB->isColliding = true;
+  physicsB->collisionCount = physicsB->collidingWithSet.size();
+}
+
+void EntityXPhysicsContactListener::EndContact(b2Contact* contact) {
+  ex::Entity entityA = *(static_cast<ex::Entity*>(contact->GetFixtureA()->GetBody()->GetUserData()));
+  ex::Entity entityB = *(static_cast<ex::Entity*>(contact->GetFixtureB()->GetBody()->GetUserData()));
+#ifdef DEBUG
+  auto indexA = entityA.id().index();
+  auto indexB = entityB.id().index();
+#endif // DEBUG
+  // Assuming EndContact is always called when collision ends.
+  auto physicsA = entityA.component<Physics>();
+  auto elemB = std::find(physicsA->collidingWithSet.begin(), physicsA->collidingWithSet.end(), entityB);
+  assert(elemB != physicsA->collidingWithSet.end());
+  physicsA->collidingWithSet.erase(elemB);
+  physicsA->collisionCount = physicsA->collidingWithSet.size();
+
+  auto physicsB = entityB.component<Physics>();
+  auto elemA = std::find(physicsB->collidingWithSet.begin(), physicsB->collidingWithSet.end(), entityA);
+  assert(elemA != physicsB->collidingWithSet.end());
+  physicsB->collidingWithSet.erase(elemA);
+  physicsB->collisionCount = physicsB->collidingWithSet.size();
+
+  if ( physicsA->collidingWithSet.size() == 0 ) { physicsA->isColliding = false; }
+  if ( physicsB->collidingWithSet.size() == 0 ) { physicsB->isColliding = false; }
+}
+
 void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt) {
     // Resync physics components that are 'dirty'.
     em.each<Physics>(
@@ -16,87 +60,58 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
 
         physics.isDirty = false;
         physics.halfSize = 0.5f * (sf::Vector2f)physics.size * METERS_PER_PIXEL;
-
-        if ( physics.body == NULL ) {
-            return;
-        }
-
-        b2Filter filter;
-        filter.categoryBits = physics.collisionCategory;
-        filter.categoryBits = physics.collisionMask;
-        filter.groupIndex = physics.collisionGroup;
-        // Sync Collision Masks
-        for ( b2Fixture* fixture = physics.body->GetFixtureList();
-             fixture; fixture = fixture->GetNext() ) {
-          fixture->SetFilterData(filter);
-        }
-
         if ( entity.has_component<Body>() ) {
           auto body = entity.component<Body>().get();
           sf::Vector2f physicsBodyPos = (body->position * METERS_PER_PIXEL) + physics.halfSize;
-          auto rotation = physics.body->GetAngle();
+          auto rotation = 0.f;
+          if ( physics.body != nullptr ) {
+            // Assuming one fixture per-physics body here.
+            physics.body->DestroyFixture(physics.body->GetFixtureList());
+            rotation = physics.body->GetAngle();
+          }
+
+          // Resync Fixture
+          b2PolygonShape shape;
+          shape.SetAsBox(physics.halfSize.x, physics.halfSize.y);
+          b2FixtureDef shapeDef;
+          shapeDef.shape = &shape;
+          shapeDef.density = 1.0f;
+          shapeDef.restitution = 0.0f;
+          shapeDef.friction = 0.0f;
+          shapeDef.filter.categoryBits = physics.collisionCategory;
+          shapeDef.filter.maskBits = physics.collisionMask;
+          shapeDef.filter.groupIndex = physics.collisionGroup;
+          shapeDef.isSensor = physics.isSensor;
+          b2BodyDef bodyDef;
+          bodyDef.type = physics.bodyType;
+          bodyDef.bullet = physics.isBullet;
+          b2Body * boxbody = physicsWorld->CreateBody(&bodyDef);
+          boxbody->CreateFixture(&shapeDef);
+          physics.self = entity;
+          boxbody->SetUserData(static_cast<void*>(&physics.self));
+
           // TODO(SMA) : Sync Rotation.
-          physics.body->SetTransform( {physicsBodyPos.x, physicsBodyPos.y}, rotation);
+          boxbody->SetTransform( {physicsBodyPos.x, physicsBodyPos.y}, rotation);
+          physics.body = boxbody;
+
+          // HACK(SMA) : Assign it a rectangle if there's no drawable component.
+          // Really should remove me now that we've got the physics debugger.
+          if ( !entity.has_component<Renderable>() ) {
+            auto renderable = entity.assign<Renderable>();
+            auto rect_ptr = std::make_shared<sf::RectangleShape>((sf::Vector2f)physics.size);
+            renderable->drawable = rect_ptr;
+            renderable->transform = rect_ptr;
+          }
+
+          physics.collidingWithSet.clear();
+          physics.isColliding = false;
+          physics.collisionCount = 0;
         }
 
         // TODO(SMA) : Resync stat changes
         if ( entity.has_component<Stats>() ) {
         }
     });
-
-    // Spawn physics bodies for objects without them.
-    for ( auto e : entitiesToCreatePhysicsFor ) {
-        // Intialize physics components to new Entities
-        if ( e.has_component<Physics>() &&
-            e.has_component<Body>() &&
-            e.has_component<Stats>() ) {
-            auto physics = e.component<Physics>().get();
-            auto body = e.component<Body>().get();
-
-            // Something has gone horribly wrong.
-            assert(physics->body == NULL);
-
-            // We don't process an entity unless it has all the required components
-            // TODO(MRC): Look into Component dependencies
-
-            physics->halfSize = 0.5f * (sf::Vector2f)physics->size * METERS_PER_PIXEL;
-
-            b2BodyDef bodyDef;
-            bodyDef.type = physics->bodyType;
-
-            sf::Vector2f physicsBodyPos = (body->position * METERS_PER_PIXEL) + physics->halfSize;
-            bodyDef.position.Set(physicsBodyPos.x, physicsBodyPos.y);
-            bodyDef.bullet = true;
-            b2Body * boxbody = physicsWorld->CreateBody(&bodyDef);
-
-            b2PolygonShape shape;
-            shape.SetAsBox(physics->halfSize.x, physics->halfSize.y);
-            b2FixtureDef shapeDef;
-            shapeDef.shape = &shape;
-            shapeDef.density = 10.0;
-            shapeDef.restitution = 0.0f;
-            shapeDef.friction = 0.0f;
-            shapeDef.filter.categoryBits = physics->collisionCategory;
-            shapeDef.filter.maskBits = physics->collisionMask;
-            shapeDef.filter.groupIndex = physics->collisionGroup;
-            boxbody->CreateFixture(&shapeDef);
-
-            physics->body = boxbody;
-
-            // HACK(SMA) : Assign it a rectangle if there's no drawable component.
-            // Really should remove me now that we've got the physics debugger.
-            if ( !e.has_component<Renderable>() ) {
-                auto renderable = e.assign<Renderable>();
-                auto rect_ptr = std::make_shared<sf::RectangleShape>((sf::Vector2f)physics->size);
-                renderable->drawable = rect_ptr;
-                renderable->transform = rect_ptr;
-            }
-        } else {
-            continue;
-        }
-    }
-
-    entitiesToCreatePhysicsFor.clear();
 
     // Update velocity in the physics world.
     em.each<Body, Physics, Stats>(
@@ -121,6 +136,11 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
             vel.x = 0.0f;
             vel.y = 0.0f;
             physics.body->SetLinearVelocity(vel);
+        }
+
+        for ( auto it = physics.collidingWithSet.begin(); it != physics.collidingWithSet.end();) {
+          if ( !it->valid() ) { it = physics.collidingWithSet.erase(it); }
+          else  { it++; }
         }
     });
 
@@ -161,33 +181,6 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
         body.position.x = (physicsPosition.x - physics.halfSize.x) * PIXELS_PER_METER;
         body.position.y = (physicsPosition.y - physics.halfSize.y) * PIXELS_PER_METER;
     });
-
-    // TODO(SMA) : Implement me
-    // Entity entityA;
-    // Entity entityB;
-
-    // // Process any collisions that might have happened during the simulation
-    // for each (EntityContact contact in contactListener->contacts) {
-    //     for ( auto& entity : em.entities_with_components(physics) ) {
-    //         if ( physics->body == contact.fixtureA->GetBody() ) {
-    //             entityA = entity;
-    //         } else if ( physics->body == contact.fixtureB->GetBody() ) {
-    //             entityB = entity;
-    //         }
-
-    //         if ( entityA != NULL && entityB != NULL ) {
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // if ( entityA != NULL && entityB != NULL ) {
-    //     events.emit<CollisionEvent>(entityA, entityB);
-    // }
-}
-
-void PhysicsSystem::receive(const ex::ComponentAddedEvent<Physics> &componentAddedEvent) {
-    entitiesToCreatePhysicsFor.push_back(componentAddedEvent.entity);
 }
 
 void PhysicsSystem::receive(const ex::EntityDestroyedEvent &entityDestroyedEvent) {

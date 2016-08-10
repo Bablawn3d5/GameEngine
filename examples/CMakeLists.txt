@@ -33,6 +33,7 @@ file(GLOB ExampleResources
     ${SCRIPTDIR}/action/__init__.py
     ${SCRIPTDIR}/action/mouse.py
     ${SCRIPTDIR}/action/shooter.py
+    ${SCRIPTDIR}/action/explosion.py
     ${SCRIPTDIR}/entityx/__init__.py
     ${SCRIPTDIR}/gamemath/__init__.py
     ${SCRIPTDIR}/gamemath/vector2.py

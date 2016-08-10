@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <boost/python.hpp>
 #include <Farquaad/Components/PythonScript.hpp>
 #include <boost/filesystem.hpp>
 #include <entityx/entityx.h>
@@ -10,6 +11,7 @@
 
 namespace ex = entityx;
 namespace fs = boost::filesystem;
+namespace py = boost::python;
 
 struct PythonSystem : public ex::System<PythonSystem>, public ex::Receiver<PythonSystem> {
 public:
@@ -53,3 +55,39 @@ static Component* get_component(ex::EntityManager& em, ex::Entity::Id id) {
         return NULL;
     return handle.get();
 }
+
+
+struct EntityToPythonEntity {
+  static PyObject *convert(ex::Entity entity) {
+    auto python = entity.component<PythonScript>();
+    assert(python && "Entity does not have a PythonComponent");
+    return py::incref(python->object.ptr());
+  }
+};
+
+struct PythonEntity {
+  explicit PythonEntity(ex::Entity ent) :
+    _entity(ent) {
+    assert(_entity.valid());
+  }
+
+  explicit PythonEntity(ex::EntityManager* em, ex::Entity::Id id) :
+    _entity(ex::Entity(em, id)) {
+    assert(_entity.valid());
+  }
+  virtual ~PythonEntity() {}
+
+  void destroy() {
+    _entity.destroy();
+  }
+
+  operator ex::Entity() const { return _entity; }
+
+  virtual void update(ex::TimeDelta dt) {}
+
+  ex::Entity::Id _entity_id() const {
+    return _entity.id();
+  }
+
+  ex::Entity _entity;
+};

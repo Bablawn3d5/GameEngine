@@ -2,15 +2,15 @@
 
 #include <Farquaad/Box2D/SFMLB2DDebug.h>
 
-sf::Color cast(const b2Color& color) {
+sf::Color SFMLB2DDebug::cast(const b2Color& color) {
     return sf::Color(static_cast<sf::Uint8>(color.r * 255),
                      static_cast<sf::Uint8>(color.g * 255),
                      static_cast<sf::Uint8>(color.b * 255),
                      static_cast<sf::Uint8>(color.a * 255));
 }
 
-sf::Vector2f cast(const b2Vec2& vector) {
-    return sf::Vector2f(vector.x, vector.y);
+sf::Vector2f SFMLB2DDebug::cast(const b2Vec2& vector) {
+    return sf::Vector2f(vector.x * SCALE, vector.y * SCALE);
 }
 
 void SFMLB2DDebug::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) {

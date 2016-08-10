@@ -9,8 +9,10 @@
 class SFMLB2DDebug : public b2Draw {
 public:
     SFMLB2DDebug(sf::RenderTarget& target, const float scale) : target(target)
-      , OUTLINE_THICKNESS(1.f/ scale) {}
+      , OUTLINE_THICKNESS(1.0f), SCALE(scale) {}
 
+    sf::Color cast(const b2Color& color);
+    sf::Vector2f cast(const b2Vec2& vector);
     void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
     void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
     void DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color);
@@ -21,4 +23,5 @@ public:
 private:
     sf::RenderTarget& target;
     const float OUTLINE_THICKNESS;
+    const float SCALE;
 };
