@@ -38,6 +38,7 @@ public:
     void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
 
     sf::Event events;
+    std::vector<std::string> triggedEvents;
 private:
     KeyBindMap keyBinds;
     sf::Window& window;

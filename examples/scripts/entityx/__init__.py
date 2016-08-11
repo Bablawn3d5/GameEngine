@@ -97,7 +97,7 @@ class Entity(_entityx.Entity):
     def _from_raw_entity(cls, entity_id, *args, **kwargs):
         """Create a new Entity from a raw entity.
 
-        This is called from C++.
+        This is called from CComponent(cls, args++.
         """
         self = Entity.__new__(cls, entity_id=entity_id)
         cls.__init__(self, *args, **kwargs)

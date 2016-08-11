@@ -94,6 +94,10 @@ void InputSystem::update(ex::EntityManager &em,
       }
     }
 
+    // Copy events in reverse to list
+    this->triggedEvents.clear();
+    std::copy(triggedEvents.rbegin(), triggedEvents.rend(), std::back_inserter(this->triggedEvents));
+
     // Store responders in a refrence vec, and clear old responses
     em.each<InputResponder>(
       [&](ex::Entity entity, InputResponder &responder) {

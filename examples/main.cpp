@@ -27,6 +27,7 @@ BOOST_PYTHON_MODULE(_entityx_components) {
   Serializable::initPy(py::class_<Physics>("Physics", py::init<>()));
   Serializable::initPy(py::class_<Destroyed>("Destroyed", py::init<>()));
   Serializable::initPy(py::class_<Stats>("Stats", py::init<>()));
+  Serializable::initPy(py::class_<Renderable>("Renderable", py::init<>()));
   Serializable::initPy(py::class_<InputResponder>("InputResponder", py::init<>()));
   Serializable::initPy(py::class_<Physics::CoollidingSet>("CollisionList", py::init<>()));
   typedef std::vector<std::string> vec_string;
@@ -56,6 +57,10 @@ public:
     std::shared_ptr<SFMLB2DDebug> debugDraw;
     sf::RenderWindow& window;
     sf::View debugViewPort;
+    bool debug = false;
+    bool physDebug = true;
+    bool isPaused = false;
+    ex::TimeDelta frameAdvance = 0.;
 
     explicit Application(fs::path exec_dir, sf::RenderWindow &target, Json::Value& v) : 
       window(target), debugViewPort(target.getView()) { // NOLINT
@@ -119,17 +124,49 @@ public:
     }
 
     void update(ex::TimeDelta dt) {
-        systems.update<DestroyerSystem>(dt);
+
+        // Don't process time if no time is passing.
+        if( isPaused ) { 
+          dt = 0.0;
+        }
+
+        if ( frameAdvance != 0.0 ) {
+          dt = frameAdvance;
+          frameAdvance = 0.0;
+        }
+
         systems.update<InputSystem>(dt);
+        systems.update<DestroyerSystem>(dt);
         systems.update<MoveSystem>(dt);
         systems.update<PythonSystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<SpriteRenderSystem>(dt);
 
+        // HACK(SMA) : Check if we need to toggle some hardcoded keys
+        const auto events = systems.system<InputSystem>()->triggedEvents;
+        if ( std::find(events.begin(), events.end(), "+Game_Pause") != events.end() ) {
+          isPaused = !isPaused;
+        }
+
+        if ( std::find(events.begin(), events.end(), "+Game_FrameAdvance") != events.end() ) {
+          frameAdvance = 0.0127;
+        }
+
+        if ( std::find(events.begin(), events.end(), "+Debug") != events.end() ) {
+          debug = !debug;
+        }
+        if ( std::find(events.begin(), events.end(), "+Phys_Debug") != events.end() ) {
+          physDebug = !physDebug;
+        }
+
         // Draw debug data literally ontop of every thing.
-        physWorld->DrawDebugData();
-        window.setView(window.getDefaultView());
-        systems.update<ImGuiSystem>(dt);
+        if ( this->debug ) {
+          if ( this->physDebug ) {
+            physWorld->DrawDebugData();
+          }
+          window.setView(window.getDefaultView());
+          systems.update<ImGuiSystem>(dt);
+        }
     }
 };
 
