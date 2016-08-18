@@ -44,6 +44,7 @@ file(GLOB ExampleResources
     ${FarquaadExamples_SOURCE_DIR}/Resources/Hero.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/Mouse.json
     ${FarquaadExamples_SOURCE_DIR}/images/perfectface.png
+    ${FarquaadExamples_SOURCE_DIR}/sounds/Explode.wav
     ${PYTHON27_STD_ZIP})
 
 add_custom_target(CopyExampleResources DEPENDS ${ExampleResources})

@@ -21,3 +21,4 @@ class Follower(entityx.Entity):
 
         direction_vec.copy_to(self.body.direction)
         Exploder.check_explodes(self, dt)
+

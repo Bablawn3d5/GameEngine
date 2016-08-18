@@ -23,6 +23,21 @@ inline auto registerMembers<Body>() {
     );
 }
 
+template <>
+constexpr auto registerName<Sound>() {
+  return "sound";
+}
+
+template <>
+inline auto registerMembers<Sound>() {
+  return members(
+    member("name", &Sound::name),
+    member("pitch", &Sound::pitch),
+    member("volume", &Sound::volume),
+    member("start_delay", &Sound::start_delay),
+    member("play_count", &Sound::play_count)
+  );
+}
 
 template <>
 constexpr auto registerName<PythonScript>() {

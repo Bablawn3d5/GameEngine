@@ -6,9 +6,11 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <json/json.h>
+#include <entityx/entityx.h>
 #include <string>
 
 namespace py = boost::python;
+namespace ex = entityx;
 
 // Built in C++ types.
 template <class T>
@@ -79,6 +81,31 @@ public:
   }
 };
 
+
+template<>
+class SerializableHandle<ex::Entity> {
+public:
+  // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
+  // Define these so class becomes non POD for const initalizaiton
+  SerializableHandle() {}
+  ~SerializableHandle() {}
+
+  // TODO(SMA): This doesn't actually do any conversion. Should fixme sometime.
+  ex::Entity fromJSON(const Json::Value& v) const {
+    return ex::Entity();
+  }
+
+  Json::Value toJSON(const ex::Entity& e) const {
+    if ( e.id() != ex::Entity::INVALID ) {
+      return Json::Value(static_cast<Json::UInt>(e.id().index()));
+    }
+    return Json::Value(0);
+  }
+
+  // Implicity convertable from PythonEntity using EntityToPythonEntity
+  void initPy(py::class_<ex::Entity>&& py) const {}
+};
+
 template<class T>
 class SerializableHandle<std::vector<T>> {
 public:
@@ -98,6 +125,9 @@ public:
 
   Json::Value toJSON(const std::vector<T>& arr) const {
     Json::Value v = Json::arrayValue;
+    if ( arr.size() == 0 ) {
+      return v;
+    }
     for ( auto& a : arr ) {
       v.append(Serializable::toJSON<T>(a));
     }
@@ -225,10 +255,19 @@ public:
   inline Json::Value toJSON(const PythonScript& s) const {
     Json::Value o;
     // Don't seralize null objects.
-    if ( s.object != py::object() ) {
-     o["class"] = (std::string)py::extract<std::string>(s.object.attr("__class__").attr("__name__"));
-     o["modulename"] = (std::string)
-        py::extract<std::string>(s.object.attr("__class__").attr("__module__"));
+    if ( s.object.ptr() != 0 ) {
+     try {
+       o["class"] = (std::string)py::extract<std::string>(s.object.attr("__class__").attr("__name__"));
+       o["modulename"] = (std::string)
+          py::extract<std::string>(s.object.attr("__class__").attr("__module__"));
+       Json::Reader reader;
+       reader.parse(((std::string)py::extract<std::string>(s.object.attr("to_json")())).c_str(), o["vars"]);
+     }
+     catch ( const py::error_already_set& ) {
+       PyErr_Print();
+       PyErr_Clear();
+       throw;
+     }
     } else {
       o["class"] = s.cls;
       o["modulename"] = s.module;

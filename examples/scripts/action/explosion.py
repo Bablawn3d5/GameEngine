@@ -1,6 +1,6 @@
 import entityx
 from _entityx import Entity
-from _entityx_components import CollisionCategory, Destroyed, Body, Physics, Stats, b2BodyType
+from _entityx_components import Sound, CollisionCategory, Destroyed, Body, Physics, Stats, b2BodyType
 from gamemath import vector2
 
 Vector2 = vector2.Vector2
@@ -37,6 +37,8 @@ class Exploder(entityx.Entity):
                 phys.isDirty = True
                 pos = Vector2(self.body.position) - 0.5*Vector2(e.explode.explode_size, e.explode.explode_size)
                 pos.copy_to(bod.position)
+                sound = e.Component(Sound)
+                sound.name = "sounds/Explode.wav"
 
 
 class Explosion(entityx.Entity):

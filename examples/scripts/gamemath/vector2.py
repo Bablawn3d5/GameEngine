@@ -6,6 +6,11 @@ class Vector2(object):
 
     _gameobjects_vector = 2
 
+    # Define dict so we're useful
+    @property
+    def __dict__(self):
+        return {s: getattr(self, s) for s in self.__slots__ if hasattr(self, s)}
+
     def __init__(self, x=0., y=0.):
         """Initialize a vector
 
