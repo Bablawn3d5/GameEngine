@@ -1,5 +1,5 @@
 import _entityx
-
+import json, operator
 
 """These classes provide a convenience layer on top of the raw entityx::python
 primitives.
@@ -91,7 +91,10 @@ class Entity(_entityx.Entity):
         """Default constructor."""
 
     def __repr__(self):
-        return '<%s.%s %d.%d>' % (self.__class__.__module__, self.__class__.__name__, self._entity_id.index, self._entity_id.version)
+        return "<%s.%s %d.%d>" % (self.__class__.__module__, self.__class__.__name__, self._entity_id.index, self._entity_id.version)
+
+    def to_json(self):
+        return json.dumps(self.__dict__.copy(), default=operator.attrgetter('__dict__'), indent=2)
 
     @classmethod
     def _from_raw_entity(cls, entity_id, *args, **kwargs):

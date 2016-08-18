@@ -79,7 +79,7 @@ public:
     bool isSensor = false;
 
     // HACK(SMA) : Id holder, intialized when physics assigns the id to a fixutre
-    ex::Entity self;
+    ex::Entity self = ex::Entity();
     // HACK(SMA) : Arbiratairly initalize set to have 50 buckets.
     using CoollidingSet = std::vector<ex::Entity>;
     CoollidingSet collidingWithSet;

@@ -24,6 +24,7 @@ namespace py = boost::python;
 // HACK(SMA) : Just shove this here for now.
 BOOST_PYTHON_MODULE(_entityx_components) {
   Serializable::initPy(py::class_<Body>("Body", py::init<>()));
+  Serializable::initPy(py::class_<Sound>("Sound", py::init<>()));
   Serializable::initPy(py::class_<Physics>("Physics", py::init<>()));
   Serializable::initPy(py::class_<Destroyed>("Destroyed", py::init<>()));
   Serializable::initPy(py::class_<Stats>("Stats", py::init<>()));
@@ -81,6 +82,7 @@ public:
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         // Setup the rest
+        systems.add<SoundSystem>();
         systems.add<SpriteRenderSystem>(target);
         systems.add<MoveSystem>();
         systems.add<DestroyerSystem>();
@@ -141,6 +143,7 @@ public:
         systems.update<PythonSystem>(dt);
         systems.update<PhysicsSystem>(dt);
         systems.update<SpriteRenderSystem>(dt);
+        systems.update<SoundSystem>(dt);
 
         // HACK(SMA) : Check if we need to toggle some hardcoded keys
         const auto events = systems.system<InputSystem>()->triggedEvents;
