@@ -65,6 +65,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIR})
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
 include_directories(${METASTUFF_INCLUDE_DIRS})
+include_directories(${AsepriteToSFMLImage_SOURCE_DIR})
+include_directories(${AsepriteToSFMLImage_SOURCE_DIR}/aseprite-rgba-converter)
 
 # Build Executable
 enable_testing()

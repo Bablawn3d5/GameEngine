@@ -25,3 +25,6 @@
 [submodule "extinclude/MetaStuff-repo"]
 	path = extinclude/MetaStuff-repo
 	url = https://github.com/Bablawn3d5/MetaStuff.git
+[submodule "extinclude/AsepriteToSFMLImage"]
+	path = extinclude/AsepriteToSFMLImage
+	url = https://github.com/Bablawn3d5/AsepriteToSFMLImage.git
