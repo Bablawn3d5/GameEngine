@@ -93,7 +93,11 @@ endif()
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
+# Lie to everyone that we've found SFML.
+set(SFML_FOUND True)
+set(SFML_INCLUDE_DIR ${SFML_SOURCE_DIR}/include)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Thor)
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/AsepriteToSFMLImage)
 #add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo)
 #HACK(SMA) : Set metatstuff include dir
 set(METASTUFF_INCLUDE_DIRS ${GameEngine_SOURCE_DIR}/extinclude/MetaStuff-repo/include)

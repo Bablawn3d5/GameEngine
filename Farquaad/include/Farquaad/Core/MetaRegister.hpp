@@ -126,7 +126,10 @@ template <>
 inline auto registerMembers<Renderable>() {
   return members(
     member("texture", &Renderable::texture_name),
-    member("sprite", &Renderable::sprite_name)
+    member("sprite", &Renderable::sprite_name),
+    member("currentAnim", &Renderable::current_animation),
+    member("frame", &Renderable::cur_frame),
+    member("frameTime", &Renderable::cur_frame_time)
   );
 }
 } // namespace meta

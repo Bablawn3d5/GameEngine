@@ -43,6 +43,7 @@ file(GLOB ExampleResources
     ${FarquaadExamples_SOURCE_DIR}/Resources/Box.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/Hero.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/Mouse.json
+    ${FarquaadExamples_SOURCE_DIR}/images/Chest_1.ase
     ${FarquaadExamples_SOURCE_DIR}/images/perfectface.png
     ${FarquaadExamples_SOURCE_DIR}/sounds/Explode.wav
     ${PYTHON27_STD_ZIP})
@@ -94,6 +95,9 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
 include_directories(${METASTUFF_INCLUDE_DIRS})
+include_directories(${AsepriteToSFMLImage_INCLUDE_DIRS})
+include_directories(${AsepriteToSFMLImage_SOURCE_DIR})
+include_directories(${AsepriteToSFMLImage_SOURCE_DIR}/aseprite-rgba-converter)
 
 link_directories(${Boost_LIBRARY_DIR})
 

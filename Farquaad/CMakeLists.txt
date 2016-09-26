@@ -137,6 +137,17 @@ target_link_libraries(Farquaad ${IMGUI_AMALGAMATE_LIBRARIES})
 message("Metastuff - ${METASTUFF_INCLUDE_DIRS}")
 include_directories(${METASTUFF_INCLUDE_DIRS})
 
+
+# Include Aseprite stuff
+include_directories(${AsepriteToSFMLImage_INCLUDE_DIRS})
+include_directories(${AsepriteToSFMLImage_SOURCE_DIR})
+include_directories(${AsepriteToSFMLImage_SOURCE_DIR}/aseprite-rgba-converter)
+target_link_libraries(Farquaad AsepriteToSFMLImage)
+set_target_properties(AsepriteToSFMLImage PROPERTIES FOLDER "Aseprite")
+set_target_properties(zlib PROPERTIES FOLDER "Aseprite")
+set_target_properties(zlibstatic PROPERTIES FOLDER "Aseprite")
+set_target_properties(AsepriteRgbaConvert PROPERTIES FOLDER "Aseprite")
+
 # Set installation directory to incl Packages
 install(TARGETS Farquaad DESTINATION lib)
 
