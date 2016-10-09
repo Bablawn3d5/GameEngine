@@ -49,7 +49,7 @@ include_directories(${INCROOT})
 
 
 # Set source_group for Visual Studio organization
-foreach(FILE ${INCLUDES} ${SOURCES} ${IMGUI_AMALGAMATE_SOURCES})
+foreach(FILE ${INCLUDES} ${SOURCES})
     # Get the directory of the source file
     get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
     get_filename_component(PARENT_DIR "${PARENT_DIR}" ABSOLUTE)
