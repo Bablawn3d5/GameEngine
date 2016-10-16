@@ -16,15 +16,34 @@ struct Frame {
   unsigned int loop_type = 0;
 };
 
+// TODO(SMA) : Split this up into multiple components?
 struct Renderable {
-    std::string texture_name;
-    std::string sprite_name;
+  // Flag to signify we should rebuild the sprite.
+  bool isDirty = true;
 
-    std::string current_animation;
-    size_t cur_frame = 0;
-    entityx::TimeDelta cur_frame_time = 0;
-    std::map<std::string, Frame> animations;
-    std::shared_ptr<sf::Drawable> drawable;
-    std::weak_ptr<sf::Transformable> transform;
-    std::weak_ptr<sf::Sprite> sprite;
+  // Animation Stuff
+  std::string texture_name;
+  std::string current_animation;
+  // Current frame can be negative to indicate a offset from the last
+  // frame.
+  int cur_frame = 0;
+  // HACK(SMA):Assume this is convertable to entityx::TimeDelta
+  float cur_frame_time = 0.f;
+  std::map<std::string, Frame> animations;
+
+  // Font stuff
+  std::string font_name;
+  std::string font_string;
+  uint32_t font_size = 30;
+  // HACK(SMA):This doesn't work in metaregister for whatever reason.
+  //uint8_t r = 200, g = 0,b = 200, a = 255;
+  uint32_t r = 200, g = 0, b = 200, a = 255;
+  sf::Vector2f scale{ 1.f,1.f };
+  sf::Vector2f offset{ 0.f,0.f };
+
+
+
+  std::shared_ptr<sf::Drawable> drawable;
+  std::weak_ptr<sf::Transformable> transform;
+  std::weak_ptr<sf::Sprite> sprite;
 };

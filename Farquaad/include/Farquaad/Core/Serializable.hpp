@@ -3,8 +3,8 @@
 #pragma once
 
 #include <boost/python.hpp>
-#include <Farquaad/Systems/PythonSystem.h>
 #include <Farquaad/Core/MetaRegister.hpp>
+#include <Farquaad/Systems/PythonSystem.h>
 #include <Meta.h>
 #include <json/json.h>
 #include <memory>
@@ -32,11 +32,13 @@ class SerializableHandle {
 public:
   // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
   // Define these so class becomes non POD for const initalizaiton
-  SerializableHandle() {}
+  SerializableHandle() {
+    static_assert(meta::isRegistered<T>(), "Default handler called on class that is not registered"
+                  " in meta::registerMembers! Please define a SerializableHandle specailization"
+                  " or register the somewhere in meta::registerMembers");
+  }
   ~SerializableHandle() {}
-  static_assert(meta::isRegistered<T>(), "Default handler called on class that is not registered"
-                " in meta::registerMembers! Please define a SerializableHandle specailization"
-                " or register the somewhere in meta::registerMembers");
+
 
   T fromJSON(const Json::Value& v) const {
     T obj;
@@ -82,7 +84,7 @@ public:
       .staticmethod("get_component");
   }
 
-  inline void initPy(py::enum_<T>&& py) const = delete;
+  void initPy(py::enum_<T>&& py) const= delete;
 };
 
 // Static handle to SerializableHandle
@@ -132,7 +134,7 @@ struct EnumClassHash {
     std::hash<underlying_type> hfn;
     return hfn(u_val);
   }
-  inline void initPy(py::class_<T>&& py) const = delete;
+  void initPy(py::class_<T>&& py) const = delete;
 };
 
 template<class T>
@@ -144,7 +146,7 @@ public:
     }
   }
 
-  inline T fromJSON(const Json::Value &v) const {
+  T fromJSON(const Json::Value &v) const {
     // Slightly undefined if you don't type it correctly.
     try {
       return str_to_enum.at(v.asString());
@@ -156,7 +158,7 @@ public:
     return static_cast<T>(0);
   }
 
-  inline Json::Value toJSON(const T& val) const {
+  Json::Value toJSON(const T& val) const {
     Json::Value v;
     try {
       v = enum_to_str.at(val);
@@ -166,8 +168,8 @@ public:
     return Json::nullValue;
   }
 
-  inline void initPy(py::class_<T>&& py) const = delete;
-  inline void initPy(py::enum_<T>&& pynum) const {
+  void initPy(py::class_<T>&& py) const = delete;
+  void initPy(py::enum_<T>&& pynum) const {
     for ( auto& pair : enum_to_str ) {
       pynum.value(pair.second.c_str(), pair.first);
     }

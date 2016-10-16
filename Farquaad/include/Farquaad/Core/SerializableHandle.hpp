@@ -21,7 +21,7 @@ public:
   SerializableHandlePrimitive() {}
   ~SerializableHandlePrimitive() {}
 
-  inline Json::Value toJSON(const T& primitive) const {
+  Json::Value toJSON(const T& primitive) const {
     static_assert(std::is_fundamental<T>::value, "Class only to be used in primitives.");
     return Json::Value(primitive);
   }
@@ -36,19 +36,19 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline sf::Vector2<T> fromJSON(const Json::Value &v) const {
+  sf::Vector2<T> fromJSON(const Json::Value &v) const {
     return sf::Vector2<T>(Serializable::fromJSON<T>(v[0]),
                           Serializable::fromJSON<T>(v[1]));
   }
 
-  inline Json::Value toJSON(const sf::Vector2<T> & component) const {
+  Json::Value toJSON(const sf::Vector2<T> & component) const {
     Json::Value v = Json::arrayValue;
     v[0] = component.x;
     v[1] = component.y;
     return v;
   }
 
-  inline void initPy(py::class_<sf::Vector2<T>>&& py) {
+  void initPy(py::class_<sf::Vector2<T>>&& py) const {
     py.def_readwrite("x", &sf::Vector2<T>::x)
       .def_readwrite("y", &sf::Vector2<T>::y);
   }
@@ -147,7 +147,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline bool fromJSON(const Json::Value& v) const {
+  bool fromJSON(const Json::Value& v) const {
     return v.asBool();
   }
 };
@@ -161,7 +161,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline float fromJSON(const Json::Value& v) const {
+  float fromJSON(const Json::Value& v) const {
     return v.asFloat();
   }
 };
@@ -175,7 +175,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline double fromJSON(const Json::Value& v) const {
+  double fromJSON(const Json::Value& v) const {
     return v.asDouble();
   }
 };
@@ -190,27 +190,30 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline int fromJSON(const Json::Value& v) const {
+  int fromJSON(const Json::Value& v) const {
     return v.asInt();
   }
 };
 
+// TODO(SMA): Combine these to use is_intergral instead.
 template<>
-class SerializableHandle<size_t> {
+class SerializableHandle<uint32_t> {
 public:
   // Workaround: DR253: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#253
   // Define these so class becomes non POD for const initalizaiton
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline size_t fromJSON(const Json::Value& v) const {
-    return (size_t)v.asUInt();
+
+  uint32_t fromJSON(const Json::Value& v) const {
+    return (uint32_t)v.asUInt();
   }
 
-  inline Json::Value toJSON(size_t v) const {
+  Json::Value toJSON(uint32_t v) const {
     return Json::Value(static_cast<Json::UInt>(v));
   }
 };
+
 
 template<>
 class SerializableHandle<const char*>
@@ -221,7 +224,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline const char* fromJSON(const Json::Value& v) const {
+  const char* fromJSON(const Json::Value& v) const {
       return v.asCString();
   }
 };
@@ -234,11 +237,11 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline Json::Value toJSON(const std::string& s) const {
+  Json::Value toJSON(const std::string& s) const {
     return Json::Value(s);
   }
 
-  inline std::string fromJSON(const Json::Value& v) const {
+  std::string fromJSON(const Json::Value& v) const {
       return v.asString();
   }
 };
@@ -252,7 +255,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline Json::Value toJSON(const PythonScript& s) const {
+  Json::Value toJSON(const PythonScript& s) const {
     Json::Value o;
     // Don't seralize null objects.
     if ( s.object.ptr() != 0 ) {
@@ -275,7 +278,7 @@ public:
     return o;
   }
 
-  inline PythonScript fromJSON(const Json::Value& v) const {
+  PythonScript fromJSON(const Json::Value& v) const {
     return PythonScript(v["modulename"].asCString(), v["class"].asCString());
   }
 };
@@ -293,7 +296,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline KeyInput fromJSON(const Json::Value& v) const {
+  KeyInput fromJSON(const Json::Value& v) const {
     KeyInput bind;
     auto keyString = v.asString();
     std::regex rek("^KEY_(.*)");
@@ -312,7 +315,7 @@ public:
     return bind;
   }
 
-  inline Json::Value toJSON(const KeyInput& bind) const {
+  Json::Value toJSON(const KeyInput& bind) const {
     Json::Value v;
     if ( bind.userInputType == KeyboardInput ) {
       v = "KEY_" + thor::toString(bind.keyCode);
@@ -334,7 +337,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline InputSystem::KeyBindMap fromJSON(const Json::Value& v) const {
+  InputSystem::KeyBindMap fromJSON(const Json::Value& v) const {
     InputSystem::KeyBindMap map;
     for ( auto& val : v.getMemberNames() ) {
       KeyInput b = Serializable::fromJSON<KeyInput>(v[val]);
@@ -360,7 +363,7 @@ public:
     return map;
   }
 
-  inline Json::Value toJSON(const InputSystem::KeyBindMap& map) const {
+  Json::Value toJSON(const InputSystem::KeyBindMap& map) const {
     Json::Value v;
     for ( auto& pair : map ) {
       // Handle a bit of the fragile string event system here.
@@ -429,13 +432,13 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline Json::Value toJSON(const CollisionCategoryBitset& s) const {
+  Json::Value toJSON(const CollisionCategoryBitset& s) const {
     Json::Value o;
     o = s.to_string();
     return o;
   }
 
-  inline CollisionCategoryBitset fromJSON(const Json::Value& v) const {
+  CollisionCategoryBitset fromJSON(const Json::Value& v) const {
     return CollisionCategoryBitset(std::string(v.asString()));
   }
 
@@ -454,7 +457,7 @@ public:
   SerializableHandle() {}
   ~SerializableHandle() {}
 
-  inline Json::Value toJSON(const sf::Color& c) const {
+  Json::Value toJSON(const sf::Color& c) const {
     Json::Value o;
     o[0] = c.r;
     o[1] = c.g;
@@ -463,7 +466,7 @@ public:
     return o;
   }
 
-  inline sf::Color fromJSON(const Json::Value& v) const {
+  sf::Color fromJSON(const Json::Value& v) const {
     auto r = v[0].asInt();
     auto g = v[1].asInt();
     auto b = v[2].asInt();

@@ -126,10 +126,19 @@ template <>
 inline auto registerMembers<Renderable>() {
   return members(
     member("texture", &Renderable::texture_name),
-    member("sprite", &Renderable::sprite_name),
     member("currentAnim", &Renderable::current_animation),
     member("frame", &Renderable::cur_frame),
-    member("frameTime", &Renderable::cur_frame_time)
+    member("frameTime", &Renderable::cur_frame_time),
+    member("r", &Renderable::r),
+    member("g", &Renderable::g),
+    member("b", &Renderable::b),
+    member("a", &Renderable::a),
+    member("scale", &Renderable::scale),
+    member("offset", &Renderable::offset),
+    member("font", &Renderable::font_name),
+    member("fontString", &Renderable::font_string),
+    member("fontSize", &Renderable::font_size),
+    member("dirty", &Renderable::isDirty)
   );
 }
 } // namespace meta

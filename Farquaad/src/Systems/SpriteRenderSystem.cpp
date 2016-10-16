@@ -10,6 +10,7 @@
 #include "Aseprite/SFML/convert.h"
 #include "AsepriteRgbaConvert/loader.h"
 
+namespace {
 // String comparision helper, returns true if two strings are equal regardless of case.
 bool case_insensitive_string_eq(const std::string& lhs, const std::string& rhs) {
   return std::equal(lhs.begin(),
@@ -20,8 +21,8 @@ bool case_insensitive_string_eq(const std::string& lhs, const std::string& rhs) 
                     });
 }
 
-void LoadAsTexture(thor::ResourceHolder<sf::Texture, std::string>& texture_holder,
-                         const ex::Entity entity, const Body &body, Renderable &renderable) {
+// TODO(SMA): Move me to my own managed resource reloader, maybe avoid std::shared_ptr???
+void LoadAsTexture(thor::ResourceHolder<sf::Texture, std::string>& texture_holder, Renderable &renderable) {
   try {
     auto& texture = texture_holder.acquire(renderable.texture_name,
                                    thor::Resources::fromFile<sf::Texture>(renderable.texture_name),
@@ -29,7 +30,6 @@ void LoadAsTexture(thor::ResourceHolder<sf::Texture, std::string>& texture_holde
 
     auto sprite = std::make_shared<sf::Sprite>();
     sprite->setTexture(texture);
-    sprite->setPosition(body.position);
     renderable.drawable = std::static_pointer_cast<sf::Drawable>(sprite);
     renderable.transform = std::static_pointer_cast<sf::Transformable>(sprite);
   }
@@ -42,9 +42,8 @@ void LoadAsTexture(thor::ResourceHolder<sf::Texture, std::string>& texture_holde
   }
 }
 
-
-void LoadAsSpriteSheetTexture(thor::ResourceHolder<sf::Texture, std::string>& texture_holder,
-                   const ex::Entity entity, const Body &body, Renderable &renderable) {
+// TODO(SMA): Move me to my own managed resource reloader, maybe avoid std::shared_ptr???
+void LoadAsSpriteSheetTexture(thor::ResourceHolder<sf::Texture, std::string>& texture_holder, Renderable &renderable) {
   try {
     // TODO(SMA): Move me to a resource loader.
     auto assprite = aseprite::load_sprite_from_file(renderable.texture_name.c_str());
@@ -60,7 +59,6 @@ void LoadAsSpriteSheetTexture(thor::ResourceHolder<sf::Texture, std::string>& te
                                           thor::Resources::Reuse);
     auto sprite = std::make_shared<sf::Sprite>();
     sprite->setTexture(texture);
-    sprite->setPosition(body.position);
     auto offsets = aseprite::calcFrameOffsets(assprite);
     for ( auto& tag : assprite.tags ) {
       Frame a;
@@ -105,6 +103,27 @@ void LoadAsSpriteSheetTexture(thor::ResourceHolder<sf::Texture, std::string>& te
   }
 }
 
+// TODO(SMA): Move me to my own managed resource reloader, maybe avoid std::shared_ptr???
+void LoadAsFontTexture(thor::ResourceHolder<sf::Font, std::string>& font_holder, Renderable &renderable) {
+  try {
+    auto& font = font_holder.acquire(renderable.font_name,
+                                thor::Resources::fromFile<sf::Font>(renderable.font_name),
+                                thor::Resources::Reuse);
+
+    auto text = std::make_shared<sf::Text>(renderable.font_string, font, renderable.font_size);
+    text->setFillColor(sf::Color(renderable.r, renderable.g, renderable.b, renderable.a));
+    renderable.drawable = std::static_pointer_cast<sf::Drawable>(text);
+    renderable.transform = std::static_pointer_cast<sf::Transformable>(text);
+  }
+  // Failed to load it for whatever reason
+  catch ( thor::ResourceAccessException& e ) {
+    std::cerr << "Failed to load resource: " << renderable.texture_name
+      << " " << e.what() << std::endl;
+    throw e;
+  }
+}
+
+} // anon namespace
 
 void SpriteRenderSystem::update(ex::EntityManager & em,
                           ex::EventManager & events, ex::TimeDelta dt) {
@@ -112,19 +131,32 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
     // Update drawables.
     em.each<Body, Renderable>(
         [this, regex](ex::Entity entity, Body &body, Renderable &renderable) {
+      // If dirty, then rebuild drawable
+      if ( renderable.isDirty == true ) {
+        renderable.drawable = nullptr;
+      }
       // Resource exists, just exit it.
-      if( renderable.drawable != nullptr )
+      else if ( renderable.drawable != nullptr ) {
         return;
+      }
 
       // Create sprite from texture
+      // TODO(SMA): Just combine renderable to have one name type, and have it loaded in
+      // based on regex extendsions.
       if ( renderable.texture_name.length() != 0 ) {
         // If we're loading a .ase or .aseprite, treate as spritesheet
         if ( std::regex_search(renderable.texture_name, regex) ) {
-          LoadAsSpriteSheetTexture(this->texture_holder, entity, body, renderable);
+          LoadAsSpriteSheetTexture(this->texture_holder, renderable);
         } else {
-          LoadAsTexture(this->texture_holder, entity, body, renderable);
+          LoadAsTexture(this->texture_holder, renderable);
         }
+      } else if ( renderable.font_name.length() != 0 ) {
+        LoadAsFontTexture(this->font_holder, renderable);
+      } else {
+        // No font or texture but we have uninit renderable..?
+        //assert(false && "Something horrible has happened.");
       }
+      renderable.isDirty = false;
     });
 
     em.each<Renderable>(
@@ -133,7 +165,7 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
           // If need to sync game body to screen position.
           if ( auto trans_ptr = renderable.transform.lock() ) {
             if ( entity.has_component<Body>() ) {
-              trans_ptr->setPosition(entity.component<Body>()->position);
+              trans_ptr->setPosition(entity.component<Body>()->position + renderable.offset);
             }
           }
 
@@ -146,18 +178,46 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
                                             [renderable](const auto& item) {
                 return case_insensitive_string_eq(item.first, renderable.current_animation);
               });
-              auto& animation = anim_iter->second;
+              const auto& animation = anim_iter->second;
               renderable.cur_frame_time += dt;
+              size_t offset = (renderable.cur_frame >= 0) ? renderable.cur_frame
+                : -renderable.cur_frame;
               // Advance animation if we're out of time for the current frame.
-              if ( renderable.cur_frame_time >= animation.frame_delay[renderable.cur_frame] ) {
-                renderable.cur_frame++;
-                renderable.cur_frame_time = 0;
-                // TODO(SMA): Assume we want to loop back to start of the animation
-                if ( renderable.cur_frame >= animation.frame_offsets.size() ) {
-                  renderable.cur_frame = 0;
+              if ( renderable.cur_frame_time >= animation.frame_delay[offset] ) {
+                // HACK(SMA) : Some ugly hacks to support loop types.
+                // Normal 'forward'
+                if ( animation.loop_type == 0 ) {
+                  renderable.cur_frame++;
+                  renderable.cur_frame_time = 0;
+                  // Assume never negative here.
+                  assert(renderable.cur_frame > 0);
+                  if ( size_t(renderable.cur_frame) >= animation.frame_offsets.size() ) {
+                    renderable.cur_frame = 0;
+                  }
+                // Reverse
+                } else if ( animation.loop_type == 1 ) {
+                  renderable.cur_frame--;
+                  renderable.cur_frame_time = 0;
+                  if ( renderable.cur_frame < 0 ) {
+                    renderable.cur_frame = animation.frame_offsets.size() - 1;
+                  }
+                // Ping pong.
+                } else if ( animation.loop_type == 2 ) {
+                  renderable.cur_frame++;
+                  renderable.cur_frame_time = 0;
+                  if ( renderable.cur_frame > 0 &&
+                      size_t(renderable.cur_frame) >= animation.frame_offsets.size() ) {
+                    renderable.cur_frame = 1 - animation.frame_offsets.size();
+                  }
+                } else {
+                  assert(false && "Unkown loop type specified.");
                 }
               }
-              sprite_ptr->setTextureRect(animation.frame_offsets[renderable.cur_frame]);
+              if ( renderable.cur_frame >= 0 ) {
+                sprite_ptr->setTextureRect(animation.frame_offsets[renderable.cur_frame]);
+              } else {
+                sprite_ptr->setTextureRect(animation.frame_offsets[-renderable.cur_frame]);
+              }
             } else {
               renderable.cur_frame = 0;
               renderable.cur_frame_time = 0;

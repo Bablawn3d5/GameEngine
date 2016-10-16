@@ -16,5 +16,6 @@ public:
 
 private:
     sf::RenderTarget& target;
+    thor::ResourceHolder<sf::Font, std::string> font_holder;
     thor::ResourceHolder<sf::Texture, std::string> texture_holder;
 };

@@ -85,5 +85,5 @@ public:
     CoollidingSet collidingWithSet;
     bool isColliding = false;
     bool isBullet = false;
-    size_t collisionCount = 0;
+    uint32_t collisionCount = 0;
 };
