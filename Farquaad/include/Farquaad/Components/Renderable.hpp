@@ -16,6 +16,8 @@ struct Frame {
   unsigned int loop_type = 0;
 };
 
+typedef std::map<std::string, Frame> AnimationMap;
+
 // TODO(SMA) : Split this up into multiple components?
 struct Renderable {
   // Flag to signify we should rebuild the sprite.
@@ -29,7 +31,7 @@ struct Renderable {
   int cur_frame = 0;
   // HACK(SMA):Assume this is convertable to entityx::TimeDelta
   float cur_frame_time = 0.f;
-  std::map<std::string, Frame> animations;
+  AnimationMap animations;
 
   // Font stuff
   std::string font_name;
@@ -40,10 +42,10 @@ struct Renderable {
   uint32_t r = 200, g = 0, b = 200, a = 255;
   sf::Vector2f scale{ 1.f,1.f };
   sf::Vector2f offset{ 0.f,0.f };
-
-
+  float rotation = 0.f;
+  uint32_t layer = 0u;
 
   std::shared_ptr<sf::Drawable> drawable;
-  std::weak_ptr<sf::Transformable> transform;
-  std::weak_ptr<sf::Sprite> sprite;
+  sf::Transformable* transform = nullptr;
+  sf::Sprite* sprite = nullptr;
 };

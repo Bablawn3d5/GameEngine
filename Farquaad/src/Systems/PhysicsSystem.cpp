@@ -100,7 +100,7 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
             auto renderable = entity.assign<Renderable>();
             auto rect_ptr = std::make_shared<sf::RectangleShape>((sf::Vector2f)physics.size);
             renderable->drawable = rect_ptr;
-            renderable->transform = rect_ptr;
+            renderable->transform = std::static_pointer_cast<sf::Transformable>(rect_ptr).get();
             renderable->font_string = "Debug Shape";
             renderable->isDirty = false;
           }
