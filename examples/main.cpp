@@ -72,21 +72,21 @@ public:
 
         // Setup Debug drawing stuff
         const float ppm = physsystem->PIXELS_PER_METER;
-        debugDraw = std::make_shared<SFMLB2DDebug>(target, ppm);
+        debugDraw = std::make_shared<SFMLB2DDebug>(window, ppm);
         physWorld->SetDebugDraw(debugDraw.get());
         debugDraw->SetFlags(b2Draw::e_shapeBit /*| b2Draw::e_aabbBit|
                                                b2Draw::e_centerOfMassBit | b2Draw::e_pairBit*/);
 
         // Setup Input
-        auto inputSystem = systems.add<InputSystem>(target);
+        auto inputSystem = systems.add<InputSystem>(window);
         inputSystem->setKeybinds(Serializable::fromJSON<InputSystem::KeyBindMap>(v["keys"]));
 
         // Setup the rest
         systems.add<SoundSystem>();
-        systems.add<SpriteRenderSystem>(target);
+        systems.add<SpriteRenderSystem>(window);
         systems.add<MoveSystem>();
         systems.add<DestroyerSystem>();
-        systems.add<ImGuiSystem>(target);
+        systems.add<ImGuiSystem>(window);
 
         // Setup python system
 
@@ -168,8 +168,9 @@ public:
           if ( this->physDebug ) {
             physWorld->DrawDebugData();
           }
-          window.setView(window.getDefaultView());
           systems.update<ImGuiSystem>(dt);
+          // Reset window state for next sprite window.draws.
+          //window.resetGLStates();
         }
     }
 };
