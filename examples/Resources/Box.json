@@ -7,12 +7,14 @@
     },
     "physics" : {
         "bodyType" : "STATIC",
-        "size" : [ 50, 50 ],
+        "size" : [ 50, 20 ],
         "category" : "CATEGORY_1",
+        "isSensor" : 0,
         "mask" : "0000000000000111"
     },
     "renderable" : {
         "texture" : "./images/Chest_1.ase",
-        "currentAnim" : "opening"
+        "currentAnim" : "opening",
+        "offset" :  [5, -50]
     }
 }

@@ -135,6 +135,8 @@ inline auto registerMembers<Renderable>() {
     member("a", &Renderable::a),
     member("scale", &Renderable::scale),
     member("offset", &Renderable::offset),
+    member("rotation", &Renderable::rotation),
+    member("layer", &Renderable::layer),
     member("font", &Renderable::font_name),
     member("fontString", &Renderable::font_string),
     member("fontSize", &Renderable::font_size),

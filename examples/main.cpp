@@ -115,7 +115,8 @@ public:
         for ( auto& items : v["entities"] ) {
             std::cout << "Loading file: " << items.asString() << std::endl;
             auto json = holder.acquire(items.asString(),
-                                       Resources::loadJSON(items.asString()));
+                                       Resources::loadJSON(items.asString()),
+                                       thor::Resources::Reuse);
             EntitySerializer es(json);
             auto entity = entities.create();
             es.Load(entity);

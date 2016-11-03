@@ -76,7 +76,7 @@ public:
     CollisionCategory collisionCategory = CollisionCategory::CATEGORY_1;
     CollisionCategoryBitset collisionMask = CollisionCategory::CATEGORY_1;
     int collisionGroup = 0;
-    bool isSensor = false;
+    bool isSensor = true;
 
     // HACK(SMA) : Id holder, intialized when physics assigns the id to a fixutre
     ex::Entity self = ex::Entity();
