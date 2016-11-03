@@ -180,7 +180,7 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
     typedef std::pair<float,
                       std::reference_wrapper<const Renderable>> renderable_ref_pair;
     std::vector< std::vector<renderable_ref_pair> > sorted_drawable_layers;
-    sorted_drawable_layers.resize(max_layers);
+    sorted_drawable_layers.resize(max_layers+1);
     // Resize defualt layer to expect most of the entites to sit in.
     sorted_drawable_layers[0].reserve(em.size());
     em.each<Renderable>(
@@ -191,8 +191,8 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
           trans_ptr->setScale(renderable.scale);
           trans_ptr->setRotation(renderable.rotation);
           if ( entity.has_component<Body>() ) {
-            auto& sorted_drawable = sorted_drawable_layers.at(std::min(renderable.layer,this->max_layers));
-            auto& bod = entity.component<Body>();
+            auto& sorted_drawable = sorted_drawable_layers.at(std::min((size_t)renderable.layer,this->max_layers));
+            auto bod = entity.component<Body>();
             trans_ptr->setPosition(bod->position + renderable.offset);
             const renderable_ref_pair p{ bod->position.y, std::cref(renderable) };
             // Sort drawables by 
