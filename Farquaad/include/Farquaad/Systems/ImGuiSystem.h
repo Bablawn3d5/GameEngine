@@ -13,9 +13,11 @@ namespace ex = entityx;
 
 struct ImGuiSystem : public ex::System<ImGuiSystem> {
 public:
-    explicit ImGuiSystem(sf::RenderWindow &targ) {
+    explicit ImGuiSystem(sf::RenderWindow &targ) : targ(targ) {
         ImGui::SFML::Init(targ);
     }
 
     void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
+private:
+  sf::RenderWindow &targ;
 };

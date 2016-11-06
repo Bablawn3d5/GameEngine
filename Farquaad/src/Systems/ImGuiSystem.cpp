@@ -38,7 +38,7 @@ void ImGuiSystem::update(ex::EntityManager & em,
                           ex::EventManager & events, ex::TimeDelta dt) {
 
 //    ImGui::SFML::ProcessEvent(event);
-    ImGui::SFML::Update(sf::seconds(static_cast<float>(dt)));
+    ImGui::SFML::Update(targ, sf::seconds(static_cast<float>(dt)));
 
     ImGui::SetNextWindowSize({ 200,120 }, ImGuiSetCond_FirstUseEver);
     ImGui::SetNextWindowPos({0,0}, ImGuiSetCond_FirstUseEver);
