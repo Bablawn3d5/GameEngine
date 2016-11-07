@@ -87,9 +87,9 @@ ex::Entity::Id EntityManager_configure(ex::EntityManager& em, py::object self) {
 
 struct ChronoTimeToPythonFloat {
   static PyObject *convert(const ex::TimeDelta& dt) {
-    using FpMilliseconds =
+    using FpSeconds =
       std::chrono::duration<float, std::chrono::seconds::period>;
-    return py::incref(py::object(FpMilliseconds(dt).count()).ptr());
+    return py::incref(py::object(FpSeconds(dt).count()).ptr());
   }
 };
 

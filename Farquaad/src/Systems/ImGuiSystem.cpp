@@ -38,12 +38,14 @@ void ImGuiSystem::update(ex::EntityManager & em,
                           ex::EventManager & events, ex::TimeDelta dt) {
 
 //    ImGui::SFML::ProcessEvent(event);
-    ImGui::SFML::Update(targ, sf::seconds(static_cast<float>(dt.count())));
+    using FpSeconds =
+      std::chrono::duration<float, std::chrono::seconds::period>;
+    ImGui::SFML::Update( targ, sf::seconds(FpSeconds(dt).count()) );
 
     ImGui::SetNextWindowSize({ 200,120 }, ImGuiSetCond_FirstUseEver);
     ImGui::SetNextWindowPos({0,0}, ImGuiSetCond_FirstUseEver);
     ImGui::Begin("Debug");
-    ImGui::Text("FPS: %d", (int) (1.f/dt.count()) );
+    ImGui::Text("FPS: %d", (int) (1.f/ FpSeconds(dt).count()) );
 
     auto all_entities = em.entities_for_debugging();
     size_t t = static_cast<size_t>(std::distance(all_entities.begin(), all_entities.end()));

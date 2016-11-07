@@ -150,7 +150,9 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
             });
             const auto& animation = anim_iter->second;
             // HACK(SMA): renderable.cur_frame_time is a float instead of duration.
-            renderable.cur_frame_time += dt.count();
+            using FpSeconds =
+              std::chrono::duration<float, std::chrono::seconds::period>;
+            renderable.cur_frame_time += FpSeconds(dt).count();
             auto cur_frame_time = entityx::TimeDelta(renderable.cur_frame_time);
             size_t offset = (renderable.cur_frame >= 0) ? renderable.cur_frame
               : -renderable.cur_frame;

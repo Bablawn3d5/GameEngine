@@ -32,7 +32,7 @@ struct Renderable {
   // Current frame time in seconds.
   // HACK(SMA): store as float instead of a duration object, makes it easier to convert
   // from JSON
-  float cur_frame_time;
+  float cur_frame_time = 0.f;
   AnimationMap animations;
 
   // Font stuff

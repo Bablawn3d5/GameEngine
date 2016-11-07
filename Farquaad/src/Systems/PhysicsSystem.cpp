@@ -137,8 +137,10 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
     // Run the simulation
     // Maximum number of steps, to avoid degrading to an halt.
     const int MAX_STEPS = 5;
-
-    fixedTimestepAccumulator += static_cast<float>(dt.count());
+    // Box2D backend uses floating point seconds.
+    using FpSeconds =
+      std::chrono::duration<float, std::chrono::seconds::period>;
+    fixedTimestepAccumulator += FpSeconds(dt).count();
     const int nSteps = static_cast<int> (
       std::floor(fixedTimestepAccumulator / FIXED_TIMESTEP)
     );

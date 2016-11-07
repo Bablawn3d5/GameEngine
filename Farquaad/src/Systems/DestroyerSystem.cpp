@@ -15,7 +15,9 @@ void DestroyerSystem::update(ex::EntityManager & em,
   // Do stuff with inputs
   em.each<Destroyed>(
     [&em, &dt](ex::Entity entity, Destroyed &d) {
-        d.deathTimer -= static_cast<float>(dt.count());
+        using FpSeconds =
+          std::chrono::duration<float, std::chrono::seconds::period>;
+        d.deathTimer -= FpSeconds(dt).count();
         if ( d.deathTimer <= 0 ) { 
           entity.destroy(); 
         }
