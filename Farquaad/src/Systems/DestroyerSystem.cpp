@@ -15,7 +15,7 @@ void DestroyerSystem::update(ex::EntityManager & em,
   // Do stuff with inputs
   em.each<Destroyed>(
     [&em, &dt](ex::Entity entity, Destroyed &d) {
-        d.deathTimer -= static_cast<float>(dt);
+        d.deathTimer -= static_cast<float>(dt.count());
         if ( d.deathTimer <= 0 ) { 
           entity.destroy(); 
         }

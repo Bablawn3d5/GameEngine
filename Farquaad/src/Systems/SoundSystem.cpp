@@ -37,7 +37,7 @@ void SoundSystem::update(ex::EntityManager & em,
         }
       }
     } else {
-      sound.start_delay -= (float)dt;
+      sound.start_delay -= static_cast<float>(dt.count());
     }
   });
 }

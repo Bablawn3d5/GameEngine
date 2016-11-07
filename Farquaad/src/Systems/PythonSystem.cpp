@@ -85,9 +85,17 @@ ex::Entity::Id EntityManager_configure(ex::EntityManager& em, py::object self) {
     return entity.id();
 }
 
+struct ChronoTimeToPythonFloat {
+  static PyObject *convert(const ex::TimeDelta& dt) {
+    using FpMilliseconds =
+      std::chrono::duration<float, std::chrono::seconds::period>;
+    return py::incref(py::object(FpMilliseconds(dt).count()).ptr());
+  }
+};
 
 BOOST_PYTHON_MODULE(_entityx) {
     py::to_python_converter<ex::Entity, EntityToPythonEntity>();
+    py::to_python_converter<ex::TimeDelta, ChronoTimeToPythonFloat>();
     py::implicitly_convertible<PythonEntity, ex::Entity>();
 
     // py::class_<BaseEvent, ptr<BaseEvent>, boost::noncopyable>("BaseEvent", py::no_init);

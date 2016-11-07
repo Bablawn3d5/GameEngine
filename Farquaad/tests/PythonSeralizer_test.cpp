@@ -93,7 +93,8 @@ TEST_CASE_METHOD(PythonSystemTest, "TestSystemUpdateCallsEntityUpdate") {
         Entity e = em.create();
         auto script = e.assign<PythonScript>("entityx.tests.update_test", "UpdateTest");
         REQUIRE(!py::extract<bool>(script->object.attr("updated")));
-        python->update(em, ev, 0.1);
+        entityx::TimeDelta t = std::chrono::seconds(1);
+        python->update(em, ev, t);
         REQUIRE(py::extract<bool>(script->object.attr("updated")));
     }
     catch ( ... ) {

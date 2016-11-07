@@ -149,16 +149,18 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
               return case_insensitive_string_eq(item.first, renderable.current_animation);
             });
             const auto& animation = anim_iter->second;
-            renderable.cur_frame_time += dt;
+            // HACK(SMA): renderable.cur_frame_time is a float instead of duration.
+            renderable.cur_frame_time += dt.count();
+            auto cur_frame_time = entityx::TimeDelta(renderable.cur_frame_time);
             size_t offset = (renderable.cur_frame >= 0) ? renderable.cur_frame
               : -renderable.cur_frame;
             // Advance animation if we're out of time for the current frame.
-            if ( renderable.cur_frame_time >= animation.frame_delay[offset] ) {
+            if ( cur_frame_time >= animation.frame_delay[offset] ) {
               // HACK(SMA) : Some ugly hacks to support loop types.
               // Normal 'forward'
               if ( animation.loop_type == 0 ) {
                 renderable.cur_frame++;
-                renderable.cur_frame_time = 0;
+                renderable.cur_frame_time = 0.f;
                 // Assume never negative here.
                 assert(renderable.cur_frame > 0);
                 if ( size_t(renderable.cur_frame) >= animation.frame_offsets.size() ) {
@@ -167,14 +169,14 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
               // Reverse
               } else if ( animation.loop_type == 1 ) {
                 renderable.cur_frame--;
-                renderable.cur_frame_time = 0;
+                renderable.cur_frame_time = 0.f;
                 if ( renderable.cur_frame < 0 ) {
                   renderable.cur_frame = animation.frame_offsets.size() - 1;
                 }
               // Ping pong.
               } else if ( animation.loop_type == 2 ) {
                 renderable.cur_frame++;
-                renderable.cur_frame_time = 0;
+                renderable.cur_frame_time = 0.f;
                 if ( renderable.cur_frame > 0 &&
                     size_t(renderable.cur_frame) >= animation.frame_offsets.size() ) {
                   renderable.cur_frame = 1 - animation.frame_offsets.size();
@@ -190,7 +192,7 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
             }
           } else {
             renderable.cur_frame = 0;
-            renderable.cur_frame_time = 0;
+            renderable.cur_frame_time = 0.f;
             // HACK(SMA) : If we have animations just pick the first offset we have.
             if ( renderable.animations.size() != 0 ) {
               auto& animation = renderable.animations.begin()->second;
