@@ -25,80 +25,30 @@ bool case_insensitive_string_eq(const std::string& lhs, const std::string& rhs) 
 }
 
 // TODO(SMA): Move me to my own managed resource reloader, maybe avoid std::shared_ptr???
-void LoadAsTexture(thor::ResourceHolder<TextureWithOffsets, std::string>& texture_holder, Renderable &renderable) {
-  try {
-    const auto& loadingFunc = [&renderable]() {
-      auto tex_obj = std::make_unique<TextureWithOffsets>();
-      tex_obj->tex = *thor::Resources::fromFile<sf::Texture>(renderable.texture_name).load();
-      return tex_obj;
-    };
-    auto& texture = texture_holder.acquire(renderable.texture_name, 
-                                           thor::ResourceLoader<TextureWithOffsets>
-                                          (loadingFunc, renderable.texture_name),
-                                           thor::Resources::Reuse);
-
+void LoadAsTexture(const LevelResoruceLoader& holder, 
+                   thor::ResourceHolder<sf::Texture, std::string>& tex, 
+                   Renderable &renderable) {
+    auto& image = holder.get<TextureWithOffsets>(renderable.texture_name);
+    auto& texture = tex.acquire(renderable.texture_name,
+                                          thor::Resources::fromImage<sf::Texture>(image.image),
+                                          thor::Resources::Reuse);
     auto sprite = std::make_shared<sf::Sprite>();
-    sprite->setTexture(texture.tex);
+    sprite->setTexture(texture);
     renderable.drawable = std::static_pointer_cast<sf::Drawable>(sprite);
     renderable.transform = std::static_pointer_cast<sf::Transformable>(sprite).get();
-  }
-
-  // Failed to load it for whatever reason
-  catch ( thor::ResourceAccessException& e ) {
-    std::cerr << "Failed to load resource: " << renderable.texture_name
-      << " " << e.what() << std::endl;
-    throw e;
-  }
 }
 
 // TODO(SMA): Move me to my own managed resource reloader, maybe avoid std::shared_ptr???
-void LoadAsSpriteSheetTexture(thor::ResourceHolder<TextureWithOffsets, std::string>& texture_holder, Renderable &renderable) {
-  try {
-    // TODO(SMA): Move me to a resource loader.
-    const auto& loadingFunc = [&renderable]() {
-      auto tex_obj = std::make_unique<TextureWithOffsets>();
-      auto assprite = aseprite::load_sprite_from_file(renderable.texture_name.c_str());
-      tex_obj->tex.loadFromImage(aseprite::convertToSFML(assprite));
-      tex_obj->offsets = aseprite::calcFrameOffsets(assprite);
-
-      // HACK(SMA) : Just load animation data while we're at it here.
-      auto& offsets = tex_obj->offsets;
-      AnimationMap& map = tex_obj->anims;
-      for ( auto& tag : assprite.tags ) {
-        Frame a;
-        assert(tag.from <= tag.to);
-        assert(tag.to < offsets.size());
-        assert(tag.to < assprite.frames.size());
-        assert(offsets.size() == assprite.frames.size());
-        // Copy frame rects, assuming from -> to always specifies a range of frames.
-        std::vector<sf::IntRect> anim_offsets(offsets.begin() + tag.from, offsets.begin() + tag.to);
-        // Copy frame delay data
-        std::vector<entityx::TimeDelta> anim_delays;
-        assert(anim_offsets.size() > 0);
-        anim_delays.resize(anim_offsets.size());
-        std::transform(assprite.frames.begin() + tag.from, assprite.frames.begin() + tag.to,
-                       anim_delays.begin(), [](const auto& elem) {
-          // Convert MS to Sec
-          return static_cast<entityx::TimeDelta>(elem.duration / 1000.0f);
-        });
-        a.loop_type = tag.loop_direction;
-        a.frame_offsets = anim_offsets;
-        a.frame_delay = anim_delays;
-
-        // Assume there's not multiple tags with the same name.
-        assert(map.find(tag.name) == map.end());
-        map[tag.name] = a;
-      }
-      return tex_obj;
-    };
-
-    auto& texture = texture_holder.acquire(renderable.texture_name,
-                                          thor::ResourceLoader<TextureWithOffsets>
-                                           (loadingFunc, renderable.texture_name),
+void LoadAsSpriteSheetTexture(const LevelResoruceLoader& holder, 
+                              thor::ResourceHolder<sf::Texture, std::string>& tex, 
+                              Renderable &renderable) {
+    auto& image = holder.get<TextureWithOffsets>(renderable.texture_name);
+    auto& texture = tex.acquire(renderable.texture_name,
+                                          thor::Resources::fromImage<sf::Texture>(image.image),
                                           thor::Resources::Reuse);
     auto sprite = std::make_shared<sf::Sprite>();
-    sprite->setTexture(texture.tex);
-    renderable.animations = texture.anims;
+    sprite->setTexture(texture);
+    renderable.animations = image.anims;
     // HACK (SMA) : Set current animation to be the first frame
     // if its unset
     if ( renderable.current_animation.length() == 0 && renderable.animations.size() != 0) {
@@ -107,35 +57,16 @@ void LoadAsSpriteSheetTexture(thor::ResourceHolder<TextureWithOffsets, std::stri
     renderable.drawable = std::static_pointer_cast<sf::Drawable>(sprite);
     renderable.transform = std::static_pointer_cast<sf::Transformable>(sprite).get();
     renderable.sprite = std::static_pointer_cast<sf::Sprite>(sprite).get();
-  }
-
-  // Failed to load it for whatever reason
-  catch ( thor::ResourceAccessException& e ) {
-    std::cerr << "Failed to load resource: " << renderable.texture_name
-      << " " << e.what() << std::endl;
-    throw e;
-  }
 
 } // Anon Namespace
 
 // TODO(SMA): Move me to my own managed resource reloader, maybe avoid std::shared_ptr???
-void LoadAsFontTexture(thor::ResourceHolder<sf::Font, std::string>& font_holder, Renderable &renderable) {
-  try {
-    auto& font = font_holder.acquire(renderable.font_name,
-                                thor::Resources::fromFile<sf::Font>(renderable.font_name),
-                                thor::Resources::Reuse);
-
+void LoadAsFontTexture(const LevelResoruceLoader& holder, Renderable &renderable) {
+    auto& font = holder.get<sf::Font>(renderable.font_name);
     auto text = std::make_shared<sf::Text>(renderable.font_string, font, renderable.font_size);
     text->setFillColor(sf::Color(renderable.r, renderable.g, renderable.b, renderable.a));
     renderable.drawable = std::static_pointer_cast<sf::Drawable>(text);
     renderable.transform = std::static_pointer_cast<sf::Transformable>(text).get();
-  }
-  // Failed to load it for whatever reason
-  catch ( thor::ResourceAccessException& e ) {
-    std::cerr << "Failed to load resource: " << renderable.texture_name
-      << " " << e.what() << std::endl;
-    throw e;
-  }
 }
 
 } // anon namespace
@@ -161,12 +92,12 @@ void SpriteRenderSystem::update(ex::EntityManager & em,
       if ( renderable.texture_name.length() != 0 ) {
         // If we're loading a .ase or .aseprite, treate as spritesheet
         if ( std::regex_search(renderable.texture_name, regex) ) {
-          LoadAsSpriteSheetTexture(this->texture_holder, renderable);
+          LoadAsSpriteSheetTexture(this->holder, this->texture_holder, renderable);
         } else {
-          LoadAsTexture(this->texture_holder, renderable);
+          LoadAsTexture(this->holder, this->texture_holder, renderable);
         }
       } else if ( renderable.font_name.length() != 0 ) {
-        LoadAsFontTexture(this->font_holder, renderable);
+        LoadAsFontTexture(this->holder, renderable);
       } else {
         // No font or texture but we have uninit renderable..?
         //assert(false && "Something horrible has happened.");

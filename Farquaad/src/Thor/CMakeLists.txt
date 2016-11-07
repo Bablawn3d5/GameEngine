@@ -3,11 +3,11 @@ set(INCROOT ${PROJECT_SOURCE_DIR}/include/Farquaad/Thor)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Thor)
 
 set(SRC
-	${INCROOT}/ResourceLoader.hpp
+	${SRCROOT}/ResourceLoader.cpp
 )
 
 set(INC
-    ${SRC}
+	${INCROOT}/ResourceLoader.h
 )
 
 # Set all source files

@@ -36,14 +36,18 @@ file(GLOB ExampleResources
     ${SCRIPTDIR}/action/explosion.py
     ${SCRIPTDIR}/action/follower.py
     ${SCRIPTDIR}/entityx/__init__.py
+    ${SCRIPTDIR}/system/__init__.py
+    ${SCRIPTDIR}/system/loader.py
     ${SCRIPTDIR}/gamemath/__init__.py
     ${SCRIPTDIR}/gamemath/vector2.py
     ${SCRIPTDIR}/gamemath/util.py
     ${FarquaadExamples_SOURCE_DIR}/Config.json
+    ${FarquaadExamples_SOURCE_DIR}/Resources/Loader.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/Box.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/Hero.json
     ${FarquaadExamples_SOURCE_DIR}/Resources/Mouse.json
     ${FarquaadExamples_SOURCE_DIR}/images/Chest_1.ase
+    ${FarquaadExamples_SOURCE_DIR}/images/Bar.ase
     ${FarquaadExamples_SOURCE_DIR}/images/perfectface.png
     ${FarquaadExamples_SOURCE_DIR}/sounds/Explode.wav
     ${PYTHON27_STD_ZIP})

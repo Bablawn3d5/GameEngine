@@ -3,8 +3,6 @@
 #include <Farquaad/Systems/SoundSystem.h>
 #include <Farquaad/Components/Sound.hpp>
 
-SoundSystem::SoundSystem() {}
-
 void SoundSystem::update(ex::EntityManager & em,
   ex::EventManager & events, ex::TimeDelta dt) {
 
@@ -15,12 +13,7 @@ void SoundSystem::update(ex::EntityManager & em,
       return;
     }
 
-    auto& soundbuff =
-      this->soundbuff_holder.acquire(sound.name,
-                                   thor::Resources::fromFile<sf::SoundBuffer>(sound.name),
-                                   thor::Resources::Reuse);
-
-    auto s = std::make_shared<sf::Sound>(soundbuff);
+    auto s = std::make_shared<sf::Sound>(soundbuff_holder.get<sf::SoundBuffer>(sound.name));
     s->setPitch(sound.pitch);
     s->setVolume(sound.volume);
     s->pause();

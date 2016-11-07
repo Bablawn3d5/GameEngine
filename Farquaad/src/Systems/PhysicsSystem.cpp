@@ -1,7 +1,6 @@
 // Copyright 2015 Bablawn3d5
 #include <Farquaad/Systems/PhysicsSystem.h>
 #include <Farquaad/Components.hpp>
-#include <SFML/Graphics.hpp>
 #include <cmath>
 
 namespace ex = entityx;
@@ -93,17 +92,6 @@ void PhysicsSystem::update(ex::EntityManager &em, ex::EventManager &events, ex::
           // TODO(SMA) : Sync Rotation.
           boxbody->SetTransform( {physicsBodyPos.x, physicsBodyPos.y}, rotation);
           physics.body = boxbody;
-
-          // HACK(SMA) : Assign it a rectangle if there's no drawable component.
-          // Really should remove me now that we've got the physics debugger.
-          if ( !entity.has_component<Renderable>() ) {
-            auto renderable = entity.assign<Renderable>();
-            auto rect_ptr = std::make_shared<sf::RectangleShape>((sf::Vector2f)physics.size);
-            renderable->drawable = rect_ptr;
-            renderable->transform = std::static_pointer_cast<sf::Transformable>(rect_ptr).get();
-            renderable->font_string = "Debug Shape";
-            renderable->isDirty = false;
-          }
 
           physics.collidingWithSet.clear();
           physics.isColliding = false;

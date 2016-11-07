@@ -1,0 +1,13 @@
+{
+    "body" : {
+        "position" : [ 50, 50 ]
+    },
+    "renderable" : {
+        "texture" : "./images/Bar.ase",
+        "currentAnim" : "Bar"
+    },
+    "pythons" : {
+        "modulename" : "system.loader",
+        "class" : "Loader"
+    }
+}

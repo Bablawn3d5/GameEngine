@@ -11,7 +11,7 @@ namespace ex = entityx;
 class EntitySerializer {
 public:
     explicit EntitySerializer(Json::Value value = Json::nullValue) : cs(value) {}
-    explicit EntitySerializer(ComponentSerializer cs) : cs(cs) {}
+    explicit EntitySerializer(const ComponentSerializer& cs) : cs(cs) {}
     ~EntitySerializer() {}
 
     std::string toString() const;

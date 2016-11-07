@@ -13,6 +13,9 @@
     "Use" : "KEY_E",
     "Spawn" : "MOUSE_Left"
   },
+  "loader" : [
+    "./Resources/Loader.json"
+  ],
   "entities" : [
     "./Resources/Hero.json",
     "./Resources/Mouse.json",

@@ -49,3 +49,9 @@ struct Renderable {
   sf::Transformable* transform = nullptr;
   sf::Sprite* sprite = nullptr;
 };
+
+struct TextureWithOffsets {
+  sf::Image image;
+  std::vector<sf::IntRect> offsets;
+  AnimationMap anims;
+};
