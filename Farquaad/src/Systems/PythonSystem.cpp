@@ -49,10 +49,11 @@ void PythonSystem::update(ex::EntityManager & em,
         [=](ex::Entity entity, PythonScript& python) { // NOLINT
         //See if component is initalized
         assert(python.object && "Python object should be initalized by this loop" );
-
+        using FpSeconds =
+          std::chrono::duration<float, std::chrono::seconds::period>;
         try {
             // Access PythonEntity and call Update.
-            python.object.attr("update")(dt);
+            python.object.attr("update")(FpSeconds(dt).count());
         }
         catch ( const py::error_already_set& ) {
             PyErr_Print();
