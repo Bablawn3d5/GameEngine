@@ -5,12 +5,14 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/Core)
 set(SRC
     ${SRCROOT}/EntitySerializer.cpp
     ${SRCROOT}/ComponentSerializer.cpp
+    ${SRCROOT}/LevelResourceLoader.cpp
 )
 
 # Include hpp
 set(INC
     ${INCROOT}/MetaRegister.hpp
     ${INCROOT}/ComponentSerializer.h
+    ${INCROOT}/LevelResourceLoader.h
     ${INCROOT}/EntitySerializer.h
     ${INCROOT}/Serializable.hpp
     ${INCROOT}/SerializableHandle.hpp

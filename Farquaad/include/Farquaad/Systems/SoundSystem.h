@@ -5,14 +5,15 @@
 #include <entityx/entityx.h>
 #include <SFML/Audio.hpp>
 #include <Thor/Resources.hpp>
+#include <Farquaad/Core/LevelResourceLoader.h>
 #include <string>
 
 namespace ex = entityx;
 
 struct SoundSystem : public ex::System<SoundSystem> {
 public:
-  explicit SoundSystem();
+  explicit SoundSystem(LevelResoruceLoader& s) : soundbuff_holder(s) {};
   void update(ex::EntityManager &em, ex::EventManager &events, ex::TimeDelta dt);  // NOLINT
 
-  thor::ResourceHolder<sf::SoundBuffer, std::string> soundbuff_holder;
+  LevelResoruceLoader& soundbuff_holder;
 };

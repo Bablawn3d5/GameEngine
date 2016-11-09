@@ -7,6 +7,29 @@
 #include <sstream>
 #include <string>
 
+namespace {
+void create_python_obj(ex::ComponentHandle<PythonScript> python, const ex::Entity ent) {
+  try {
+    py::object module = py::import(python->module.c_str());
+    py::object cls = module.attr(python->cls.c_str());
+    py::object from_raw_entity = cls.attr("_from_raw_entity");
+    if ( py::len(python->args) == 0 ) {
+      python->object = from_raw_entity(ent.id());
+    } else {
+      py::list args;
+      args.append(ent.id());
+      args.extend(python->args);
+      python->object = from_raw_entity(*py::tuple(args));
+    }
+  }
+  catch ( ... ) {
+    PyErr_Print();
+    PyErr_Clear();
+    throw;
+  }
+}
+} //anon namespace
+
 // Workaround Visual Studio 2015 Update 3 Known Issue - June 27th 2016 :|
 namespace boost {
 template <>
@@ -24,6 +47,9 @@ void PythonSystem::update(ex::EntityManager & em,
                           ex::EventManager & events, ex::TimeDelta dt) {
     em.each<PythonScript>(
         [=](ex::Entity entity, PythonScript& python) { // NOLINT
+        //See if component is initalized
+        assert(python.object && "Python object should be initalized by this loop" );
+
         try {
             // Access PythonEntity and call Update.
             python.object.attr("update")(dt);
@@ -171,28 +197,10 @@ void PythonSystem::configure(ex::EventManager& ev) {
     }
 }
 
-void PythonSystem::receive(const ex::ComponentAddedEvent<PythonScript> &event) {
+void PythonSystem::receive(const ex::ComponentAddedEvent<PythonScript> &e) {
     // If the component was created in C++ it won't have a Python object
     // associated with it. Create one.
-    if ( !event.component->object ) {
-      try {
-        py::object module = py::import(event.component->module.c_str());
-        py::object cls = module.attr(event.component->cls.c_str());
-        py::object from_raw_entity = cls.attr("_from_raw_entity");
-        if ( py::len(event.component->args) == 0 ) {
-            ex::ComponentHandle<PythonScript> p = event.component;
-            p->object = from_raw_entity(event.entity.id());
-        } else {
-            py::list args;
-            args.append(event.entity.id());
-            args.extend(event.component->args);
-            ex::ComponentHandle<PythonScript> p = event.component;
-            p->object = from_raw_entity(*py::tuple(args));
-        }
-      } catch ( ... ) {
-        PyErr_Print();
-        PyErr_Clear();
-        throw;
-      }
+    if ( !e.component->object ) {
+      create_python_obj(e.component, e.entity);
     }
 }
