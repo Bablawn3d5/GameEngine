@@ -184,7 +184,6 @@ public:
           this->start_game();
         });
       });
-      loadThread.detach();
 
       // Setup Box2d Physics
       b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
@@ -352,11 +351,10 @@ int main(int argc, char* const argv[]) {
       Application app(execute_dir, window, configs, clear_color);
       // FIXME(SMA) : Apparently high_resolution_clock isn't consistent on some platforms
       // but I have yet to observe that.
-      auto start = std::chrono::high_resolution_clock::now();
-      static_assert(std::chrono::high_resolution_clock::is_steady, "Clock should be steady");
-      const sf::Color clear_color = Serializable::fromJSON<sf::Color>(configs["clear_color"]);
+      auto start = std::chrono::steady_clock::now();
+      static_assert(std::chrono::steady_clock::is_steady, "Clock should be steady");
       while ( window.isOpen() ) {
-        auto finish = std::chrono::high_resolution_clock::now();
+        auto finish = std::chrono::steady_clock::now();
         app.update(entityx::TimeDelta(finish - start));
         start = finish;
       }
