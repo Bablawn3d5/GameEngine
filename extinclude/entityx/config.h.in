@@ -7,6 +7,6 @@
 namespace entityx {
 
 static const size_t MAX_COMPONENTS = @ENTITYX_MAX_COMPONENTS@;
-typedef @ENTITYX_DT_TYPE@ TimeDelta;
+typedef std::chrono::duration<float, std::chrono::seconds::period> TimeDelta;
 
 }  // namespace entityx

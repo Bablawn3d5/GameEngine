@@ -40,7 +40,6 @@ option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
 option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your"  ON)
 option(ENTITYX_BUILD_TESTING "Enable building of tests." OFF)
-set(ENTITYX_DT_TYPE "std::chrono::duration<float, std::chrono::seconds::period>" CACHE STRING "The type used for delta time in EntityX update methods.")
 
 enable_testing()
 

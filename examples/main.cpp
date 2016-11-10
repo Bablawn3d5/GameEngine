@@ -184,6 +184,7 @@ public:
           this->start_game();
         });
       });
+      loadThread.detach();
 
       // Setup Box2d Physics
       b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
@@ -346,9 +347,9 @@ int main(int argc, char* const argv[]) {
     sf::RenderWindow window(sf::VideoMode(800, 600), "");
     window.setKeyRepeatEnabled(true);
     window.setTitle(title);
+    // Scope to destory the app when main loop closes.
     {
-      Application app(execute_dir, window, configs,clear_color);
-
+      Application app(execute_dir, window, configs, clear_color);
       // FIXME(SMA) : Apparently high_resolution_clock isn't consistent on some platforms
       // but I have yet to observe that.
       auto start = std::chrono::high_resolution_clock::now();

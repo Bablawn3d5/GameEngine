@@ -5,7 +5,6 @@
 #include <mutex>
 #include <queue>
 #include <functional>
-#include <atomic>
 #include <condition_variable>
 #include <json/json.h>
 #include <SFML/Graphics.hpp>
@@ -40,5 +39,4 @@ private:
   std::queue<std::function<void()>> syncQueue;
   std::mutex syncMutex;
   std::condition_variable loadCondition;
-  std::atomic_flag loading_lock = ATOMIC_FLAG_INIT;
 };
