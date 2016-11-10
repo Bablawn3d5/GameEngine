@@ -37,7 +37,9 @@ void SoundSystem::update(ex::EntityManager & em,
         }
       }
     } else {
-      sound.start_delay -= (float)dt;
+      using FpSeconds =
+        std::chrono::duration<float, std::chrono::seconds::period>;
+      sound.start_delay -= FpSeconds(dt).count();
     }
   });
 }

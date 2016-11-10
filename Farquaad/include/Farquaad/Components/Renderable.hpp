@@ -29,8 +29,10 @@ struct Renderable {
   // Current frame can be negative to indicate a offset from the last
   // frame.
   int cur_frame = 0;
-  // HACK(SMA):Assume this is convertable to entityx::TimeDelta
-  float cur_frame_time = 0.f;
+  // Current frame time in seconds.
+  // HACK(SMA): store as float instead of a duration object, makes it easier to convert
+  // from JSON
+  float cur_frame_time;
   AnimationMap animations;
 
   // Font stuff

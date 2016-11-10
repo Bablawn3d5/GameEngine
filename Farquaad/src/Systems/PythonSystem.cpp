@@ -49,10 +49,11 @@ void PythonSystem::update(ex::EntityManager & em,
         [=](ex::Entity entity, PythonScript& python) { // NOLINT
         //See if component is initalized
         assert(python.object && "Python object should be initalized by this loop" );
-
+        using FpSeconds =
+          std::chrono::duration<float, std::chrono::seconds::period>;
         try {
             // Access PythonEntity and call Update.
-            python.object.attr("update")(dt);
+            python.object.attr("update")(FpSeconds(dt).count());
         }
         catch ( const py::error_already_set& ) {
             PyErr_Print();
@@ -85,9 +86,17 @@ ex::Entity::Id EntityManager_configure(ex::EntityManager& em, py::object self) {
     return entity.id();
 }
 
+struct ChronoTimeToPythonFloat {
+  static PyObject *convert(const ex::TimeDelta& dt) {
+    using FpSeconds =
+      std::chrono::duration<float, std::chrono::seconds::period>;
+    return py::incref(py::object(FpSeconds(dt).count()).ptr());
+  }
+};
 
 BOOST_PYTHON_MODULE(_entityx) {
     py::to_python_converter<ex::Entity, EntityToPythonEntity>();
+    py::to_python_converter<ex::TimeDelta, ChronoTimeToPythonFloat>();
     py::implicitly_convertible<PythonEntity, ex::Entity>();
 
     // py::class_<BaseEvent, ptr<BaseEvent>, boost::noncopyable>("BaseEvent", py::no_init);

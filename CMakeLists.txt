@@ -26,12 +26,20 @@ execute_process(
 
 set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.2.0-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_NAME}")
 
-# Disable examples by default
+# Disable examples/third party testing by default
 option(BUILD_SHARED_LIBS "Link SFML as shared or not" OFF)
+if(BUILD_SHARED_LIBS)
+  set(ENTITYX_BUILD_SHARED true CACHE BOOL "Build shared libraries?")
+  set(THOR_SHARED_LIBS ON CACHE PATH "BOOST top-level directory")
+else()
+  set(ENTITYX_BUILD_SHARED false CACHE BOOL "Build shared libraries?")
+  set(THOR_SHARED_LIBS OFF CACHE PATH "BOOST top-level directory")
+endif()
 option(SFML_OPENGL_ES "Build using ES opengl for non-desktop?" OFF)
 option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
 option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your"  ON)
+option(ENTITYX_BUILD_TESTING "Enable building of tests." OFF)
 
 enable_testing()
 
@@ -52,8 +60,8 @@ message(status "** Boost Include: ${Boost_INCLUDE_DIR}")
 message(status "** Boost Dir: ${Boost_LIBRARY_DIRS}")
 message(status "** Boost Libraries: ${Boost_LIBRARIES}")
 if(NOT Boost_FOUND)
-    set(BOOST_ROOT "" CACHE PATH "BOOST top-level directory")
-    message("---> Boost 1.59 directory not found. Set BOOST_ROOT to Boost's top-level path (containing \"include\" and \"lib\" directories).\n")
+  set(BOOST_ROOT "" CACHE PATH "BOOST top-level directory")
+  message("---> Boost 1.59 directory not found. Set BOOST_ROOT to Boost's top-level path (containing \"include\" and \"lib\" directories).\n")
 else()
   # Assume we're good to go.
 endif()
@@ -68,11 +76,6 @@ if(THOR_SFML_IS_BUILT)
     set(SFML_LIBRARIES "sfml-graphics" "sfml-window" "sfml-audio" "sfml-system")
     add_definitions(-DSFML_STATIC)
 endif()
-
-if(NOT BUILD_SHARED_LIBS)
-    set(THOR_SHARED_LIBS OFF CACHE PATH "BOOST top-level directory")
-endif()
-
 
 #Fake finding SFML
 # find_package(SFML 2 COMPONENTS graphics window system audio)
@@ -91,6 +94,13 @@ endif()
 
 # TODO(SMA) : Use ExternalProject_Add to conditionally build external libs.
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
+
+# Override entityx include with ours.
+configure_file(
+    ${GameEngine_SOURCE_DIR}/extinclude/entityx/config.h.in
+    ${GameEngine_SOURCE_DIR}/extinclude/entityx-repo/entityx/config.h
+)
+
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 # Lie to everyone that we've found SFML.

@@ -65,7 +65,7 @@ public:
     sf::View debugViewPort;
     bool debug = false;
     bool physDebug = true;
-    ex::TimeDelta frameAdvance = 0.;
+    ex::TimeDelta frameAdvance = std::chrono::seconds::zero();
     const sf::Color clear_color = sf::Color(50,120,170);
 
 
@@ -275,12 +275,12 @@ public:
 
         // Don't process time if no time is passing.
         if( isPaused ) {
-          dt = 0.0;
+          dt = 0ms;
         }
 
-        if ( frameAdvance != 0.0 ) {
+        if ( frameAdvance.count() != 0.f ) {
           dt = frameAdvance;
-          frameAdvance = 0.0;
+          frameAdvance = frameAdvance.zero();
         }
 
         systems.update<InputSystem>(dt);
@@ -298,7 +298,7 @@ public:
         }
 
         if ( std::find(events.begin(), events.end(), "+Game_FrameAdvance") != events.end() ) {
-          frameAdvance = 0.0127f;
+          frameAdvance = 1270us;
         }
 
         if ( std::find(events.begin(), events.end(), "+Debug") != events.end() ) {
@@ -315,7 +315,7 @@ public:
           }
           systems.update<ImGuiSystem>(dt);
           // Reset window state for next sprite window.draws.
-          //window.resetGLStates();
+          window.resetGLStates();
         }
         window.display();
     }
@@ -342,21 +342,22 @@ int main(int argc, char* const argv[]) {
     Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));
     const std::string title = configs["app_title"].asString();
     const sf::Color clear_color = Serializable::fromJSON<sf::Color>(configs["clear_color"]);
-
     // To have app destory itself when window closes.
+    sf::RenderWindow window(sf::VideoMode(800, 600), "");
+    window.setKeyRepeatEnabled(true);
+    window.setTitle(title);
+    // Scope to destory the app when main loop closes.
     {
-      sf::RenderWindow window(sf::VideoMode(800, 600), "");
-      window.setKeyRepeatEnabled(true);
-      window.setTitle(title);
-
       Application app(execute_dir, window, configs, clear_color);
-
-      sf::Clock clock;
+      // FIXME(SMA) : Apparently high_resolution_clock isn't consistent on some platforms
+      // but I have yet to observe that.
+      auto start = std::chrono::steady_clock::now();
+      static_assert(std::chrono::steady_clock::is_steady, "Clock should be steady");
       while ( window.isOpen() ) {
-        sf::Time elapsed = clock.restart();
-        app.update(elapsed.asSeconds());
+        auto finish = std::chrono::steady_clock::now();
+        app.update(entityx::TimeDelta(finish - start));
+        start = finish;
       }
     }
-
     return 0;
 }

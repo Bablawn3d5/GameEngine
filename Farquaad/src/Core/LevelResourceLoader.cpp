@@ -6,6 +6,7 @@
 #include "Aseprite/SFML/convert.h"
 #include "AsepriteRgbaConvert/loader.h"
 #include <iostream>
+#include <atomic>
 
 namespace {
 
@@ -155,27 +156,15 @@ void LevelResoruceLoader::queue(std::function<void()> callback) {
 }
 
 void LevelResoruceLoader::joins() {
-  {
-    // If someone is adding/removing stuff to the queue, block.
-    std::lock_guard<std::mutex> lock(syncMutex);
-    if ( syncQueue.empty() ) {
-      return;
-    }
+  std::atomic_flag isDone = ATOMIC_FLAG_INIT;
+  // Aquire our own atomic, and let the loading thread clear it.
+  isDone.test_and_set(std::memory_order_relaxed);
+  this->queue([&isDone]{ isDone.clear(std::memory_order_release); });
+  while ( isDone.test_and_set(std::memory_order_acquire) ) {
+    std::this_thread::yield(); 
   }
-  // Wait till no callback is loading.
-  while ( true ) {
-    // If there's a callback in progress block
-    while ( loading_lock.test_and_set(std::memory_order_acq_rel) ) {
-      std::this_thread::yield(); // FIXME(SMA) : Can lock in here if nothing is running jobs.
-    }
-    // If someone is adding/removing stuff to the queue, block.
-    std::lock_guard<std::mutex> lock(syncMutex);
-    if ( syncQueue.empty() ) {
-      return;
-    }
-    // FIXME(SMA): Could potentially busy loop here if nothing is running jobs
-    // and something is stuck in queue.
-  }
+  assert(syncQueue.empty());
+  return;
 }
 
 void LevelResoruceLoader::loading() {
@@ -191,7 +180,6 @@ void LevelResoruceLoader::loading() {
 
   // Call it
   callback();
-  loading_lock.clear();
 }
 
 // Returns a shared pointer to the resource.
