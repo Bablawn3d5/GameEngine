@@ -343,7 +343,7 @@ int main(int argc, char* const argv[]) {
     const std::string title = configs["app_title"].asString();
     const sf::Color clear_color = Serializable::fromJSON<sf::Color>(configs["clear_color"]);
     // To have app destory itself when window closes.
-    sf::RenderWindow window(sf::VideoMode(800, 600), "");
+    sf::RenderWindow window(sf::VideoMode(1024, 768), "");
     window.setKeyRepeatEnabled(true);
     window.setTitle(title);
     // Scope to destory the app when main loop closes.
