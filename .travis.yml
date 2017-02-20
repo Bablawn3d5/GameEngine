@@ -49,7 +49,7 @@ matrix:
     env:
     - CMAKE_BUILD_TYPE=debug
     - JOBS_LIMIT=4
-    - LLVM_VERSION=3.8.0
+    - LLVM_VERSION=3.9.0
     - LLVM_ARCHIVE_PATH=$HOME/clang+llvm.tar.xz
     addons:
       apt:
@@ -76,7 +76,6 @@ cache:
   apt: true
   directories:
   - $HOME/.ccache
-  - "deps/boost-install"
   - "deps/cmake"
   - $HOME/clang-$LLVM_VERSION
   - /usr/local/Cellar/cmake31
@@ -135,29 +134,6 @@ install:
     fi
   - which cmake
   - cmake --version
-  - popd && pushd .
-  # Build Boost
-  - cd ${DEPS_DIR}
-  - if [ ! -d "${DEPS_DIR}/boost-install/lib" ]; then export REBUILD_BOOST="yes"; else export REBUILD_BOOST="no"; fi
-  - |
-    if [ "$REBUILD_BOOST" == "yes" ]; then
-      rm -rf boost && rm -rf boost-install
-      git clone -b boost-1.59.0 --quiet --recursive https://github.com/boostorg/boost.git boost
-      cd boost
-      chmod +x bootstrap.sh
-      ./bootstrap.sh --prefix="$(pwd)/../boost-install"
-      ./b2 headers
-      if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-        # Use gcc as clang has problems building boost :(((
-        ./b2 toolset=gcc-5 cxxflags="-std=c++11" link=static --with-filesystem --with-python install -d0
-      else
-        # Assume osx
-        ./b2 cxxflags="-std=c++11" link=static --with-filesystem --with-python install -d0
-      fi
-    fi
-  - if [ "$REBUILD_BOOST" == "no"  ]; then mkdir boost && cd boost; fi
-  - cd ../boost-install && export BOOST_ROOT="$(pwd)"
-  - popd
   # End script
   - popd
 
@@ -168,7 +144,7 @@ before_script:
 
 script:
   - mkdir build && cd build
-  - cmake .. -DCMAKE_INSTALL_PREFIX="$(pwd)/install" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=$BOOST_ROOT
+  - cmake .. -DCMAKE_INSTALL_PREFIX="$(pwd)/install" -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DENTITYX_BUILD_TESTING=0
   - make VERBOSE=1
   #- LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so valgrind --leak-check=full --error-exitcode=1 make test || (cat Testing/Temporary/LastTest.log && exit 1)
   # HACK(SMA): Only do this on linux, cpack isn't working on osx due to linking issues :(

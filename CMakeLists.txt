@@ -30,10 +30,10 @@ set(CPACK_PACKAGE_FILE_NAME "GameEngine-0.2.0-${GIT_COMMIT_HASH}-${CMAKE_SYSTEM_
 option(BUILD_SHARED_LIBS "Link SFML as shared or not" OFF)
 if(BUILD_SHARED_LIBS)
   set(ENTITYX_BUILD_SHARED true CACHE BOOL "Build shared libraries?")
-  set(THOR_SHARED_LIBS ON CACHE PATH "BOOST top-level directory")
+  set(THOR_SHARED_LIBS ON CACHE PATH "Thor top-level directory")
 else()
   set(ENTITYX_BUILD_SHARED false CACHE BOOL "Build shared libraries?")
-  set(THOR_SHARED_LIBS OFF CACHE PATH "BOOST top-level directory")
+  set(THOR_SHARED_LIBS OFF CACHE PATH "Thor top-level directory")
 endif()
 option(SFML_OPENGL_ES "Build using ES opengl for non-desktop?" OFF)
 option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
@@ -43,27 +43,14 @@ option(ENTITYX_BUILD_TESTING "Enable building of tests." OFF)
 
 enable_testing()
 
-# HACK(SMA): Your on your own kid-o for boost and python libs
+# TODO(SMA): You'll have to install python on the system yourself for now
+# till we compile CPython.
 find_package(PythonLibs 2.7 REQUIRED)
 message(status "** Python Include: ${PYTHON_INCLUDE_DIRS}")
 message(status "** Python Libraries: ${PYTHON_LIBRARIES}")
 if(NOT PYTHONLIBS_FOUND)
     set(PYTHON_ROOT "" CACHE PATH "PYTHON top-level directory")
     message("---> Python 2.7 directory not found. Set PYTHON_ROOT to Pyons's top-level path (containing \"include\" and \"lib\" directories).\n")
-endif()
-
-SET(Boost_USE_STATIC_LIBS     ON)
-SET(Boost_USE_MULTITHREADED    ON)
-SET(Boost_USE_STATIC_RUNTIME     OFF)
-find_package(Boost 1.59.0 COMPONENTS python filesystem system REQUIRED)
-message(status "** Boost Include: ${Boost_INCLUDE_DIR}")
-message(status "** Boost Dir: ${Boost_LIBRARY_DIRS}")
-message(status "** Boost Libraries: ${Boost_LIBRARIES}")
-if(NOT Boost_FOUND)
-  set(BOOST_ROOT "" CACHE PATH "BOOST top-level directory")
-  message("---> Boost 1.59 directory not found. Set BOOST_ROOT to Boost's top-level path (containing \"include\" and \"lib\" directories).\n")
-else()
-  # Assume we're good to go.
 endif()
 
 # Include Built Copy of Python27.dll

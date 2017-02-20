@@ -12,34 +12,10 @@ build_script:
 
     git submodule update --init --recursive
 
-    if (! ( (Test-Path C:\deps\boost-install\lib\libboost_python-vc140-mt-1_60.lib) -And
-            (Test-Path C:\deps\boost-install\lib\libboost_filesystem-vc140-mt-1_60.lib) )) {
-        pushd .
-
-        cd C:\Libraries\boost_1_60_0
-
-        rm -r C:/deps/boost-install
-
-        .\bootstrap.bat --prefix="C:/deps/boost-install"
-
-        .\b2.exe headers
-
-        .\b2.exe --prefix="C:/deps/boost-install" link=static --with-filesystem --with-python install -d0
-
-        ls C:\deps\boost-install
-
-        ls C:\deps\boost-install\lib
-
-        ls C:\deps\boost-install\include
-
-        popd
-    }
-
-    cmake -DCMAKE_INSTALL_PREFIX=build -DBoost_DEBUG=ON -DENTITYX_BUILD_TESTING=0 -DBOOST_ROOT=C:/deps/boost-install
+    cmake -DCMAKE_INSTALL_PREFIX=build -DENTITYX_BUILD_TESTING=0
 
     cmake --build . --target ALL_BUILD --config Release
-
-    cp C:/deps/boost-install/lib/*.* ./Release/
+    
 test_script:
 - ps: >-
 

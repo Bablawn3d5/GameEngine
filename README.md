@@ -28,7 +28,7 @@ Boostraps serveral C++ libraries the Bablawn uses into a covinent "engine". Buil
 
 ## Building
 
-The engine builds on Windows, Linux and MacOSX. Built with:  **Visual Studio 2015 - Update 3**, **gcc-4.9**, and **clang-3.8**. 
+The engine builds on Windows, Linux and MacOSX. Built with:  **Visual Studio 2015 - Update 3**, **gcc-4.9**, and **clang-3.9**. 
 
 You will need to install **Python 2.7** and **Boost.Python 1.59** on your system to build from source.
 

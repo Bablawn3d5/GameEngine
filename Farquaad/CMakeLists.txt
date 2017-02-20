@@ -10,7 +10,7 @@ project(Farquaad)
 
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++14 -DBOOST_STATIC -DBOOST_NO_AUTO_PTR -Wno-error=deprecated-declarations -Wno-unused-local-typedefs")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++14 -Wno-error=deprecated-declarations -Wno-unused-local-typedefs")
     if (CMAKE_CXX_COMPILER_ID MATCHES "(.*Clang)")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Qunused-arguments -Wno-format-pedantic")
     endif()
@@ -86,8 +86,6 @@ endforeach()
 # We should fix this eventually.
 # Define HAVE_ROUND for pymath.h
 add_definitions(/DHAVE_ROUND)
-# Statically link boost
-add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
 if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
 endif()
@@ -122,11 +120,9 @@ set_target_properties(jsoncpp-amalgamate PROPERTIES FOLDER "JsonCPP")
 include_directories(${Box2D_SOURCE_DIR})
 target_link_libraries(Farquaad Box2D)
 
-# Add Boost Python
+# Add Python
 include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIR})
-target_link_libraries(Farquaad ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(Farquaad ${PYTHON_LIBRARIES})
 
 # Include ImGui
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})

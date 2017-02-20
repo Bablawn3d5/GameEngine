@@ -12,8 +12,6 @@ set(TEST_SOURCES
     ${TESTROOT}/EntitySeralizer_test.cpp
     ${TESTROOT}/JSONSerializedComponents_test.cpp
     ${TESTROOT}/JSONSerializedSystemObjects_test.cpp
-    ${TESTROOT}/PythonSeralizer_test.cpp
-
 )
 
 # Add target to copy files
@@ -59,10 +57,8 @@ include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 include_directories(${EntityX_SOURCE_DIR})
 # Include JsonCPP-amalgamate headers to avoid cmake issues.
 include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
-# Add Boost Python
+# Add Python
 include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIR})
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
 include_directories(${METASTUFF_INCLUDE_DIRS})
 include_directories(${AsepriteToSFMLImage_SOURCE_DIR})
@@ -72,8 +68,6 @@ include_directories(${AsepriteToSFMLImage_SOURCE_DIR}/aseprite-rgba-converter)
 enable_testing()
 # Define HAVE_ROUND for python on windows
 add_definitions(/DHAVE_ROUND)
-# Statically link boost
-add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
 add_executable(all_tests ${TEST_SOURCES})
 include_directories(${catch-amalgamate_SOURCE_DIR})
 source_group("" FILES "${TEST_SOURCES}")
