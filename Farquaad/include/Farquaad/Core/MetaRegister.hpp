@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include <Farquaad/Components/PythonScript.hpp>
 #include <Meta.h>
 #include <Farquaad/Components.hpp>
+#include <entityx/python/PythonScript.hpp>
 
+using PythonScript = entityx::python::PythonScript;
 
 namespace meta
 {

@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include <Farquaad/Core/MetaRegister.hpp>
-#include <Farquaad/Systems/PythonSystem.h>
 #include <Meta.h>
 #include <json/json.h>
 #include <memory>
@@ -14,7 +13,7 @@
 #include <functional>
 #include <unordered_map>
 
-namespace py = boost::python;
+namespace py = pybind11;
 
 // Forward declare these.
 template<typename> class SerializableHandle;
@@ -79,9 +78,8 @@ public:
       py.def_readwrite(name, member.getPtr());
     });
     py.def("assign_to", &assign_to<T>)
-      .def("get_component", &get_component<T>,
+      .def_static("get_component", &get_component<T>,
            py::return_value_policy<py::reference_existing_object>())
-      .staticmethod("get_component");
   }
 
   void initPy(py::enum_<T>&& py) const= delete;

@@ -2,14 +2,12 @@
 
 #pragma once
 
-#include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <pybind11/pybind11.h>
 #include <json/json.h>
 #include <entityx/entityx.h>
 #include <string>
 
-namespace py = boost::python;
+namespace py = pybind11;
 namespace ex = entityx;
 
 // Built in C++ types.
@@ -77,7 +75,6 @@ public:
   }
 
   void initPy(py::class_<Physics::CoollidingSet>&& py) const {
-    py.def(py::vector_indexing_suite<Physics::CoollidingSet, true>());
   }
 };
 
@@ -135,7 +132,6 @@ public:
   }
 
   void initPy(py::class_<std::vector<T>>&& py) const {
-    py.def(py::vector_indexing_suite<std::vector<T>>());
   }
 };
 
@@ -260,11 +256,11 @@ public:
     // Don't seralize null objects.
     if ( s.object.ptr() != 0 ) {
      try {
-       o["class"] = (std::string)py::extract<std::string>(s.object.attr("__class__").attr("__name__"));
+       o["class"] = (std::string)py::cast<std::string>(s.object.attr("__class__").attr("__name__"));
        o["modulename"] = (std::string)
-          py::extract<std::string>(s.object.attr("__class__").attr("__module__"));
+          py::cast<std::string>(s.object.attr("__class__").attr("__module__"));
        Json::Reader reader;
-       reader.parse(((std::string)py::extract<std::string>(s.object.attr("to_json")())).c_str(), o["vars"]);
+       reader.parse(((std::string)py::cast<std::string>(s.object.attr("to_json")())).c_str(), o["vars"]);
      }
      catch ( const py::error_already_set& ) {
        PyErr_Print();
@@ -443,7 +439,7 @@ public:
   }
 
   void initPy(py::class_<CollisionCategoryBitset>&& py) const {
-    py.add_property("bits",
+    py.def_property("bits",
                     &CollisionCategoryBitset::get_bits,
                     &CollisionCategoryBitset::set_bits);
   }

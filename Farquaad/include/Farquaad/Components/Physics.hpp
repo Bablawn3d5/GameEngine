@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Bablawn3d5
+// Copyright 2017 Bablawn3d5
 
 #pragma once
 

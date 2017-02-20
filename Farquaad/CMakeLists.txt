@@ -121,8 +121,10 @@ include_directories(${Box2D_SOURCE_DIR})
 target_link_libraries(Farquaad Box2D)
 
 # Add Python
+include_directories(${PYBIND11_INCLUDE_DIR})
+include_directories(${ENTITYX_PYBIND11_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
-target_link_libraries(Farquaad ${PYTHON_LIBRARIES})
+target_link_libraries(Farquaad ${PYTHON_LIBRARIES} ${ENTITYX_PYBIND11_LIBRARIES})
 
 # Include ImGui
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})

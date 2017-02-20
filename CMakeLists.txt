@@ -91,12 +91,22 @@ configure_file(
     ${GameEngine_SOURCE_DIR}/extinclude/entityx-repo/entityx/config.h
 )
 
+# Add entityx python with a bit of tweaking.
 set(ENTITYX_FOUND true)
 set(ENTITYX_LIBRARY entityx)
 set(ENTITYX_LIBRARY_RELEASE entityx)
 set(ENTITYX_LIBRARY_DEBUG entityx-d)
 set(ENTITYX_INCLUDE_DIR ${EntityX_SOURCE_DIR})
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx_pybind11-repo)
+
+set(ENTITYX_PYBIND11_LIBRARY entityx_python)
+set(ENTITYX_PYBIND11_LIBRARY_RELEASE entityx_python)
+set(ENTITYX_PYBIND11_LIBRARY_DEBUG entityx_python-d)
+set(ENTITYX_PYBIND11_INCLUDE_DIR ${EntityX_PYBIND11_SOURCE_DIR})
+set(ENTITYX_PYBIND11_LIBRARIES optimized ${ENTITYX_PYBIND11_LIBRARY_RELEASE} debug ${ENTITYX_PYBIND11_LIBRARY_DEBUG})
+message(status "** ENTITYX_PYBIND11 Include: ${ENTITYX_PYBIND11_INCLUDE_DIR}")
+message(status "** ENTITYX_PYBIND11 Libs: ${ENTITYX_PYBIND11_LIBRARIES}")
+
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 # Lie to everyone that we've found SFML.

@@ -1,5 +1,6 @@
 // Copyright 2015-2016 Bablawn3d5
 
+#include <pybind11/pybind11.h>
 #include <experimental/filesystem>
 #include <Farquaad/Serialization.hpp>
 #include <json/json.h>
@@ -7,6 +8,7 @@
 #include <Box2D/Box2D.h>
 #include <entityx/entityx.h>
 #include <Farquaad/Systems.hpp>
+#include <entityx/python/PythonSystem.h>
 #include <Farquaad/Core.hpp>
 #include <Farquaad/Thor/ResourceLoader.h>
 #include <Farquaad/Core/LevelResourceLoader.h>
@@ -19,38 +21,46 @@
 #include <thread>
 
 namespace fs = std::experimental::filesystem;
-namespace py = boost::python;
+namespace py = pybind11;
 using namespace std::chrono_literals;
+using PythonSystem = entityx::python::PythonSystem;
 
 // HACK(SMA) : Just shove this here for now.
-BOOST_PYTHON_MODULE(_entityx_components) {
-  Serializable::initPy(py::class_<Body>("Body", py::init<>()));
-  Serializable::initPy(py::class_<Sound>("Sound", py::init<>()));
-  Serializable::initPy(py::class_<Physics>("Physics", py::init<>()));
-  Serializable::initPy(py::class_<Destroyed>("Destroyed", py::init<>()));
-  Serializable::initPy(py::class_<Stats>("Stats", py::init<>()));
-  Serializable::initPy(py::class_<Renderable>("Renderable", py::init<>()));
-  Serializable::initPy(py::class_<InputResponder>("InputResponder", py::init<>()));
-  Serializable::initPy(py::class_<Physics::CoollidingSet>("CollisionList", py::init<>()));
+namespace farqaad_python {
+
+PYBIND11_PLUGIN(_entityx_components) {
+  py::module m("_entityx_components");
+  Serializable::initPy(py::class_<Body>(m, "Body"));
+  Serializable::initPy(py::class_<Sound>(m, "Sound"));
+  Serializable::initPy(py::class_<Physics>(m, "Physics"));
+  Serializable::initPy(py::class_<Destroyed>(m, "Destroyed"));
+  Serializable::initPy(py::class_<Stats>(m, "Stats"));
+  Serializable::initPy(py::class_<Renderable>(m, "Renderable"));
+  Serializable::initPy(py::class_<InputResponder>(m, "InputResponder"));
+  Serializable::initPy(py::class_<Physics::CoollidingSet>(m, "CollisionList"));
   typedef std::vector<std::string> vec_string;
-  Serializable::initPy(py::class_<vec_string>("std_vector_string", py::init<>()));
-  Serializable::initPy(py::enum_<b2BodyType>("b2BodyType"));
-  Serializable::initPy(py::enum_<CollisionCategory>("CollisionCategory"));
-  Serializable::initPy(py::class_<CollisionCategoryBitset>("CollisionCategoryBitset", py::init<>()));
+  Serializable::initPy(py::class_<vec_string>(m, "std_vector_string"));
+  Serializable::initPy(py::enum_<b2BodyType>(m, "b2BodyType"));
+  Serializable::initPy(py::enum_<CollisionCategory>(m, "CollisionCategory"));
+  Serializable::initPy(py::class_<CollisionCategoryBitset>(m, "CollisionCategoryBitset"));
   // This doesn't work
   //Serializable::initPy<sf::Vector2i>(
   //  py::class_<sf::Vector2i>("sf_vector_int", py::init<>()));
 
   // TODO(SMA) : Seralize me
   // TODO(SMA) : Add is_convertable between these two.
-  py::class_< sf::Vector2<int> >("Vec2i", py::init<>())
+  py::class_< sf::Vector2<int> >(m, "Vec2i")
     .def_readwrite("x", &sf::Vector2<int>::x)
     .def_readwrite("y", &sf::Vector2<int>::y);
 
-  py::class_< sf::Vector2<float> >("Vec2f", py::init<>())
+  py::class_< sf::Vector2<float> >(m, "Vec2f")
     .def_readwrite("x", &sf::Vector2<float>::x)
     .def_readwrite("y", &sf::Vector2<float>::y);
+
+  return m.ptr();
 }
+
+} //namespace farqaad_python
 
 // Quick test for EntityX
 class Application final : public entityx::EntityX {
@@ -210,16 +220,28 @@ public:
       // Setup python system
 
       // Set python script path
-      std::string path_exec = exec_dir.string();
-      std::string path_scripts = (exec_dir / "scripts").string();
-      assert(
-        PyImport_AppendInittab("_entityx_components", init_entityx_components) != -1
-        && "Failed to initialize _entityx_components Python module");
-#ifdef NDEBUG
-      PyImport_AppendInittab("_entityx_components", init_entityx_components);
-#endif
-      auto pythonSystem = systems.add<PythonSystem>(&entities, path_exec.c_str());
-      pythonSystem->add_path(path_scripts.c_str());
+      const std::string path_exec = exec_dir.string();
+      const std::string path_scripts = (exec_dir / "scripts").string();
+      farqaad_python::pybind11_init();
+      // HACK(SMA) : Initalize  python27.zip path here.
+
+      // HACK(SMA) : Throw away wide characters
+      // Write to tempoaray char[] for PySys_SetPath
+      std::vector<char> lib_paths(path_exec.begin(), path_exec.end());
+      lib_paths.push_back('\0');
+
+      // Set path so we can find the python27.zip
+      Py_NoSiteFlag = 1;
+      Py_SetPythonHome(&lib_paths[0]);
+      Py_InitializeEx(0);
+
+      // Assuming python27.zip is our python lib zip.
+      PyRun_SimpleString("import sys");
+      PyRun_SimpleString("sys.path.append('python27.zip')");
+      
+      // Add python system
+      auto pythonSystem = systems.add<PythonSystem>(&entities);
+      pythonSystem->add_path(path_scripts);
       systems.configure();
 
       // Output script path
@@ -323,19 +345,6 @@ public:
 int main(int argc, char* const argv[]) {
     // global setup..
     const auto execute_dir = fs::system_complete(argv[0]).remove_filename();
-    // HACK(SMA) : Initialize these component serializers so they become registered.
-    // FIXME(SMA) : These cause JSON objects to be held in memory permanently. FIXME.
-    {
-        Serializable::handle<Body>();
-        Serializable::handle<Destroyed>();
-        Serializable::handle<Stats>();
-        Serializable::handle<Physics>();
-        Serializable::handle<PythonScript>();
-        Serializable::handle<InputResponder>();
-        Serializable::handle<Renderable>();
-        Serializable::handle<sf::Color>();
-        Serializable::handle<Physics::CoollidingSet>();
-    }
 
     thor::ResourceHolder<Json::Value, std::string> holder;
     Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));

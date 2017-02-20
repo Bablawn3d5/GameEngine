@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include <boost/python.hpp>
 #include <Meta.h>
 #include <Farquaad/Core/MetaRegister.hpp>
 #include <Farquaad/Core/Serializable.hpp>
