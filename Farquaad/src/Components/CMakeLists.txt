@@ -9,7 +9,6 @@ set(SRC
     ${INCROOT}/InputResponder.hpp
     ${INCROOT}/Stats.hpp
     ${INCROOT}/Sound.hpp
-    ${INCROOT}/PythonScript.hpp
     ${INCROOT}/Renderable.hpp
 )
 

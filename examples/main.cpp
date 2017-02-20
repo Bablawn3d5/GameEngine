@@ -1,13 +1,12 @@
 // Copyright 2015-2016 Bablawn3d5
 
-#include <boost/python.hpp>
+#include <experimental/filesystem>
 #include <Farquaad/Serialization.hpp>
 #include <json/json.h>
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
 #include <entityx/entityx.h>
 #include <Farquaad/Systems.hpp>
-#include <Farquaad/Systems/PythonSystem.h>
 #include <Farquaad/Core.hpp>
 #include <Farquaad/Thor/ResourceLoader.h>
 #include <Farquaad/Core/LevelResourceLoader.h>
@@ -19,7 +18,7 @@
 #include <atomic>
 #include <thread>
 
-namespace fs = boost::filesystem;
+namespace fs = std::experimental::filesystem;
 namespace py = boost::python;
 using namespace std::chrono_literals;
 

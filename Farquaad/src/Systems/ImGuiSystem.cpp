@@ -1,6 +1,5 @@
 // Copyright 2016 Bablawn3d5
 
-#include <boost/python.hpp>
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core/EntitySerializer.h>
 #include <Farquaad/Systems/ImGuiSystem.h>

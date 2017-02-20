@@ -31,15 +31,18 @@ option(BUILD_SHARED_LIBS "Link SFML as shared or not" OFF)
 if(BUILD_SHARED_LIBS)
   set(ENTITYX_BUILD_SHARED true CACHE BOOL "Build shared libraries?")
   set(THOR_SHARED_LIBS ON CACHE PATH "Thor top-level directory")
+ set(ENTITYX_PYTHON_BUILD_SHARED ON CACHE BOOL "Enable building shared entityx python libraries" )
 else()
   set(ENTITYX_BUILD_SHARED false CACHE BOOL "Build shared libraries?")
   set(THOR_SHARED_LIBS OFF CACHE PATH "Thor top-level directory")
+  set(ENTITYX_PYTHON_BUILD_SHARED OFF CACHE BOOL "Enable building shared entityx python libraries" )
 endif()
 option(SFML_OPENGL_ES "Build using ES opengl for non-desktop?" OFF)
 option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" OFF)
 option(BOX2D_INSTALL "Install Box2D libs, includes, and CMake scripts" OFF)
 option(THOR_SFML_IS_BUILT "Set to automatically link SFML includes, as you build the enitre SFML source as part of your"  ON)
 option(ENTITYX_BUILD_TESTING "Enable building of tests." OFF)
+option(ENTITYX_PYTHON_BUILD_TESTING "Enable building shared entityx python tests" OFF)
 
 enable_testing()
 
@@ -88,6 +91,12 @@ configure_file(
     ${GameEngine_SOURCE_DIR}/extinclude/entityx-repo/entityx/config.h
 )
 
+set(ENTITYX_FOUND true)
+set(ENTITYX_LIBRARY entityx)
+set(ENTITYX_LIBRARY_RELEASE entityx)
+set(ENTITYX_LIBRARY_DEBUG entityx-d)
+set(ENTITYX_INCLUDE_DIR ${EntityX_SOURCE_DIR})
+add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx_pybind11-repo)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/Box2D-repo/Box2D)
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/SFML-Repo)
 # Lie to everyone that we've found SFML.

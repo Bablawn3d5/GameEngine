@@ -1,9 +1,9 @@
 // Copyright 2015-2016 Bablawn3d5
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
-#include <boost/filesystem.hpp>
+#include <experimental/filesystem>
 
-namespace fs = boost::filesystem;
+namespace fs = std::experimental::filesystem;
 
 // HACK(SMA) : Ugly hack to define a global and pass though to tests.
 // Normally a application should be provided paths to load for python libs.

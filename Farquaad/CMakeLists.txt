@@ -10,7 +10,7 @@ project(Farquaad)
 
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++14 -Wno-error=deprecated-declarations -Wno-unused-local-typedefs")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++fs -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++14 -Wno-error=deprecated-declarations -Wno-unused-local-typedefs")
     if (CMAKE_CXX_COMPILER_ID MATCHES "(.*Clang)")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Qunused-arguments -Wno-format-pedantic")
     endif()
@@ -108,8 +108,8 @@ include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 target_link_libraries(Farquaad thor)
 
 # Include EntityX
-include_directories(${EntityX_SOURCE_DIR})
-target_link_libraries(Farquaad entityx)
+include_directories(${ENTITYX_INCLUDE_DIR})
+target_link_libraries(Farquaad ${ENTITYX_LIBRARIES})
 
 # Include JsonCPP-amalgamate headers to avoid cmake issues.
 include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
