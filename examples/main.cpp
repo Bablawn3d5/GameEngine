@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Bablawn3d5
+// Copyright 2017 Bablawn3d5
 
 #include <pybind11/pybind11.h>
 #include <experimental/filesystem>
@@ -29,20 +29,20 @@ using PythonSystem = entityx::python::PythonSystem;
 namespace farqaad_python {
 
 PYBIND11_PLUGIN(_entityx_components) {
-  py::module m("_entityx_components");
-  Serializable::initPy(py::class_<Body>(m, "Body"));
-  Serializable::initPy(py::class_<Sound>(m, "Sound"));
-  Serializable::initPy(py::class_<Physics>(m, "Physics"));
-  Serializable::initPy(py::class_<Destroyed>(m, "Destroyed"));
-  Serializable::initPy(py::class_<Stats>(m, "Stats"));
-  Serializable::initPy(py::class_<Renderable>(m, "Renderable"));
-  Serializable::initPy(py::class_<InputResponder>(m, "InputResponder"));
-  Serializable::initPy(py::class_<Physics::CoollidingSet>(m, "CollisionList"));
   typedef std::vector<std::string> vec_string;
-  Serializable::initPy(py::class_<vec_string>(m, "std_vector_string"));
-  Serializable::initPy(py::enum_<b2BodyType>(m, "b2BodyType"));
-  Serializable::initPy(py::enum_<CollisionCategory>(m, "CollisionCategory"));
-  Serializable::initPy(py::class_<CollisionCategoryBitset>(m, "CollisionCategoryBitset"));
+  py::module m("_entityx_components");
+  Serializable::initPy<Body>({ m, "Body" });
+  Serializable::initPy<Sound>({m, "Sound"});
+  Serializable::initPy<Physics>({m, "Physics"});
+  Serializable::initPy<Destroyed>({m, "Destroyed"});
+  Serializable::initPy<Stats>({m, "Stats"});
+  Serializable::initPy<Renderable>({m, "Renderable"});
+  Serializable::initPy<InputResponder>({m, "InputResponder"});
+  Serializable::initPy<Physics::CoollidingSet>({m, "CollisionList"});
+  Serializable::initPy<vec_string>({m, "std_vector_string"});
+  Serializable::initPy<b2BodyType>({m, "b2BodyType"});
+  Serializable::initPy<CollisionCategory>({m, "CollisionCategory"});
+  Serializable::initPy<CollisionCategoryBitset>({m, "CollisionCategoryBitset"});
   // This doesn't work
   //Serializable::initPy<sf::Vector2i>(
   //  py::class_<sf::Vector2i>("sf_vector_int", py::init<>()));
@@ -240,7 +240,7 @@ public:
       PyRun_SimpleString("sys.path.append('python27.zip')");
       
       // Add python system
-      auto pythonSystem = systems.add<PythonSystem>(&entities);
+      auto pythonSystem = systems.add<PythonSystem>(entities);
       pythonSystem->add_path(path_scripts);
       systems.configure();
 
@@ -346,6 +346,8 @@ int main(int argc, char* const argv[]) {
     // global setup..
     const auto execute_dir = fs::system_complete(argv[0]).remove_filename();
 
+    // Temparay JSON resoruce loader here just so we can load the conifg
+    // to load our other resource loaders.
     thor::ResourceHolder<Json::Value, std::string> holder;
     Json::Value configs = holder.acquire("config", Resources::loadJSON("Config.json"));
     const std::string title = configs["app_title"].asString();

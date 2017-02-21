@@ -1,4 +1,4 @@
-// Copyright 2016 Bablawn3d5
+// Copyright 2017 Bablawn3d5
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
 #include <Common.h>

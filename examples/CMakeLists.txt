@@ -20,9 +20,11 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL 'MSVC')
     # /FS - Allows multiple cl.exe processes to write to the same .pdb file
     # /DEBUG - Enable debug during linking
     # /Od - Disables optimization
+    # /MDd - Multithreaded Debug DLL Runtime
     set(CMAKE_CXX_FLAGS_DEBUG "/Zi /FS /DEBUG /Od /MDd")
     # /Ox - Full optimization
-    set(CMAKE_CXX_FLAGS_RELEASE "/Ox -DNDEBUG")
+    # /MD - Multithreaded DLL Runtime
+    set(CMAKE_CXX_FLAGS_RELEASE "/Ox -DNDEBUG /MD")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/Ox /Zi /FS /DEBUG")
 endif()
 
@@ -80,8 +82,6 @@ endforeach()
 
 # Define HAVE_ROUND for pymath.h not being defined by windows.
 add_definitions(/DHAVE_ROUND)
-# Statically link boost
-add_definitions(-DBOOST_STATIC -DBOOST_PYTHON_STATIC_LIB )
 
 if(NOT BUILD_SHARED_LIBS)
     add_definitions(-DSFML_STATIC)
@@ -105,7 +105,7 @@ include_directories(${AsepriteToSFMLImage_SOURCE_DIR}/aseprite-rgba-converter)
 include_directories(${PYBIND11_INCLUDE_DIR})
 include_directories(${ENTITYX_PYBIND11_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
-target_link_libraries(FarquaadExamples ${PYTHON_LIBRARIES} ${ENTITYX_PYBIND11_LIBRARIES})
+target_link_libraries(FarquaadExamples ${ENTITYX_LIBRARIES} ${PYTHON_LIBRARIES} ${ENTITYX_PYBIND11_LIBRARIES})
 
 add_dependencies(FarquaadExamples CopyExampleResources)
 target_link_libraries(FarquaadExamples Farquaad)

@@ -57,8 +57,12 @@ include_directories(${thor_SOURCE_DIR}/extlibs/aurora/include/)
 include_directories(${EntityX_SOURCE_DIR})
 # Include JsonCPP-amalgamate headers to avoid cmake issues.
 include_directories(${jsoncpp-amalgamate_SOURCE_DIR})
-# Add Python
+
+#Add python
+include_directories(${PYBIND11_INCLUDE_DIR})
+include_directories(${ENTITYX_PYBIND11_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIRS})
+
 include_directories(${IMGUI_AMALGAMATE_INCLUDE_DIRS})
 include_directories(${METASTUFF_INCLUDE_DIRS})
 include_directories(${AsepriteToSFMLImage_SOURCE_DIR})
@@ -71,6 +75,7 @@ add_definitions(/DHAVE_ROUND)
 add_executable(all_tests ${TEST_SOURCES})
 include_directories(${catch-amalgamate_SOURCE_DIR})
 source_group("" FILES "${TEST_SOURCES}")
+target_link_libraries(all_tests ${ENTITYX_LIBRARIES} ${PYTHON_LIBRARIES} ${ENTITYX_PYBIND11_LIBRARIES})
 target_link_libraries(all_tests ${SFML_DEPENDENCIES} ${SFML_LIBRARIES})
 target_link_libraries(all_tests thor)
 target_link_libraries(

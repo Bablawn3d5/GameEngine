@@ -81,6 +81,10 @@ endif()
 #     message("-> Make sure the SFML libraries with the same configuration (Release/Debug, Static/Dynamic) exist.\n")
 # endif()
 
+# Set libdirs to output directory because cmake is very confused when we add_subdirectory a 
+# project.
+message ("WTF? ${CMAKE_BINARY_DIR}/lib/${CMAKE_CFG_INTDIR}/")
+link_directories(${CMAKE_BINARY_DIR}/lib/)
 
 # TODO(SMA) : Use ExternalProject_Add to conditionally build external libs.
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx-repo)
@@ -97,6 +101,7 @@ set(ENTITYX_LIBRARY entityx)
 set(ENTITYX_LIBRARY_RELEASE entityx)
 set(ENTITYX_LIBRARY_DEBUG entityx-d)
 set(ENTITYX_INCLUDE_DIR ${EntityX_SOURCE_DIR})
+set(ENTITYX_LIBRARIES optimized ${ENTITYX_LIBRARY_RELEASE} debug ${ENTITYX_LIBRARY_DEBUG})
 add_subdirectory(${GameEngine_SOURCE_DIR}/extinclude/entityx_pybind11-repo)
 
 set(ENTITYX_PYBIND11_LIBRARY entityx_python)

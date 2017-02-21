@@ -1,8 +1,7 @@
-// Copyright 2016 Bablawn3d5
+// Copyright 2017 Bablawn3d5
 
 #pragma once
 
-#include <boost/python.hpp>
 #include <Farquaad/Serialization.hpp>
 #include <Farquaad/Core.hpp>
 #include <Farquaad/Core/ComponentSerializer.h>

@@ -1,9 +1,10 @@
-// Copyright 2016 Bablawn3d5
+// Copyright 2017 Bablawn3d5
 
 #pragma once
 
 #include <pybind11/pybind11.h>
 #include <Farquaad/Core/MetaRegister.hpp>
+#include <entityx/python/PythonSystem.h>
 #include <Meta.h>
 #include <json/json.h>
 #include <memory>
@@ -14,13 +15,14 @@
 #include <unordered_map>
 
 namespace py = pybind11;
+namespace entpy = entityx::python;
 
 // Forward declare these.
 template<typename> class SerializableHandle;
 namespace Serializable {
 template<typename T> T fromJSON(const Json::Value&);
 template<typename T> Json::Value toJSON(const T&);
-template<typename T> void initPy(py::class_<T>&&);
+//template<typename T> void initPy(py::class_<T>&&);
 template<typename T> const SerializableHandle<T>& handle();
 }
 
@@ -70,19 +72,17 @@ public:
     return v;
   }
 
-  void initPy(py::class_<T>&& py) const {
+  void initPy(typename std::enable_if<!std::is_enum<T>::value, py::class_<T>&&>::type py) const {
     meta::doForAllMembers<T>(
       [&py](const auto& member) {
       using memeber_type = meta::get_member_type<decltype(member)>;
       const auto& name = member.getName();
       py.def_readwrite(name, member.getPtr());
     });
-    py.def("assign_to", &assign_to<T>)
-      .def_static("get_component", &get_component<T>,
-           py::return_value_policy<py::reference_existing_object>())
+    py.def("assign_to", &entpy::assign_to<T>)
+      .def_static("get_component", &entpy::get_component<T>,
+           py::return_value_policy::reference);
   }
-
-  void initPy(py::enum_<T>&& py) const= delete;
 };
 
 // Static handle to SerializableHandle
@@ -98,12 +98,14 @@ inline Json::Value toJSON(const T& component) {
 }
 
 template<typename T>
-inline void initPy(py::class_<T>&& py) {
+void initPy( 
+  typename std::enable_if<!std::is_enum<T>::value, py::class_<T>&&>::type  py) {
     handle<T>().initPy(std::forward<py::class_<T>>(py));
 }
 
 template<typename T>
-inline void initPy(py::enum_<T>&& py) {
+void initPy(
+  typename std::enable_if<std::is_enum<T>::value, py::enum_<T>&&>::type py) {
   handle<T>().initPy(std::forward<py::enum_<T>>(py));
 }
 
@@ -166,8 +168,7 @@ public:
     return Json::nullValue;
   }
 
-  void initPy(py::class_<T>&& py) const = delete;
-  void initPy(py::enum_<T>&& pynum) const {
+  void initPy(typename std::enable_if<std::is_enum<T>::value, py::enum_<T>>::type&& pynum) const {
     for ( auto& pair : enum_to_str ) {
       pynum.value(pair.second.c_str(), pair.first);
     }

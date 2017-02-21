@@ -1,9 +1,12 @@
 // Copyright 2016 Bablawn3d5
-#include <Farquaad/Components/PythonScript.hpp>
+
 #include <Farquaad/Core/EntitySerializer.h>
 #include <Farquaad/Components.hpp>
 #include <Meta.h>
 #include <Farquaad/Core/MetaRegister.hpp>
+#include <entityx/python/PythonScript.hpp>
+
+using PythonScript = entityx::python::PythonScript;
 
 std::string EntitySerializer::toString() const {
     return cs.toString();
