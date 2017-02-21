@@ -1,5 +1,5 @@
 import _entityx
-import json, operator
+
 
 """These classes provide a convenience layer on top of the raw entityx::python
 primitives.
@@ -54,7 +54,7 @@ class EntityMetaClass(_entityx.Entity.__class__):
 
     This is done at class creation time to reduce entity creation overhead.
     """
-
+    
     def __new__(cls, name, bases, dct):
         dct['_components'] = components = {}
         # Collect components from base classes
@@ -67,64 +67,36 @@ class EntityMetaClass(_entityx.Entity.__class__):
                 components[key] = value
         return type.__new__(cls, name, bases, dct)
 
-
 class Entity(_entityx.Entity):
     """Base Entity class.
 
     Python Enitities differ in semantics from C++ components, in that they
     contain logic, receive events, and so on.
     """
-
     __metaclass__ = EntityMetaClass
 
-    def __new__(cls, *args, **kwargs):
-        entity_id = kwargs.pop('entity_id', None)
-        self = _entityx.Entity.__new__(cls)
-        if entity_id is None:
-            entity_id = _entityx._entity_manager.configure(self)
-        _entityx.Entity.__init__(self, _entityx._entity_manager, entity_id)
-        for k, v in self._components.items():
-            setattr(self, k, v._build(self._entity_id))
-        return self
-
-    def __init__(self):
+    def __init__(self, entity = None):
         """Default constructor."""
+        """Entity is created from python won't have a C++ entity assigned to it.
+            Create one by calling entity_manager.
+        """
+        if entity is None:
+            entity = _entityx._entity_manager.new_entity(self)
+        """ Assign and sync components """
+        self.entity = entity
+        for k, v in self._components.items():
+            setattr(self, k, v._build(self.id))
 
     def __repr__(self):
-        return "<%s.%s %d.%d>" % (self.__class__.__module__, self.__class__.__name__, self._entity_id.index, self._entity_id.version)
-
-    def to_json(self):
-        return json.dumps(self.__dict__.copy(), default=operator.attrgetter('__dict__'), indent=2)
+        return '<%s.%s %s.%s>' % (self.__class__.__module__, self.__class__.__name__, self.id.index, self.id.version)
 
     @classmethod
-    def _from_raw_entity(cls, entity_id, *args, **kwargs):
+    def _from_raw_entity(cls, *args, **kwargs):
         """Create a new Entity from a raw entity.
 
-        This is called from CComponent(cls, args++.
+        This is called from C++.
         """
-        self = Entity.__new__(cls, entity_id=entity_id)
-        cls.__init__(self, *args, **kwargs)
+        args = list(*args)
+        kwargs = dict(kwargs)
+        self = cls(*args, **kwargs)
         return self
-
-    def Component(self, cls, *args, **kwargs):
-        entity_id = self._entity_id
-        component = cls.get_component(_entityx._entity_manager, entity_id)
-        if not component:
-            component = cls(*args, **kwargs)
-            component.assign_to(_entityx._entity_manager, entity_id)
-            return self.Component(cls, *args, **kwargs)
-        return component
-
-    def HasComponent(self, cls):
-        entity_id = self._entity_id
-        component = cls.get_component(_entityx._entity_manager, entity_id)
-        if component:
-            return True
-        return False
-
-def emit(event):
-    """Emit an event.
-
-    :param event: A Python-exposed C++ subclass of entityx::BaseEvent.
-    """
-    return _entityx._event_manager.emit(event)

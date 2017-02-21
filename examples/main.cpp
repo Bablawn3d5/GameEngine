@@ -1,6 +1,7 @@
 // Copyright 2017 Bablawn3d5
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <experimental/filesystem>
 #include <Farquaad/Serialization.hpp>
 #include <json/json.h>
@@ -30,7 +31,7 @@ namespace farqaad_python {
 
 PYBIND11_PLUGIN(_entityx_components) {
   typedef std::vector<std::string> vec_string;
-  py::module m("_entityx_components");
+  py::module m("_entityx_components", "Module containing the running game's components");
   Serializable::initPy<Body>({ m, "Body" });
   Serializable::initPy<Sound>({m, "Sound"});
   Serializable::initPy<Physics>({m, "Physics"});
@@ -114,6 +115,31 @@ public:
     explicit Application(const fs::path& exec_dir, sf::RenderWindow &target,const Json::Value& v, const sf::Color& clear) :
       window(target), debugViewPort(target.getView()), clear_color(clear){ // NOLINT
 
+      //// HACK(SMA) : Initalize  python27.zip path here.
+
+      // HACK(SMA) : Throw away wide characters
+      const std::string path_exec = exec_dir.string();
+      // Write to tempoaray char[] for PySys_SetPath
+      std::vector<char> lib_paths(path_exec.begin(), path_exec.end());
+      lib_paths.push_back('\0');
+      // Set path so we can find the python27.zip
+      Py_NoSiteFlag = 1;
+      Py_SetPythonHome(&lib_paths[0]);
+      Py_Initialize();
+
+      // Assuming python27.zip is our python lib zip.
+      PyRun_SimpleString("import sys");
+      PyRun_SimpleString("sys.path.append('python27.zip')");
+
+      try {
+        farqaad_python::pybind11_init();
+      }
+      catch ( std::exception& e ) {
+        std::cerr << e.what();
+        throw e;
+      }
+
+
       // Lock the system_lock so we have loadThread wait for 
       // systems to be fully loaded.
       std::atomic_flag system_lock = ATOMIC_FLAG_INIT;
@@ -122,77 +148,77 @@ public:
 
       std::cout << "Loading...:" << "\n";
 
-      waitThread = std::thread([this] {
-        while ( isRunning ) {
-          level.loading(); 
-        } 
-      });
-      waitThread.detach();
+      //waitThread = std::thread([this] {
+      //  while ( isRunning ) {
+      //    level.loading(); 
+      //  } 
+      //});
+      //waitThread.detach();
 
-      loadThread = std::thread([this, &v, &system_lock] {
-        // HACK(SMA) : Detect magic loader entity.
-        for ( auto& item : v["loader"] ) {
-          const auto& str = item.asString();
-          level.queue_load(str);
-        }
+      //loadThread = std::thread([this, &v, &system_lock] {
+      //  // HACK(SMA) : Detect magic loader entity.
+      //  for ( auto& item : v["loader"] ) {
+      //    const auto& str = item.asString();
+      //    level.queue_load(str);
+      //  }
 
-        // Wait till we're done loading initial list of entities.
-        level.joins();
+      //  // Wait till we're done loading initial list of entities.
+      //  level.joins();
 
-        // Wait till Application is finished configuring systems before we
-        // load components in.
-        while ( system_lock.test_and_set(std::memory_order_acquire) ) {};
-        
-        // Load magic loadscreen
-        for ( auto& item : v["loader"] ) {
-          auto json = level.get<Json::Value>(item.asString());
-          // Load resources and consutct seralizer 
-          EntitySerializer es(this->queueResources(json));
-          // Lock systems as loading entites is not-threadsafe
-          std::lock_guard<std::mutex>(this->em_system_lock);
-          magic_loader = entities.create();
-          es.Load(magic_loader);
-        }
+      //  // Wait till Application is finished configuring systems before we
+      //  // load components in.
+      //  while ( system_lock.test_and_set(std::memory_order_acquire) ) {};
+      //  
+      //  // Load magic loadscreen
+      //  for ( auto& item : v["loader"] ) {
+      //    auto json = level.get<Json::Value>(item.asString());
+      //    // Load resources and consutct seralizer 
+      //    EntitySerializer es(this->queueResources(json));
+      //    // Lock systems as loading entites is not-threadsafe
+      //    std::lock_guard<std::mutex>(this->em_system_lock);
+      //    magic_loader = entities.create();
+      //    es.Load(magic_loader);
+      //  }
 
-        // Wait till any residual stuff loads in
-        level.joins();
+      //  // Wait till any residual stuff loads in
+      //  level.joins();
 
-        // Signal main thread we can have a loadscreen
-        level.queue([this] {
-          this->start_loadscreen();
-        });
+      //  // Signal main thread we can have a loadscreen
+      //  level.queue([this] {
+      //    this->start_loadscreen();
+      //  });
 
-        // Load all entites in and preloader data
-        for ( auto& item : v["entities"] ) {
-          const auto& str = item.asString();
-          level.queue_load(str);
-        }
+      //  // Load all entites in and preloader data
+      //  for ( auto& item : v["entities"] ) {
+      //    const auto& str = item.asString();
+      //    level.queue_load(str);
+      //  }
 
-        // Wait till json files have loaded.
-        level.joins();
+      //  // Wait till json files have loaded.
+      //  level.joins();
 
-        // Load Components
-        for ( auto& item : v["entities"] ) {
-          auto json = level.get<Json::Value>(item.asString());
-          this->queueResources(json);
-        }
+      //  // Load Components
+      //  for ( auto& item : v["entities"] ) {
+      //    auto json = level.get<Json::Value>(item.asString());
+      //    this->queueResources(json);
+      //  }
 
-        // Notify that loading is done
-        level.queue([this, &v] {
-          // Lock systems as loading entites is not-threadsafe
-          std::lock_guard<std::mutex>(this->em_system_lock);
-          // Destory everyhting and load the game.
-          entities.reset();
-          for ( auto& item : v["entities"] ) {
-            auto json = level.get<Json::Value>(item.asString());
-            EntitySerializer es(json);
-            auto ent = entities.create();
-            es.Load(ent);
-          }
-          // Signal game start.
-          this->start_game();
-        });
-      });
+      //   Notify that loading is done
+      //  level.queue([this, &v] {
+      //    // Lock systems as loading entites is not-threadsafe
+      //    std::lock_guard<std::mutex>(this->em_system_lock);
+      //    // Destory everyhting and load the game.
+      //    entities.reset();
+      //    for ( auto& item : v["entities"] ) {
+      //      auto json = level.get<Json::Value>(item.asString());
+      //      EntitySerializer es(json);
+      //      auto ent = entities.create();
+      //      es.Load(ent);
+      //    }
+      //    // Signal game start.
+      //    this->start_game();
+      //  });
+      //});
 
       // Setup Box2d Physics
       b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
@@ -220,24 +246,7 @@ public:
       // Setup python system
 
       // Set python script path
-      const std::string path_exec = exec_dir.string();
       const std::string path_scripts = (exec_dir / "scripts").string();
-      farqaad_python::pybind11_init();
-      // HACK(SMA) : Initalize  python27.zip path here.
-
-      // HACK(SMA) : Throw away wide characters
-      // Write to tempoaray char[] for PySys_SetPath
-      std::vector<char> lib_paths(path_exec.begin(), path_exec.end());
-      lib_paths.push_back('\0');
-
-      // Set path so we can find the python27.zip
-      Py_NoSiteFlag = 1;
-      Py_SetPythonHome(&lib_paths[0]);
-      Py_InitializeEx(0);
-
-      // Assuming python27.zip is our python lib zip.
-      PyRun_SimpleString("import sys");
-      PyRun_SimpleString("sys.path.append('python27.zip')");
       
       // Add python system
       auto pythonSystem = systems.add<PythonSystem>(entities);
