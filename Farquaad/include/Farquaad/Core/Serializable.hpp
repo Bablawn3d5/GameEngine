@@ -81,7 +81,8 @@ public:
     });
     py.def("assign_to", &entpy::assign_to<T>)
       .def_static("get_component", &entpy::get_component<T>,
-           py::return_value_policy::reference);
+           py::return_value_policy::reference)
+      .def(py::init<>());
   }
 };
 

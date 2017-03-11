@@ -49,7 +49,7 @@ class Component(object):
         return component
 
 
-class EntityMetaClass(_entityx.Entity.__class__):
+class EntityMetaClass(object.__class__):
     """Collect registered components from class attributes.
 
     This is done at class creation time to reduce entity creation overhead.
@@ -67,28 +67,38 @@ class EntityMetaClass(_entityx.Entity.__class__):
                 components[key] = value
         return type.__new__(cls, name, bases, dct)
 
-class Entity(_entityx.Entity):
+class Entity(object):
     """Base Entity class.
 
     Python Enitities differ in semantics from C++ components, in that they
-    contain logic, receive events, and so on.
+    contain logic, and so on.
     """
     __metaclass__ = EntityMetaClass
 
-    def __init__(self, entity = None):
-        """Default constructor."""
-        """Entity is created from python won't have a C++ entity assigned to it.
-            Create one by calling entity_manager.
-        """
+    def __new__(cls, *args, **kwargs):
+        entity = kwargs.pop('entity', None)
+        self = object.__new__(cls, *args, **kwargs)
         if entity is None:
             entity = _entityx._entity_manager.new_entity(self)
-        """ Assign and sync components """
+        # Initalize self.entity 
         self.entity = entity
+        cls.__init__(self, *args, **kwargs)
         for k, v in self._components.items():
-            setattr(self, k, v._build(self.id))
+            setattr(self, k, v._build(self.entity.id))
+        return self
+
+    def __init__(self):
+        """Default constructor."""
 
     def __repr__(self):
-        return '<%s.%s %s.%s>' % (self.__class__.__module__, self.__class__.__name__, self.id.index, self.id.version)
+        return '<%s.%s %s.%s>' % (self.__class__.__module__, self.__class__.__name__, self.entity.id.index, self.entity.id.version)
+
+    @property
+    def id(self):
+        return self.entity.id
+
+    def destroy(self):
+        return self.entity.destroy()
 
     @classmethod
     def _from_raw_entity(cls, *args, **kwargs):
@@ -98,5 +108,27 @@ class Entity(_entityx.Entity):
         """
         args = list(*args)
         kwargs = dict(kwargs)
-        self = cls(*args, **kwargs)
+        entity = kwargs.pop('entity', None)
+        self = Entity.__new__(cls, *args, entity=entity)
+        cls.__init__(self, *args, **kwargs)
         return self
+
+    '''
+        Create a component if its not craeted, return component otherwise. 
+    '''
+    def Component(self, cls, *args, **kwargs):
+        component = cls.get_component(_entityx._entity_manager, self.entity.id)
+        if not component:
+            component = cls(*args, **kwargs)
+            component.assign_to(_entityx._entity_manager, self.entity.id)
+            return self.Component(cls, *args, **kwargs)
+        return component
+
+    '''
+        Returns true if the entity contains the component
+    '''
+    def HasComponent(self, cls):
+        component = cls.get_component(_entityx._entity_manager, self.entity.id)
+        if component:
+            return True
+        return False

@@ -5,9 +5,5 @@
     "renderable" : {
         "texture" : "./images/Bar.ase",
         "currentAnim" : "Bar"
-    },
-    "pythons" : {
-        "modulename" : "system.loader",
-        "class" : "Loader"
     }
 }
