@@ -262,7 +262,8 @@ public:
        Json::Reader reader;
        reader.parse(((std::string)py::cast<std::string>(s.object.attr("to_json")())).c_str(), o["vars"]);
      }
-     catch ( const py::error_already_set& ) {
+     catch ( const py::error_already_set& e) {
+       PyErr_SetString(PyExc_RuntimeError, e.what());
        PyErr_Print();
        PyErr_Clear();
        throw;

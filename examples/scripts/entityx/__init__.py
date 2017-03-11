@@ -1,5 +1,5 @@
 import _entityx
-
+import json, operator
 
 """These classes provide a convenience layer on top of the raw entityx::python
 primitives.
@@ -99,6 +99,27 @@ class Entity(object):
 
     def destroy(self):
         return self.entity.destroy()
+
+    ''' For seralization '''
+    def to_json(self):
+        ''' Gets all vars including C++ varaibles of a class''' 
+        def get_vars(obj):
+            attrs = [attr for attr in dir(obj) if not callable(getattr(obj, attr)) and not attr.startswith("_")]
+            return attrs
+        ''' Fake equiablient of __dict__ that also includes C++ classes '''
+        def get_dict(obj):
+            attrs = get_vars(obj)
+            dic = {}
+            for member in attrs:
+                att = getattr(obj,member)
+                # End recursion if C++ object provides __repr__ 
+                if type(att).__repr__ != object.__repr__:
+                    dic[member] = str(att)
+                # Recursively go over components that don't provide __repr__
+                else:
+                    dic[member] = get_dict(att)
+            return dic
+        return json.dumps(get_dict(self), indent=2)
 
     @classmethod
     def _from_raw_entity(cls, *args, **kwargs):

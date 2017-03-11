@@ -62,7 +62,12 @@ void ImGuiSystem::update(ex::EntityManager & em,
         builder.newStreamWriter());
       std::stringstream stream;
       for ( auto entity : all_entities ) {
-        stream << entity.id();
+        if (entity.has_component<PythonScript>()) {
+            stream << entity.component<PythonScript>()->cls 
+                 << "(" << entity.id().index() << "." << entity.id().version() << ")";
+        } else {
+            stream << "Entity(" << entity.id().index() << "." << entity.id().version() << ")";
+        }
         if ( ImGui::TreeNode(stream.str().c_str()) ) {
           Json::Value object = es.Save(entity);
           stream.str(std::string());
