@@ -82,7 +82,6 @@ class Entity(object):
             entity = _entityx._entity_manager.new_entity(self)
         # Initalize self.entity 
         self.entity = entity
-        cls.__init__(self, *args, **kwargs)
         for k, v in self._components.items():
             setattr(self, k, v._build(self.entity.id))
         return self
@@ -91,7 +90,7 @@ class Entity(object):
         """Default constructor."""
 
     def __repr__(self):
-        return '<%s.%s %s.%s>' % (self.__class__.__module__, self.__class__.__name__, self.entity.id.index, self.entity.id.version)
+        return '<%s.%s(%s.%s)>' % (self.__class__.__module__, self.__class__.__name__, self.entity.id.index, self.entity.id.version)
 
     @property
     def id(self):
@@ -100,13 +99,16 @@ class Entity(object):
     def destroy(self):
         return self.entity.destroy()
 
+    def valid(self):
+        return self.entity.valid()
+
     ''' For seralization '''
     def to_json(self):
         ''' Gets all vars including C++ varaibles of a class''' 
         def get_vars(obj):
             attrs = [attr for attr in dir(obj) if not callable(getattr(obj, attr)) and not attr.startswith("_")]
             return attrs
-        ''' Fake equiablient of __dict__ that also includes C++ classes '''
+        ''' Fake equilvalent of __dict__ that also includes C++ classes '''
         def get_dict(obj):
             attrs = get_vars(obj)
             dic = {}

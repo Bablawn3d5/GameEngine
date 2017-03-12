@@ -9,6 +9,5 @@ class Loader(entityx.Entity):
         self.body = self.Component(Body)
 
     def update(self, dt):
-        cur_pos = Vector2(self.body.position)
-        sys.stdout.write('*')
+    	pass
 
