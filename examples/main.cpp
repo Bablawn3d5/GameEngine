@@ -141,7 +141,11 @@ public:
       PyRun_SimpleString("sys.path.append('python27.zip')");
 
       try {
-        farqaad_python::pybind11_init();
+        static bool init_py = false;
+        if ( !init_py ) {
+            farqaad_python::pybind11_init();
+            init_py = true;
+        }
       }
       catch ( std::exception& e ) {
         std::cerr << e.what();
@@ -346,8 +350,12 @@ public:
         if ( std::find(events.begin(), events.end(), "+Debug") != events.end() ) {
           debug = !debug;
         }
+
         if ( std::find(events.begin(), events.end(), "+Phys_Debug") != events.end() ) {
           physDebug = !physDebug;
+        }
+        if ( std::find(events.begin(), events.end(), "+Reset") != events.end() ) {
+            isRunning = false;
         }
 
         // Draw debug data literally ontop of every thing.
@@ -378,13 +386,13 @@ int main(int argc, char* const argv[]) {
     window.setKeyRepeatEnabled(true);
     window.setTitle(title);
     // Scope to destory the app when main loop closes.
-    {
+    while(window.isOpen()) {
       Application app(execute_dir, window, configs, clear_color);
       // FIXME(SMA) : Apparently high_resolution_clock isn't consistent on some platforms
       // but I have yet to observe that.
       auto start = std::chrono::steady_clock::now();
       static_assert(std::chrono::steady_clock::is_steady, "Clock should be steady");
-      while ( window.isOpen() ) {
+      while ( app.isRunning ) {
         auto finish = std::chrono::steady_clock::now();
         app.update(entityx::TimeDelta(finish - start));
         start = finish;

@@ -8,6 +8,7 @@
     "MoveLeft" : "KEY_A",
     "Debug" : "KEY_F1",
     "Phys_Debug" : "KEY_F2",
+    "Reset" : "KEY_F4",
     "Game_Pause" : "KEY_F5",
     "Game_FrameAdvance" : "KEY_F6",
     "Use" : "KEY_E",

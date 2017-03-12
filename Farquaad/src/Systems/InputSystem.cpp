@@ -1,4 +1,4 @@
-// Copyright 2015 Bablawn3d5
+// Copyright 2017 Bablawn3d5
 
 #include <Farquaad/Systems/InputSystem.h>
 #include <Farquaad/Components.hpp>
