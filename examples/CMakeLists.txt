@@ -38,6 +38,7 @@ file(GLOB ExampleResources
     ${SCRIPTDIR}/action/explosion.py
     ${SCRIPTDIR}/action/follower.py
     ${SCRIPTDIR}/entityx/__init__.py
+    ${SCRIPTDIR}/entityx/importer.py
     ${SCRIPTDIR}/system/__init__.py
     ${SCRIPTDIR}/system/loader.py
     ${SCRIPTDIR}/gamemath/__init__.py

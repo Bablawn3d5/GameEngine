@@ -28,7 +28,7 @@ void LoadAsTexture(thor::ResourceHolder<TextureWithOffsets, std::string>& textur
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 }
 
@@ -85,7 +85,7 @@ void LoadAsSpriteSheetTexture(thor::ResourceHolder<TextureWithOffsets, std::stri
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 
 }
@@ -100,7 +100,7 @@ void LoadAsFontTexture(thor::ResourceHolder<sf::Font, std::string>& font_holder,
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 }
 
@@ -115,7 +115,7 @@ void LevelResoruceLoader::queue_load(const std::string& s) {
   const std::regex regex_json (".(json)$");
   if( std::regex_search(s, regex_json) ) {
     this->queue([this, s]{
-      std::cout << std::endl << "Loading file: " << s << std::endl;
+      std::cout << "Loading file: " << s << std::endl;
       this->json_holder.acquire(s,
                       Resources::loadJSON(s),
                       thor::Resources::Reuse);
@@ -123,22 +123,22 @@ void LevelResoruceLoader::queue_load(const std::string& s) {
     });
   } else if( std::regex_search(s, regex_tex) ) {
     this->queue([this, s]{
-      std::cout << "\n" << "Loading file: " << s << std::endl;
+      std::cout << "Loading file: " << s << std::endl;
       LoadAsTexture(this->texture_holder, s);
     });
   } else if( std::regex_search(s, regex_ase) ) {
     this->queue([this, s]{
-      std::cout << "\n" << "Loading file: " << s << std::endl;
+      std::cout << "Loading file: " << s << std::endl;
       LoadAsSpriteSheetTexture(this->texture_holder, s);
     });
   } else if( std::regex_search(s, regex_font) ) {
     this->queue([this, s]{
-      std::cout << "\n" << "Loading file: " << s << std::endl;
+      std::cout << "Loading file: " << s << std::endl;
       LoadAsFontTexture(this->font_holder, s);
     });
   } else if( std::regex_search(s, regex_sound) ) {
     this->queue([this, s]{
-      std::cout << "\n" << "Loading file: " << s << std::endl;
+      std::cout << "Loading file: " << s << std::endl;
       this->soundbuff_holder.acquire(s,
                      thor::Resources::fromFile<sf::SoundBuffer>(s),
                      thor::Resources::Reuse);
@@ -198,7 +198,7 @@ const Json::Value& LevelResoruceLoader::get(const std::string& s) const {
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 }
 
@@ -211,7 +211,7 @@ const sf::Font& LevelResoruceLoader::get(const std::string& s) const {
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 }
 
@@ -224,7 +224,7 @@ const TextureWithOffsets& LevelResoruceLoader::get(const std::string& s) const {
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 }
 
@@ -237,6 +237,6 @@ const sf::SoundBuffer& LevelResoruceLoader::get(const std::string& s) const {
   catch ( thor::ResourceAccessException& e ) {
     std::cerr << "Failed to load resource: " << s
       << " " << e.what() << std::endl;
-    throw e;
+    throw;
   }
 }

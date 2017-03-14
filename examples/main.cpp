@@ -92,6 +92,7 @@ public:
     LevelResoruceLoader level;
     std::thread waitThread;
     std::thread loadThread;
+    std::exception_ptr thread_exception;
 
     // Async locks and such for safety.
     // em_system_lock to represnet who can write to entity systems.
@@ -140,18 +141,13 @@ public:
       PyRun_SimpleString("import sys");
       PyRun_SimpleString("sys.path.append('python27.zip')");
 
-      try {
+      {
         static bool init_py = false;
         if ( !init_py ) {
             farqaad_python::pybind11_init();
             init_py = true;
         }
       }
-      catch ( std::exception& e ) {
-        std::cerr << e.what();
-        throw e;
-      }
-
 
       // Lock the system_lock so we have loadThread wait for 
       // systems to be fully loaded.
@@ -311,7 +307,6 @@ public:
               //systems.update<PythonSystem>(dt);
               systems.update<SpriteRenderSystem>(dt);
             }
-            // Arificially slow down updates so we're not busy-waiting.
             window.display();
             return;
         }
@@ -387,15 +382,22 @@ int main(int argc, char* const argv[]) {
     window.setTitle(title);
     // Scope to destory the app when main loop closes.
     while(window.isOpen()) {
-      Application app(execute_dir, window, configs, clear_color);
-      // FIXME(SMA) : Apparently high_resolution_clock isn't consistent on some platforms
-      // but I have yet to observe that.
-      auto start = std::chrono::steady_clock::now();
-      static_assert(std::chrono::steady_clock::is_steady, "Clock should be steady");
-      while ( app.isRunning ) {
-        auto finish = std::chrono::steady_clock::now();
-        app.update(entityx::TimeDelta(finish - start));
-        start = finish;
+      try {
+        Application app(execute_dir, window, configs, clear_color);
+        // FIXME(SMA) : Apparently high_resolution_clock isn't consistent on some platforms
+        // but I have yet to observe that.
+        auto start = std::chrono::steady_clock::now();
+        static_assert(std::chrono::steady_clock::is_steady, "Clock should be steady");
+        while ( window.isOpen() && app.isRunning ) {
+          auto finish = std::chrono::steady_clock::now();
+          app.update(entityx::TimeDelta(finish - start));
+          start = finish;
+        }
+      }
+      catch ( ... ) {
+        std::cout << "[ERROR] Ooops! looks like something went wrong!" << std::endl;
+        // HACK(SMA): May not work everywhere, but lets try.
+        system("pause");
       }
     }
     return 0;

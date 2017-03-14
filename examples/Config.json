@@ -15,11 +15,11 @@
     "Spawn" : "MOUSE_Left"
   },
   "loader" : [
-    "./Resources/Loader.json"
+    "./Resources/Loader.json",
+    "./Resources/Box.json"
   ],
   "entities" : [
     "./Resources/Hero.json",
-    "./Resources/Mouse.json",
-    "./Resources/Box.json"
+    "./Resources/Mouse.json"
   ]
 }
