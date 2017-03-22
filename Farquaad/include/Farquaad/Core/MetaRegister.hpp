@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include "entityx/python/PythonScript.hpp"
 #include <Meta.h>
 #include <Farquaad/Components.hpp>
-#include "entityx/python/PythonScript.hpp"
 
 using PythonScript = entityx::python::PythonScript;
 
