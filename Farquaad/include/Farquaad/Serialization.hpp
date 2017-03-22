@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <pybind11/pybind11.h>
 #include <Meta.h>
 #include <Farquaad/Core/MetaRegister.hpp>
 #include <Farquaad/Core/Serializable.hpp>

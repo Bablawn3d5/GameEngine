@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <pybind11/pybind11.h>
 #include "entityx/python/PythonScript.hpp"
 #include <Meta.h>
 #include <Farquaad/Components.hpp>
