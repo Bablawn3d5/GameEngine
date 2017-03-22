@@ -3,7 +3,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
-#include <experimental/filesystem>
 #include <Farquaad/Serialization.hpp>
 #include <json/json.h>
 #include <SFML/Graphics.hpp>
@@ -22,7 +21,56 @@
 #include <atomic>
 #include <thread>
 
+// Filesystem
+#if (defined(_WIN32) || defined(WIN32)) && defined(USE_NON_TERRIBLE_FS)
+#include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
+#else  // Not windows
+// Provide a terrible version of fs::path and fs::system_complete till
+// Filesystem is implemented.
+namespace fs {
+  class path {
+  public:
+      path(const std::string& s): s(s) {};
+      path(const char* s): s(s) {};
+      const std::string string() const {
+          return s;
+      };
+
+      path operator/(const std::string other) const {
+          std::string f = this->remove_filename().string();
+#if defined(_WIN32) || defined(WIN32)
+          int pos = s.rfind('\\');
+#else
+          int pos = s.rfind('/');
+#endif
+          f = f.substr(0, pos);
+          // Yolo append "/" because it works on both.
+          f.append("/").append(other);
+          return path(f);
+      }
+
+      path remove_filename() const {
+          // get '/' or '\\' depending on unix/mac or windows.
+#if defined(_WIN32) || defined(WIN32)
+          int pos = s.rfind('\\');
+#else
+          int pos = s.rfind('/');
+#endif
+
+          // Get the path and the name
+          std::string fpath = s.substr(0, pos + 1);
+          return path(fpath);
+      }
+      std::string s;
+  };
+
+  path system_complete(const char* p) {
+      return path(p);
+  }
+}
+#endif // Endif not being terrible.
+
 namespace py = pybind11;
 using namespace std::chrono_literals;
 using PythonSystem = entityx::python::PythonSystem;
