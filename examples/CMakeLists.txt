@@ -5,6 +5,8 @@ project(FarquaadExamples)
 # Default compiler args
 if (CMAKE_CXX_COMPILER_ID MATCHES "(GNU|.*Clang)")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Werror -Wall -Wextra -Wno-unused-parameter -Wno-error=unused-variable -Wno-error=sign-compare -std=c++14 -DBOOST_NO_AUTO_PTR -Wno-error=deprecated-declarations -Wno-unused-local-typedefs")
+    # For filesystem experemental.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lstdc++fs")
     if (CMAKE_CXX_COMPILER_ID MATCHES "(.*Clang)")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Qunused-arguments")
     endif()
